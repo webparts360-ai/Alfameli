@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Module 4: Hands-on Lab, Exercise Outline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+.ex-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ex-num{margin:0 0 2px;color:var(--sea);font-weight:600;font-size:.9rem}
+.ex h2{margin:0}
+.ex-meta{color:var(--muted);font-size:.92rem;margin:8px 0 12px}
+.open{display:inline-block;background:var(--sea);color:var(--paper);text-decoration:none;font-weight:600;font-size:.9rem;padding:8px 16px;border-radius:6px;white-space:nowrap}
+.open:hover{filter:brightness(1.08)}
+.open:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.lbl{font-weight:600;margin:14px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--sea-soft);color:var(--sea);border-radius:999px;padding:3px 11px;font-size:.85rem;font-weight:500}
+@media print{.open{display:none}}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Alfameli AI Training</p>
+  <h1>Module 4: Hands-on Lab</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>11:10 to 12:30 (80 minutes)</dd>
+    <dt>Format</dt><dd>Six exercises, one after another, each built around an everyday task</dd>
+    <dt>Main tool</dt><dd>Microsoft 365 Copilot Chat, signed in with your work account</dd>
+  </dl>
+  <p class="fab">All names, companies and figures in the exercises are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>Run sheet</h2>
+  <div class="table-wrap"><table>
+    <tr><th style="width:24%">Time</th><th>Activity</th><th style="width:14%">Length</th></tr>
+    <tr><td>11:10 to 11:13</td><td>Introduction</td><td>3 min</td></tr>
+    <tr><td>11:13 to 11:27</td><td><strong>Exercise 4-1</strong> Planning an RFQ Response with AI</td><td>14 min</td></tr><tr><td>11:27 to 11:37</td><td><strong>Exercise 4-2</strong> Client Reporting</td><td>10 min</td></tr><tr><td>11:37 to 11:49</td><td><strong>Exercise 4-3</strong> Shift and Site Coordination</td><td>12 min</td></tr><tr><td>11:49 to 12:01</td><td><strong>Exercise 4-4</strong> Procurement Quote Comparison</td><td>12 min</td></tr><tr><td>12:01 to 12:15</td><td><strong>Exercise 4-5</strong> HR Pulse Survey Analysis</td><td>14 min</td></tr><tr><td>12:15 to 12:25</td><td><strong>Exercise 4-6</strong> Monthly Cost Variance</td><td>10 min</td></tr>
+    <tr><td>12:25 to 12:30</td><td>Close</td><td>5 min</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>How every exercise works</h2>
+  <ul>
+    <li><strong>Start with the reader.</strong> Each exercise begins by using AI to understand what's being asked, and setting your own quality requirements.</li>
+    <li><strong>Think before you prompt.</strong> A short step without AI, where you review the data yourself. You'll use it to judge the AI's output.</li>
+    <li><strong>Quick prompts and one critical prompt.</strong> Quick prompts are copied as given. The critical prompt you build yourself with RCTF+C.</li>
+    <li><strong>Check, don't trust.</strong> Every prompt is followed by check questions. Hints and example prompts are hidden until you need them.</li>
+    <li><strong>One new thing each time.</strong> Every exercise adds a new way to use AI, building on the ones before.</li>
+  </ul>
+  <p class="note">Every prompt and dataset in the guides sits in a grey box with a Copy button.</p>
+</section>
+
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-1</p><h2>Planning an RFQ Response with AI</h2></div>
+    <a class="open" href="Exercise_4-1.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">11:13 to 11:27 &nbsp;|&nbsp; 14 minutes &nbsp;|&nbsp; Copilot Chat</p>
+  <p><strong>Goal:</strong> Learn to use AI as a thinking partner, not just a writer: understand a request quickly, let AI ask what it needs, build a structured plan, then have AI critique it and challenge that critique in turn.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to understand what the client&#x27;s RFQ asks for and what it leaves unclear.</li><li>Review internal notes yourself to spot what could clash with the client&#x27;s expectations.</li><li>Let AI ask you questions about your own situation before it suggests anything.</li><li>Build an RCTF+C prompt for a response plan with workstreams, owners, dates, risks and client questions.</li><li>Have AI critique the plan as the client&#x27;s evaluator, then challenge which criticisms are assumptions.</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">AI as teacher, interviewer, planner and critic</span><span class="chip">Mark your assumptions</span><span class="chip">Critique the critic</span></div>
+</section>
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-2</p><h2>Client Reporting</h2></div>
+    <a class="open" href="Exercise_4-2.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">11:27 to 11:37 &nbsp;|&nbsp; 10 minutes &nbsp;|&nbsp; Copilot Chat</p>
+  <p><strong>Goal:</strong> Learn to turn rough site notes into an accurate client update, where every fact traces to a source and the wording stays true to what actually happened.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to list what the client wants and suggest quality requirements for the update.</li><li>Review your own notes for gaps, inconsistencies and loose ends.</li><li>Let AI question your notes before it writes anything.</li><li>Build an RCTF+C prompt to draft the update, then check every sentence against your notes.</li><li>Have AI read the update as the client, then fix what they would question.</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">Quality requirements from the reader&#x27;s brief</span><span class="chip">Ask before writing</span><span class="chip">Keep wording true to the source</span></div>
+</section>
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-3</p><h2>Shift and Site Coordination</h2></div>
+    <a class="open" href="Exercise_4-3.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">11:37 to 11:49 &nbsp;|&nbsp; 12 minutes &nbsp;|&nbsp; Copilot Chat (optional: Teams, SharePoint dashboard)</p>
+  <p><strong>Goal:</strong> Learn to use AI as a scenario tester, checking what a change would break before approving it, and to communicate one decision clearly to several people.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to work out exactly what two crew members are asking for, and what&#x27;s missing.</li><li>Test each swap request yourself against the roster and site rules.</li><li>Ask AI to play out each swap against every rule.</li><li>Build an RCTF+C prompt for a decision, an updated roster and a message for each person affected.</li><li>Have AI review the decision as the Camp Manager, then verify it on the roster dashboard (optional).</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">AI as scenario tester</span><span class="chip">Give AI the rules</span><span class="chip">One decision, several audiences</span></div>
+</section>
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-4</p><h2>Procurement Quote Comparison</h2></div>
+    <a class="open" href="Exercise_4-4.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">11:49 to 12:01 &nbsp;|&nbsp; 12 minutes &nbsp;|&nbsp; Copilot Chat (optional: Excel)</p>
+  <p><strong>Goal:</strong> Learn to turn messy, inconsistent vendor replies into a table you can trust, by giving AI an exact format and clear rules, then build a recommendation step by step on verified output.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to work out what a complete, comparable quote must contain.</li><li>Skim six vendor replies and decide your table columns and rules for messy data.</li><li>Build an RCTF+C extraction prompt, then spot-check two vendors against their replies.</li><li>Chain a follow-up prompt that uses only your verified table to check vendors, shortlist and flag risks.</li><li>Check one price conversion yourself, and keep the decision with you.</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">Schema prompting</span><span class="chip">Rules for messy data</span><span class="chip">Spot-check sampling</span><span class="chip">Prompt chaining</span></div>
+</section>
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-5</p><h2>HR Pulse Survey Analysis</h2></div>
+    <a class="open" href="Exercise_4-5.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">12:01 to 12:15 &nbsp;|&nbsp; 14 minutes &nbsp;|&nbsp; Copilot Chat, work account (optional: Word)</p>
+  <p><strong>Goal:</strong> Learn to use AI to analyse opinions rather than facts: keep the analysis proportionate, accurate and anonymous, surface serious concerns, and turn verified results into a management report.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to work out what the HR Manager needs, and set your quality requirements.</li><li>Run a "before you paste" check, then skim 30 comments for your own themes and concerns.</li><li>Build an RCTF+C prompt for themes with counts, respondent numbers and word-for-word quotes, then verify them.</li><li>Ask AI what doesn&#x27;t fit, and produce a confidential follow-up note for HR.</li><li>Write your own prompt for a management report with frequency, sentiment, insights and recommendations.</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">Before you paste</span><span class="chip">Evidence rules</span><span class="chip">Exception prompting</span><span class="chip">Finding, insight, action</span></div>
+</section>
+<section class="ex">
+  <div class="ex-head">
+    <div><p class="ex-num">Exercise 4-6</p><h2>Monthly Cost Variance</h2></div>
+    <a class="open" href="Exercise_4-6.html" target="_blank" rel="noopener">Open guide</a>
+  </div>
+  <p class="ex-meta">12:15 to 12:25 &nbsp;|&nbsp; 10 minutes &nbsp;|&nbsp; Excel with Copilot in Excel, or Copilot Chat</p>
+  <p><strong>Goal:</strong> Learn to use AI to build the tool rather than give the answer: get Excel formulas that work every month, and have AI explain an inherited formula before you rely on it.</p>
+  <p class="lbl">Tasks</p>
+  <ol><li>Use AI to work out what the Finance Manager needs, including the exact flag rule.</li><li>Inspect the inherited workbook for formulas versus typed numbers.</li><li>Build an RCTF+C prompt that asks for formulas, not results, then test one row by hand.</li><li>Check every flag against the rule, and replace typed totals with formulas.</li><li>Ask AI to explain the inherited forecast formula. Bonus: let Copilot in Excel make the edits.</li></ol>
+  <p class="lbl">New techniques</p>
+  <div class="chips"><span class="chip">Ask for the method, not the result</span><span class="chip">AI as explainer</span><span class="chip">Test one row by hand</span></div>
+</section>
+
+<section>
+  <h2>Across the six exercises</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Exercise</th><th>The job</th><th>AI helps you to</th></tr>
+    <tr><td>4-1</td><td>Plan</td><td>Think it through</td></tr>
+    <tr><td>4-2</td><td>Report</td><td>Write accurately</td></tr>
+    <tr><td>4-3</td><td>Decide</td><td>Test before acting</td></tr>
+    <tr><td>4-4</td><td>Compare</td><td>Structure messy data</td></tr>
+    <tr><td>4-5</td><td>Analyse</td><td>Weigh opinions fairly</td></tr>
+    <tr><td>4-6</td><td>Calculate</td><td>Build tools you can reuse</td></tr>
+  </table></div>
+</section>
+</main>
+</body>
+</html>
