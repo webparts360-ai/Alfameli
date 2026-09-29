@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise 4-6: Monthly Cost Variance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+td textarea{min-height:52px}</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Alfameli AI Training, Module 4 Hands-on Lab</p>
+  <h1>Exercise 4-6: Monthly Cost Variance</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>10 minutes</dd>
+    <dt>Tool</dt><dd>Excel, with Copilot in Excel if you have it, or Microsoft 365 Copilot Chat</dd>
+    <dt>You'll produce</dt><dd>A variance report driven by formulas that works every month, and a plain-English check of an inherited forecast formula</dd>
+  </dl>
+  <p class="fab">All names, companies and figures are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <p>You're in cost control. Every month you compare actual site costs against budget, work out the variances, and flag the lines that need explaining. You've just inherited the workbook from a colleague who has moved to another project.</p>
+  <p>So far today, you've asked AI for <strong>answers</strong>. With numbers, that's risky: AI can get sums wrong, and a number typed into a cell can't be checked. This time you'll ask AI to <strong>build the tool</strong>, and let Excel do the maths.</p>
+  <p><strong>New ways to use AI in this exercise:</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th>Technique</th><th>What it means</th></tr>
+    <tr><td>Ask for the method, not the result</td><td>Ask AI for the Excel formulas instead of the numbers. Excel calculates, every month, and anyone can check how.</td></tr>
+    <tr><td>AI as explainer</td><td>Ask AI to explain a formula you didn't write, in plain English, and to spot what's hardcoded or will break.</td></tr>
+    <tr><td>Test one row by hand</td><td>Before trusting a formula across the sheet, check one row with a calculator.</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Two kinds of prompt</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What you do</th><th>Which</th></tr>
+    <tr><td><span class="tag quick">Quick prompt</span></td><td>Copy and paste it as given</td><td>Prompts 1 and 3</td></tr>
+    <tr><td><span class="tag crit">Critical prompt</span></td><td><strong>You build it yourself</strong>, using RCTF+C</td><td>Prompt 2, the formulas</td></tr>
+  </table></div>
+  <p><strong>Anything in a grey box can be copied.</strong></p>
+</section>
+
+<section>
+  <h2>Before you start</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Minutes</th><th>Step</th></tr>
+    <tr><td>0 to 1.5</td><td>Step 1: Understand the request (Prompt 1)</td></tr>
+    <tr><td>1.5 to 3</td><td>Step 2: Look inside the workbook</td></tr>
+    <tr><td>3 to 7</td><td>Step 3: Ask for formulas, not answers (Prompt 2)</td></tr>
+    <tr><td>7 to 9</td><td>Step 4: Explain the inherited formula (Prompt 3)</td></tr>
+    <tr><td>9 to 10</td><td>Step 5: Check your work</td></tr>
+  </table></div>
+  <ul>
+    <li>Open the workbook <strong>Alfameli_Exercise_4-6_Site_Cost_Report.xlsx</strong> from the shared folder.</li>
+    <li>Open Copilot Chat in a browser tab, or the Copilot pane in Excel if you have it.</li>
+  </ul>
+  <details><summary>Can't open the workbook? Build it in 30 seconds</summary>
+    <p>Open a blank Excel sheet, click cell <strong>A4</strong>, and paste this. The formulas will come across as formulas.</p>
+    <div class="copy"><div class="copy-head"><span>Workbook data (paste into cell A4)</span><button type="button">Copy</button></div>
+<pre>Category	Budget (Oct, RM)	Actual (Oct, RM)	Actual YTD (Jan to Oct, RM)	Full-year forecast (RM)
+Fuel	42000	45500	418000	=D5/9*12
+Manpower	128000	124200	1262000	=D6/9*12
+Catering	36500	38900	371500	=D7/9*12
+Maintenance	19000	21300	196400	=D8/9*12
+Transport	24000	25100	243800	=D9/9*12
+Accommodation utilities	8500	9600	88300	=D10/9*12
+Communications	3000	5400	33600	=D11/9*12
+Total	=SUM(B5:B11)	271000	=SUM(D5:D11)	=SUM(E5:E11)</pre></div>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">1</span>Understand the request <span style="font-weight:400;color:var(--muted)">(1.5 minutes)</span></h2>
+  <div class="copy"><div class="copy-head"><span>Dataset A: request from the Finance Manager</span><button type="button">Copy</button></div>
+<pre>From: Siti (Finance Manager)
+Subject: October site cost variance report
+
+Hi,
+
+Please update the site cost report for October. For each cost line I need:
+
+- The variance against budget in RM and in %
+- Whether it&#x27;s over or under budget
+- A flag on any line that needs an explanation: more than 5% AND more than RM 2,000 away from budget, over or under
+
+I&#x27;ll reuse this every month, so please make sure it works without anyone retyping numbers. Also, Amir built the full-year forecast column before he moved to the Kuantan project, and I&#x27;m not sure anyone understands it. Can you check it?
+
+Thanks,
+Siti</pre></div>
+  <p>Copy Prompt 1, paste Dataset A underneath it in the same message, and send.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 1: AI as teacher</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Copy</button></div>
+<pre>Here is a request from our Finance Manager about the monthly cost variance report. List exactly what she needs, including every rule she sets. Then suggest quality requirements for a report that others can check and reuse every month.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Did it capture the flag rule exactly? Read the rule in the email again, word by word.</li>
+      <li>Which quality requirements will you use? Write them below.</li>
+    </ul>
+  </div>
+  <label class="field" for="s1">What Siti needs, the exact flag rule, and my quality requirements</label>
+  <textarea id="s1" data-save></textarea>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Look inside the workbook <span style="font-weight:400;color:var(--muted)">(1.5 minutes)</span></h2>
+  <p>Before changing anything, find out what you've inherited. Click into each of these cells and look at the formula bar.</p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:28%">Cell</th><th>Formula or typed number?</th><th>Anything that worries you?</th></tr>
+    <tr><td>B12 (Budget total)</td><td><textarea data-save id="w1"></textarea></td><td><textarea data-save id="w2"></textarea></td></tr>
+    <tr><td>C12 (Actual total)</td><td><textarea data-save id="w3"></textarea></td><td><textarea data-save id="w4"></textarea></td></tr>
+    <tr><td>E5 (Fuel forecast)</td><td><textarea data-save id="w5"></textarea></td><td><textarea data-save id="w6"></textarea></td></tr>
+  </table></div>
+  <details><summary>Hints if you're stuck</summary>
+    <ul>
+      <li>A cell showing a number with no "=" in the formula bar was typed in. Will it update next month?</li>
+      <li>Select C5 to C11. Excel shows the sum at the bottom right of the window. Compare it with C12.</li>
+      <li>Read the column headers. Which month is it, and how many months does "YTD" cover?</li>
+    </ul>
+  </details>
+</section>
+
+<section class="critical">
+  <h2><span class="num">3</span>Prompt 2: the critical prompt, ask for formulas <span style="font-weight:400;color:var(--muted)">(4 minutes)</span></h2>
+  <div class="banner">
+    <p><strong>This is the one you build yourself.</strong> Use RCTF+C.</p>
+    <p>The key difference from every other exercise: you're asking for <strong>formulas</strong>, not numbers.</p>
+  </div>
+  <p><strong>1. Copy this skeleton</strong> into Copilot Chat. Don't send it yet.</p>
+  <div class="copy"><div class="copy-head"><span>RCTF+C skeleton</span><button type="button">Copy</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div>
+  <p><strong>2. Replace each "..." with your own words.</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:18%">Line</th><th>Ask yourself</th></tr>
+    <tr><td><strong>Role</strong></td><td>Who builds reliable Excel reports?</td></tr>
+    <tr><td><strong>Context</strong></td><td>The AI can't see your sheet. Describe it: which columns hold what, which rows the data is in, where the total row is. Include Siti's flag rule exactly.</td></tr>
+    <tr><td><strong>Task</strong></td><td>Which new columns do you need, and in which column letters? Is there anything in the total row to fix?</td></tr>
+    <tr><td><strong>Format</strong></td><td>What do you need for each column to put it into Excel yourself? Think: header, formula, how to fill it down, a short explanation.</td></tr>
+    <tr><td><strong>Constraints</strong></td><td>Should it calculate any results? How exactly should it apply the flag rule? How should over and under budget be described for costs? What if a budget is zero?</td></tr>
+  </table></div>
+  <p><strong>3. Send it, then put the formulas into Excel</strong> in row 5 and fill down to row 11.</p>
+  <p><strong>4. Check the results:</strong></p>
+  <div class="check">
+    <ul>
+      <li>Pick one row. Work out its variance and variance % with a calculator. Does Excel agree?</li>
+      <li>Check the flag on every row against Siti's rule, especially any row that meets only <em>one</em> of the two conditions.</li>
+      <li>Is "over budget" described as unfavourable? Would a manager read the direction correctly?</li>
+      <li>Is the Actual total now a formula? What changed when you fixed it?</li>
+    </ul>
+  </div>
+  <p>If a formula is wrong, fix it with Draft, Diagnose, Direct:</p>
+  <div class="copy"><div class="copy-head"><span>Correction template</span><button type="button">Copy</button></div>
+<pre>The formula for [column] is wrong: [what is wrong]. Give me a corrected formula and keep everything else the same.</pre></div>
+  <details><summary>Stuck or out of time? Show an example critical prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example critical prompt</span><button type="button">Copy</button></div>
+<pre>Role: You are a financial analyst who builds clear, reusable Excel reports.
+Context: My sheet has cost categories in A5:A11, monthly budget in column B, monthly actual in column C, and a total row in row 12. Finance wants each line&#x27;s variance in RM and %, whether it is over or under budget, and a flag on lines more than 5% AND more than RM 2,000 away from budget, in either direction.
+Task: Give me the Excel formulas for three new columns, F, G and H, starting in row 5, and a formula to replace anything in the total row that should be calculated.
+Format: For each column: the header, the formula for row 5, how to fill it down, and one sentence explaining what it does.
+Constraints: Give formulas only. Do not calculate any results yourself. Apply the flag rule exactly as written, with both conditions. For costs, over budget is unfavourable, so label the direction in words. Handle a zero budget without an error. British spelling.</pre></div>
+  </details>
+
+  <div class="tip-box" style="background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:6px;padding:12px 16px;margin:16px 0 4px">
+    <p style="margin:0 0 6px"><strong>Bonus tip: let Copilot make the edits for you</strong></p>
+    <p style="margin:0 0 8px">If you have Copilot in Excel, you don't need to copy formulas across. Open the Copilot pane in the workbook and ask it to make the changes directly in the sheet:</p>
+    <div class="copy"><div class="copy-head"><span>Bonus: Copilot in Excel prompt</span><button type="button">Copy</button></div>
+<pre>Add three columns to this table. Variance (RM): Actual minus Budget. Variance %: the variance divided by Budget. Flag: show &quot;Explain&quot; only when the variance is more than 5% AND more than RM 2,000 away from budget, in either direction. Use formulas, not typed values. Then check the total row and replace any typed total with a SUM formula.</pre></div>
+    <p style="margin:8px 0 0">It's still your sheet, so check its work: click into the new cells to read the formulas, or press <strong>Ctrl + `</strong> to show every formula at once. Test one row by hand, check the flags against the rule, and use Undo if anything looks wrong.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>Explain the inherited formula <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>Amir's forecast column is now yours. Before you rely on it, find out what it actually does.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 3: AI as explainer</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Copy</button></div>
+<pre>Explain this Excel formula in plain English, step by step: =D5/9*12
+It&#x27;s in the &quot;Full-year forecast&quot; column of our October 2026 site cost report. Column D is &quot;Actual YTD (Jan to Oct, RM)&quot;.
+Point out anything hardcoded, anything that is wrong this month, and anything that will break next month. Then suggest a more reliable version.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Do you now understand every part of the formula?</li>
+      <li>Is the current forecast too high, too low, or right? By roughly how much?</li>
+      <li>Would the suggested version still work in November without anyone editing it?</li>
+      <li>Try the suggested version on the Fuel row. Does the result make sense?</li>
+    </ul>
+  </div>
+  <p class="note"><strong>With Copilot in Excel:</strong> select cell E5 and ask Copilot to explain the formula. It reads the sheet itself, so you don't need to describe the columns.</p>
+  <label class="field" for="top3">What I found in the inherited formula, and what I'd tell Siti</label>
+  <textarea id="top3" data-save></textarea>
+  <details><summary>If you get stuck</summary>
+    <ol>
+      <li>Look at the column D header. How many months of spending does it contain?</li>
+      <li>What does the 9 in the formula represent? Is that right for October?</li>
+      <li>What would have to change every month for this formula to stay right?</li>
+    </ol>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">5</span>Check your work <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h2>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="k1"><span>I checked which cells were formulas and which were typed, before changing anything.</span></li>
+    <li><input type="checkbox" data-save id="k2"><span>I asked for formulas, not numbers.</span></li>
+    <li><input type="checkbox" data-save id="k3"><span>I tested at least one row by hand, and Excel agreed.</span></li>
+    <li><input type="checkbox" data-save id="k4"><span>Every flag matches Siti's rule, with both conditions.</span></li>
+    <li><input type="checkbox" data-save id="k5"><span>No total in the report is a typed number.</span></li>
+    <li><input type="checkbox" data-save id="k6"><span>I understand the inherited forecast formula and what's wrong with it.</span></li>
+    <li><input type="checkbox" data-save id="k7"><span>The report would work next month without anyone retyping numbers.</span></li>
+  </ul>
+  <p><strong>Ticked fewer than five?</strong> Go back to the checks under Prompt 2.</p>
+  <details><summary>Finished early? Add a variance commentary</summary>
+    <p>Ask Copilot to write commentary from your Excel results, so the numbers come from Excel and only the words come from AI.</p>
+    <div class="copy"><div class="copy-head"><span>Commentary prompt</span><button type="button">Copy</button></div>
+<pre>Here are my October variance results from Excel: [paste columns A, B, C, F, G and H]. Write a short variance commentary for the lines flagged &quot;Explain&quot; only. Use my numbers exactly and do not recalculate anything. Where the data doesn&#x27;t give a reason for a variance, write &quot;Reason to be confirmed with the budget owner&quot; instead of guessing.</pre></div>
+  </details>
+</section>
+
+<section>
+  <h2>What to take away</h2>
+  <ul>
+    <li><strong>Ask for the method, not the result.</strong> A formula can be checked and reused. A number from a chat can't.</li>
+    <li><strong>Excel does the maths, AI does the explaining.</strong> Use each for what it's good at.</li>
+    <li><strong>Describe your sheet.</strong> AI can't see your workbook unless it's working inside it, so tell it where everything is.</li>
+    <li><strong>Test one row by hand.</strong> A formula that's wrong in one row is wrong in every row.</li>
+    <li><strong>Inherited spreadsheets hide assumptions.</strong> Ask AI to explain them before you rely on them.</li>
+    <li><strong>No typed totals.</strong> If it can be calculated, it should be a formula.</li>
+  </ul>
+  <p class="saved">Your notes and ticks are saved in this browser only.</p>
+</section>
+</main>
+<script>
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Copied','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Press Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-ex46-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>

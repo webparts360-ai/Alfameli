@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise 4-4: Procurement Quote Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+td textarea{min-height:56px}</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Alfameli AI Training, Module 4 Hands-on Lab</p>
+  <h1>Exercise 4-4: Procurement Quote Comparison</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>12 minutes</dd>
+    <dt>Tool</dt><dd>Microsoft 365 Copilot Chat, then Excel (optional)</dd>
+    <dt>You'll produce</dt><dd>A quote comparison table, and a shortlist with risks, outliers and follow-up questions</dd>
+  </dl>
+  <p class="fab">All names, companies and details are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <p>You're a procurement officer. You sent an RFQ for gloves, safety boots and coveralls. Six vendors have replied, every one in a different format. Your manager wants them in one comparison table by lunch.</p>
+  <p>Retyping six messy replies into a table is boring, slow and easy to get wrong. It's exactly the kind of work AI is best at, <strong>if</strong> you tell it precisely what you want and check what it gives you.</p>
+  <p><strong>New prompting techniques in this exercise:</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th>Technique</th><th>What it means</th></tr>
+    <tr><td>Schema prompting</td><td>Tell the AI the exact columns, their order, and the allowed values. It fills in your structure instead of inventing its own.</td></tr>
+    <tr><td>Rules for messy data</td><td>Tell it what to do when information is missing, unclear or in a different unit, so it flags instead of guessing.</td></tr>
+    <tr><td>Prompt chaining</td><td>Break the job into stages. Check the output of one stage, then build the next stage on it, so the AI works from verified data, not raw input.</td></tr>
+    <tr><td>Spot-check sampling</td><td>You can't check every row of bulk output. Pick a few at random and trace them to the source.</td></tr>
+  </table></div>
+  <details><summary>Terms used in this exercise</summary>
+    <ul>
+      <li><strong>RFQ:</strong> request for quotation</li>
+      <li><strong>SST:</strong> sales and service tax</li>
+      <li><strong>Validity:</strong> how long the vendor will hold their price</li>
+      <li><strong>Minimum order:</strong> the smallest quantity a vendor will sell at that price</li>
+    </ul>
+  </details>
+</section>
+
+<section>
+  <h2>Two kinds of prompt</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What you do</th><th>Which</th></tr>
+    <tr><td><span class="tag quick">Quick prompt</span></td><td>Copy and paste it as given</td><td>Prompts 1 and 3</td></tr>
+    <tr><td><span class="tag crit">Critical prompt</span></td><td><strong>You build it yourself</strong>, using RCTF+C</td><td>Prompt 2, the extraction prompt</td></tr>
+  </table></div>
+  <p>The critical prompt matters more than usual here, because the recommendation in Step 4 is built on its output. <strong>Anything in a grey box can be copied.</strong></p>
+</section>
+
+<section>
+  <h2>Before you start</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Minutes</th><th>Step</th></tr>
+    <tr><td>0 to 2</td><td>Step 1: Understand what a complete quote needs (Prompt 1)</td></tr>
+    <tr><td>2 to 4</td><td>Step 2: Look at the replies and design your table</td></tr>
+    <tr><td>4 to 9</td><td>Step 3: Extract and spot-check (Prompt 2)</td></tr>
+    <tr><td>9 to 11</td><td>Step 4: Chain to a recommendation (Prompt 3)</td></tr>
+    <tr><td>11 to 12</td><td>Step 5: Check your work</td></tr>
+  </table></div>
+  <ul>
+    <li>Open a <strong>new</strong> Copilot Chat and use it for every step.</li>
+    <li><strong>Read each response before moving on.</strong></li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">1</span>Understand what a complete quote needs <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p><strong>1. Read the RFQ we sent.</strong></p>
+  <div class="copy"><div class="copy-head"><span>Dataset A: the RFQ</span><button type="button">Copy</button></div>
+<pre>From: Procurement &lt;procurement@ourcompany.example&gt;
+Sent: Monday 9 November 2026
+Subject: RFQ: Site PPE, reply by 13 November
+
+Dear Supplier,
+
+Please quote for the following, delivered to our Kemaman supply base:
+
+1. Nitrile-coated work gloves, size L: 600 pairs
+2. Steel-toe safety boots, sizes 7 to 11: 80 pairs
+3. Fire-retardant coveralls, sizes M to XL: 120 pieces
+
+Please state for each item:
+- Unit price in RM
+- Whether SST is included
+- Delivery lead time
+- How long your quote is valid (minimum 30 days)
+
+Regards,
+Procurement</pre></div>
+  <p><strong>2. Copy Prompt 1</strong>, paste Dataset A underneath it in the same message, and send.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 1: AI as teacher</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Copy</button></div>
+<pre>Here is an RFQ we sent to vendors. List everything each vendor needs to tell us for their quote to be complete and comparable. Then suggest quality requirements for a comparison table of their replies.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Does its list match what the RFQ actually asked for?</li>
+      <li>Which of its quality requirements will you use? Write them down below.</li>
+    </ul>
+  </div>
+  <label class="field" for="s1">What a complete quote needs, and my quality requirements for the table</label>
+  <textarea id="s1" data-save></textarea>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Look at the replies and design your table <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>Here are the six replies. <strong>Don't read them all in detail.</strong> Skim them to see how different they are.</p>
+  <div class="copy"><div class="copy-head"><span>Dataset B: vendor replies</span><button type="button">Copy</button></div>
+<pre>=== Reply from Jaya Safety Supply ===
+Dear Procurement,
+Thank you for your RFQ. Gloves are RM 4.20 per pair, safety boots RM 118.00 per pair and coveralls RM 89.00 each. All prices include SST. Delivery within 7 working days of PO. This quote is valid for 30 days from 10 November 2026.
+Best regards, Aishah, Jaya Safety Supply
+
+=== Reply from Pantai Industrial ===
+Hi, please see our prices below.
+
+Item | Unit | Price (RM)
+Nitrile gloves L | Box of 12 pairs | 46.80
+Safety boots steel toe | Pair | 125.00
+FR coveralls | Piece | 85.00
+
+All prices exclude SST. Lead time 10 days. Valid until 30 November 2026.
+Kevin, Pantai Industrial
+
+=== Reply from Mega Protect ===
+hi
+gloves 4.00/pr, boots 110/pr, coverall 92/pc incl SST. can deliver in 2 weeks.
+tq
+Raj
+
+=== Reply from Borneo Workwear ===
+Dear Sir/Madam,
+Thank you for your enquiry. Unfortunately we do not carry work gloves. For the other items please refer to our current price list (dated 1 October 2026, prices valid for 30 days): steel-toe safety boots RM 105.00 per pair, FR coveralls RM 95.00 per piece. Prices include SST. Delivery 5 working days.
+Regards, Borneo Workwear Sales Team
+
+=== Reply from Sinar Utama Trading ===
+Good afternoon,
+We are pleased to offer nitrile gloves at RM 3.90 per pair (minimum order 1,000 pairs), steel-toe boots at RM 120.00 per pair and FR coveralls at RM 88.00 per piece. Delivery 10 working days. Quote valid 45 days.
+Thank you, Lim Siew Ling, Sinar Utama Trading
+
+=== Reply from Kemaman Supplies ===
+Dear Procurement Team,
+We can supply all three items as specified. Total for everything: RM 27,500.00, including SST and delivery to your supply base. Delivery in 3 weeks. Valid 30 days.
+Regards, Azlan, Kemaman Supplies</pre></div>
+
+  <p><strong>Your task:</strong> decide what your comparison table should look like, and what the AI should do when a reply is messy. The AI will follow your design, so this is where the quality comes from.</p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:34%">Question</th><th>My decision</th></tr>
+    <tr><td>What columns do I need, in what order?</td><td><textarea data-save id="q1"></textarea></td></tr>
+    <tr><td>What should it write when something is missing?</td><td><textarea data-save id="q2"></textarea></td></tr>
+    <tr><td>What should it do when vendors use different units, or treat tax differently?</td><td><textarea data-save id="q3"></textarea></td></tr>
+    <tr><td>What should it flag for me to follow up?</td><td><textarea data-save id="q4"></textarea></td></tr>
+  </table></div>
+
+  <details><summary>Hints if you're stuck</summary>
+    <ul>
+      <li><strong>Compare units.</strong> Is every vendor pricing the same thing? Look closely at gloves.</li>
+      <li><strong>Compare dates.</strong> When does each quote expire? Is any already out of date?</li>
+      <li><strong>Look for what's missing.</strong> Which replies don't answer everything the RFQ asked?</li>
+      <li><strong>Look for conditions.</strong> Does any price only apply if we do something, or buy a certain amount?</li>
+      <li><strong>Decide about calculations.</strong> Should the AI convert or calculate anything, or just copy what the vendor wrote? What's the risk either way?</li>
+    </ul>
+  </details>
+</section>
+
+<section class="critical">
+  <h2><span class="num">3</span>Prompt 2: the critical prompt, extraction <span style="font-weight:400;color:var(--muted)">(4 minutes)</span></h2>
+  <div class="banner">
+    <p><strong>This is the one you build yourself.</strong> Use RCTF+C, and put your Step 2 design into it.</p>
+    <p>Build it carefully. In Step 4, the recommendation is built on this table, so any mistake here carries through.</p>
+  </div>
+
+  <p><strong>1. Copy this skeleton</strong> into Copilot Chat. Don't send it yet.</p>
+  <div class="copy"><div class="copy-head"><span>RCTF+C skeleton</span><button type="button">Copy</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div>
+
+  <p><strong>2. Replace each "..." with your own words.</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:18%">Line</th><th>Ask yourself</th></tr>
+    <tr><td><strong>Role</strong></td><td>Who normally builds quote comparisons?</td></tr>
+    <tr><td><strong>Context</strong></td><td>What will you paste in? The RFQ and the replies.</td></tr>
+    <tr><td><strong>Task</strong></td><td>What do you want back: just a table, or follow-up questions too?</td></tr>
+    <tr><td><strong>Format</strong></td><td><strong>This is the schema.</strong> List your exact columns in order. How many rows per vendor? What values are allowed in each column?</td></tr>
+    <tr><td><strong>Constraints</strong></td><td><strong>These are your rules for messy data</strong>, from Step 2. Missing information? Different units or tax? Calculations? Guessing?</td></tr>
+  </table></div>
+
+  <p><strong>3. Paste the RFQ and Dataset B</strong> underneath your prompt, then send.</p>
+
+  <p><strong>4. Spot-check.</strong> You can't check every row of a big table, so sample it:</p>
+  <div class="check">
+    <ul>
+      <li>Pick <strong>two vendors at random</strong>. Check every figure in their rows against their reply in Dataset B.</li>
+      <li>Is every "Not stated" genuinely missing from the reply?</li>
+      <li>Did it copy each price exactly, or did it convert or calculate anything?</li>
+      <li>Is every row that can't be compared like-for-like flagged?</li>
+    </ul>
+  </div>
+
+  <p>If something is wrong, don't start again. Fix it with Draft, Diagnose, Direct:</p>
+  <div class="copy"><div class="copy-head"><span>Correction template</span><button type="button">Copy</button></div>
+<pre>In your [table / recommendation], [what is wrong]. Change it to [what it should be], and keep everything else the same.</pre></div>
+
+  <details><summary>Stuck or out of time? Show an example critical prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example critical prompt</span><button type="button">Copy</button></div>
+<pre>Role: You are a procurement officer preparing a quote comparison.
+Context: Below are the RFQ we sent and the replies from six vendors.
+Task: Extract every quote into one comparison table, then list the follow-up questions for each vendor.
+Format: One row per vendor per item, with these columns in this order: Vendor | Item | Price as quoted | Unit as quoted | SST (Included / Excluded / Not stated) | Delivery as quoted | Valid until | Flags. After the table, a short list of follow-up questions for each vendor.
+Constraints: Copy every figure exactly as the vendor wrote it. Do not convert units, currency or tax, and do not calculate anything. Write &quot;Not stated&quot; for anything missing and never guess. In Flags, note anything that stops a like-for-like comparison, such as a different unit, tax treatment, minimum order, partial quote, expired or missing validity, or a lump sum. British spelling.
+
+[paste the RFQ]
+[paste Dataset B]</pre></div>
+  </details>
+
+  <details><summary>Optional: move the table into Excel</summary>
+    <p>Copy the table from Copilot Chat and paste it into a blank Excel sheet. If you have Copilot in Excel, ask it to highlight every row with a flag. Excel is where you'd sort, filter and total the prices later.</p>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">4</span>Chain to a recommendation <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>Your table is checked. Now build on it. Instead of asking the AI to read six messy replies and recommend in one go, you ask it to work <strong>only from the table you've already verified</strong>. That's prompt chaining.</p>
+  <p>Send this in the same chat:</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 3: from table to recommendation</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Copy</button></div>
+<pre>Using only the table above, check each vendor against every requirement in the RFQ and mark it Pass, Fail or Unclear. Then shortlist up to two vendors with reasons, and list the risks and outliers. Where you need to convert a price to compare it, show the working in a separate column. The final decision is mine.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Does the shortlist rely on anything that isn't in your table?</li>
+      <li>Pick one price conversion and check the working yourself.</li>
+      <li>Is every quote that can't be compared like-for-like excluded or flagged, rather than quietly ranked?</li>
+      <li>How many vendors actually pass every requirement? What does that tell you about the next step?</li>
+      <li>Did it leave the final decision with you?</li>
+    </ul>
+  </div>
+
+  <label class="field" for="top3">My shortlist, and what I'd ask vendors before deciding</label>
+  <textarea id="top3" data-save></textarea>
+
+  <details><summary>If you get stuck</summary>
+    <ol>
+      <li>Read the shortlist as your manager would. What's the first question they'd ask?</li>
+      <li>Go back to your Step 2 decisions. Does the recommendation respect every rule you set?</li>
+      <li>Which Module 1 technique checks every fact before you sign it off? Apply it to the recommendation.</li>
+    </ol>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">5</span>Check your work <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h2>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="k1"><span>My prompt set exact columns, in a fixed order.</span></li>
+    <li><input type="checkbox" data-save id="k2"><span>My prompt told the AI what to do with missing or unclear information.</span></li>
+    <li><input type="checkbox" data-save id="k3"><span>Every price in my table is exactly as the vendor quoted it.</span></li>
+    <li><input type="checkbox" data-save id="k4"><span>Every quote that can't be compared like-for-like is flagged.</span></li>
+    <li><input type="checkbox" data-save id="k5"><span>I spot-checked at least two vendors against their replies.</span></li>
+    <li><input type="checkbox" data-save id="k6"><span>I checked the table before asking for a recommendation.</span></li>
+    <li><input type="checkbox" data-save id="k7"><span>I checked at least one price conversion in the recommendation myself.</span></li>
+    <li><input type="checkbox" data-save id="k8"><span>The final decision stayed with me.</span></li>
+  </ul>
+  <p><strong>Ticked fewer than five?</strong> Go back to the checks under Prompt 2.</p>
+</section>
+
+<section>
+  <h2>What to take away</h2>
+  <ul>
+    <li><strong>Give the AI your structure.</strong> A schema turns messy replies into a table you can trust and compare.</li>
+    <li><strong>Rules beat hope.</strong> Tell it what to do with missing, unclear or different data, or it will decide for you.</li>
+    <li><strong>Copy first, calculate later.</strong> Keep extraction and calculation separate, so you can check each.</li>
+    <li><strong>Chain, don't cram.</strong> Extract, check, then recommend. Each stage builds on output you've already verified.</li>
+    <li><strong>Sample bulk output.</strong> Spot-check a few rows at random, every time.</li>
+    <li><strong>AI shortlists, you decide.</strong> A recommendation is input to your decision, not the decision.</li>
+  </ul>
+  <p class="note"><strong>Next week:</strong> save your extraction prompt in Copilot so you can reuse it on the next batch of replies.</p>
+  <p class="saved">Your notes and ticks are saved in this browser only.</p>
+</section>
+</main>
+<script>
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Copied','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Press Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-ex44b-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>

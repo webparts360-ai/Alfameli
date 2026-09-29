@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise 4-1: Planning an RFQ response with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <p class="kicker">Alfameli AI Training, Module 4 Hands-on Lab</p>
+  <h1>Exercise 4-1: Planning an RFQ response with AI</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>14 minutes</dd>
+    <dt>Tool</dt><dd>Microsoft 365 Copilot Chat</dd>
+    <dt>You'll produce</dt><dd>A one-page plan for responding to an RFQ, including questions to send the client</dd>
+  </dl>
+  <p class="fab">All names, companies and details are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <p>You work in business development. A request for quotation (RFQ) has just arrived from a prospective client, Petrolaris Energy. You have 10 working days to respond.</p>
+  <p>Before anyone writes a response, a good bid team plans: what is being asked, what we don't know, who does what, and what could go wrong.</p>
+  <p>You'll use AI to help you plan. Not to write the response for you, but to think it through with you, in four different ways:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>What the AI does</th></tr>
+    <tr><td>Teacher</td><td>Helps you understand the request quickly</td></tr>
+    <tr><td>Interviewer</td><td>Asks you what it needs, instead of guessing</td></tr>
+    <tr><td>Planner</td><td>Turns scattered information into a structured plan</td></tr>
+    <tr><td>Critic</td><td>Shows you your plan from the client's side of the table</td></tr>
+  </table></div>
+  <p>Throughout, you stay the decision-maker. Read everything the AI gives you before moving on.</p>
+</section>
+
+<section>
+  <h2>Two kinds of prompt</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What you do</th><th>Which</th></tr>
+    <tr><td><span class="tag quick">Quick prompt</span></td><td>Copy and paste it as given</td><td>Prompts 1, 2, 4 and 5</td></tr>
+    <tr><td><span class="tag crit">Critical prompt</span></td><td><strong>You build it yourself</strong>, using RCTF+C from Module 2</td><td>Prompt 3</td></tr>
+  </table></div>
+  <p>The quick prompts do simple, single jobs. The critical prompt is where the real work happens. Spend your time there.</p>
+  <p><strong>Anything in a grey box can be copied.</strong> Press its Copy button, then paste into Copilot Chat.</p>
+</section>
+
+<section>
+  <h2>Before you start</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Minutes</th><th>Step</th></tr>
+    <tr><td>0 to 2</td><td>Step 1: Understand the RFQ (Prompt 1)</td></tr>
+    <tr><td>2 to 4</td><td>Step 2: Read the internal notes</td></tr>
+    <tr><td>4 to 12</td><td>Step 3: Plan with AI (Prompts 2 to 5)</td></tr>
+    <tr><td>12 to 14</td><td>Step 4: Check your work</td></tr>
+  </table></div>
+  <ul>
+    <li>Open a <strong>new</strong> Copilot Chat.</li>
+    <li>Use <strong>one chat for all five prompts</strong>. Each prompt builds on the answers before it.</li>
+    <li><strong>Read each response before moving on.</strong> The checks under each prompt tell you what to look for.</li>
+  </ul>
+  <p class="note">At work, you would point Copilot directly at the email and your colleagues' messages, as practised in Module 3. Today, you'll paste them in.</p>
+</section>
+
+<section>
+  <h2><span class="num">1</span>Understand the RFQ <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p><strong>1. Read the email once yourself</strong> (30 seconds).</p>
+
+  <div class="copy"><div class="copy-head"><span>Dataset A: RFQ email</span><button type="button">Copy</button></div>
+<pre>From: procurement@petrolarisenergy.com
+Subject: RFQ, Offshore Catering and Camp Management
+
+We are seeking a quotation for offshore catering and camp management services for our platform operations. Mobilisation required within 45 days of contract award. Crew headcount will range between 80 and 120 depending on operational phase. Please provide pricing and references from similar offshore contracts. Submissions are due within 10 working days of this email.</pre></div>
+
+  <p><strong>2. Copy Prompt 1</strong> into Copilot Chat.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 1: AI as teacher</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Copy</button></div>
+<pre>Here is an RFQ we received. List everything the client expects from us. Then list anything important the RFQ doesn't tell us.</pre></div>
+
+  <p><strong>3. Copy Dataset A</strong> and paste it underneath the prompt, in the same message. Then send.</p>
+
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Is every item on the AI's list actually in the email? Cross out anything it added that isn't there.</li>
+      <li>Does the "doesn't tell us" list make sense to you? Is anything missing from it?</li>
+    </ul>
+  </div>
+
+  <label class="field" for="s1">What the client expects (the items you've checked)</label>
+  <textarea id="s1" data-save></textarea>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Read the internal notes <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>You forwarded the RFQ to three colleagues. This is what they told you.</p>
+
+  <div class="copy"><div class="copy-head"><span>Dataset B: internal notes</span><button type="button">Copy</button></div>
+<pre>Ops: We can cover up to 100 crew from current staff. Above 100, we need about 60 days to recruit and certify extra crew.
+
+BD: Two past offshore contracts could serve as references, but we haven't yet asked those clients for permission.
+
+Finance: Pricing needs sign-off from the GM, who is travelling for 4 of the next 10 working days.</pre></div>
+
+  <p><strong>Your task:</strong> work out what each note means for our response. You don't need AI for this step. This is your own thinking, and you'll use it to judge the AI's plan later.</p>
+  <p><strong>For each note, ask yourself:</strong></p>
+  <ol>
+    <li>Which of the client's expectations from Step 1 does this note affect?</li>
+    <li>Could it stop us meeting that expectation, or delay our response?</li>
+    <li>If so, what would we need to do, or ask, to deal with it?</li>
+  </ol>
+
+  <div class="table-wrap"><table>
+    <tr><th style="width:14%">Note</th><th>Which client expectation does it affect?</th><th>Could it cause a problem? How?</th><th>What would we need to do or ask?</th></tr>
+    <tr><td>Ops</td><td><textarea data-save id="t1"></textarea></td><td><textarea data-save id="t2"></textarea></td><td><textarea data-save id="t3"></textarea></td></tr>
+    <tr><td>BD</td><td><textarea data-save id="t4"></textarea></td><td><textarea data-save id="t5"></textarea></td><td><textarea data-save id="t6"></textarea></td></tr>
+    <tr><td>Finance</td><td><textarea data-save id="t7"></textarea></td><td><textarea data-save id="t8"></textarea></td><td><textarea data-save id="t9"></textarea></td></tr>
+  </table></div>
+
+  <details><summary>Hints if you're stuck</summary>
+    <ul>
+      <li><strong>Look for numbers.</strong> Some numbers appear in both the RFQ and the notes. Put them side by side. Do they line up?</li>
+      <li><strong>Look for timing.</strong> The RFQ has two time limits. The notes have two more. Which ones could clash?</li>
+      <li><strong>Look for people.</strong> Some of what the client wants depends on someone outside our team, or someone who isn't always available.</li>
+      <li><strong>Look for what the client didn't say.</strong> Go back to the AI's "doesn't tell us" list. Does any note make one of those gaps more urgent?</li>
+    </ul>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">3</span>Plan with AI <span style="font-weight:400;color:var(--muted)">(8 minutes)</span></h2>
+
+  <h3><span class="tag quick">Quick prompt</span>Prompt 2: AI as interviewer <span style="font-weight:400;color:var(--muted)">(1.5 minutes)</span></h3>
+  <p>Copy into the same chat:</p>
+  <div class="copy"><div class="copy-head"><span>Prompt 2</span><button type="button">Copy</button></div>
+<pre>We need to plan our response. Before you suggest anything, ask me the questions you need answered about our own situation.</pre></div>
+
+  <p><strong>Now answer the AI's questions</strong> using Dataset B. You can copy it from Step 2.</p>
+  <p><strong>Rules for answering:</strong></p>
+  <ul>
+    <li>Only answer with what you actually know from Dataset B.</li>
+    <li>If the answer isn't there, say "We don't know yet." That is a good answer. It may become a question for the client.</li>
+    <li>Don't invent facts to fill a gap. If you do, the AI will build the plan on your guess.</li>
+  </ul>
+  <p>For any question you can't answer, copy this:</p>
+  <div class="copy"><div class="copy-head"><span>Reply for an unknown</span><button type="button">Copy</button></div>
+<pre>We don't know yet. Please treat this as an open question and include it in the list of clarification questions for the client.</pre></div>
+
+  <div class="check"><strong>Check before moving on</strong>
+    <ul><li>Did you answer every question?</li><li>Did you make anything up? If so, go back and correct it.</li></ul>
+  </div>
+</section>
+
+<section class="critical">
+  <h2><span class="num">3</span>Prompt 3: the critical prompt <span style="font-weight:400;color:var(--muted)">(3.5 minutes)</span></h2>
+  <div class="banner">
+    <p><strong>This is the one you build yourself.</strong> Use RCTF+C from Module 2.</p>
+    <p>Everything so far has been preparation. This prompt turns it into the plan. Take your time and fill in every line.</p>
+  </div>
+
+  <p><strong>1. Copy this skeleton</strong> into Copilot Chat. Don't send it yet.</p>
+  <div class="copy"><div class="copy-head"><span>RCTF+C skeleton</span><button type="button">Copy</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div>
+
+  <p><strong>2. Replace each "..." with your own words.</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:18%">Line</th><th>Ask yourself</th></tr>
+    <tr><td><strong>Role</strong></td><td>Who in a company would normally plan a bid response? Ask the AI to act as that person.</td></tr>
+    <tr><td><strong>Context</strong></td><td>What does the AI need to know? It already has the RFQ and your answers in this chat, so you can refer to them ("Use the RFQ and my answers above"). Remind it of the deadline.</td></tr>
+    <tr><td><strong>Task</strong></td><td>What exactly do you want it to produce? Be specific: a plan for what, by when?</td></tr>
+    <tr><td><strong>Format</strong></td><td>What would you need in front of you to run this bid tomorrow? Consider: workstreams, who owns each one, key dates, risks, and questions to send the client. How long should it be?</td></tr>
+    <tr><td><strong>Constraints</strong></td><td>What rules must it follow? How will you stop it inventing facts? How will you see which parts it guessed? Spelling?</td></tr>
+  </table></div>
+
+  <p><strong>3. Before you press enter, check:</strong></p>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="c1"><span>All five lines are filled in.</span></li>
+    <li><input type="checkbox" data-save id="c2"><span>The Format line lists what the plan must contain.</span></li>
+    <li><input type="checkbox" data-save id="c3"><span>The Constraints line stops the AI inventing facts.</span></li>
+    <li><input type="checkbox" data-save id="c4"><span>The Constraints line makes the AI show what it has assumed.</span></li>
+  </ul>
+
+  <p><strong>4. Check the plan before moving on:</strong></p>
+  <div class="check">
+    <ul>
+      <li>Look at the dates. Does the plan work around every note in Dataset B?</li>
+      <li>Would the GM be available when the plan needs sign-off?</li>
+      <li>What has the AI marked as assumed? Do you agree with each assumption?</li>
+      <li>Do the client questions cover everything on the "doesn't tell us" list from Step 1?</li>
+      <li>Does the plan deal with every problem in your Step 2 table?</li>
+    </ul>
+  </div>
+
+  <p><strong>If the plan misses something,</strong> don't start again. Tell the AI exactly what to fix (Draft, Diagnose, Direct from Module 2). Copy this and fill in the gap:</p>
+  <div class="copy"><div class="copy-head"><span>Correction template</span><button type="button">Copy</button></div>
+<pre>Your plan doesn't address [what's missing]. Revise the plan to deal with it, and keep everything else the same.</pre></div>
+
+  <details><summary>Stuck or out of time? Show an example critical prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example critical prompt</span><button type="button">Copy</button></div>
+<pre>Role: You are an experienced bid manager.
+Context: Use the RFQ and my answers above. We have 10 working days to submit.
+Task: Build a plan for responding to this RFQ within the deadline.
+Format: A one-page plan with workstreams, owners, key dates, risks, and a list of clarification questions to send the client.
+Constraints: British spelling. Only use facts I've given you. Mark anything you've assumed.</pre></div>
+    <p>If yours is stronger in places, good. There's no single right prompt, only prompts that give the AI everything it needs.</p>
+  </details>
+</section>
+
+<section>
+  <h3 style="margin-top:0"><span class="tag quick">Quick prompt</span>Prompt 4: AI as critic <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h3>
+  <p>Copy into the same chat:</p>
+  <div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Copy</button></div>
+<pre>Now act as the client's evaluator. Critique this plan. What is weak, missing or risky? Be direct.</pre></div>
+  <p>You can't sit on the client's side of the table. The AI can. Let it find the weaknesses before the client does.</p>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul><li>Did the critique raise anything you hadn't considered?</li></ul>
+  </div>
+
+  <h3><span class="tag quick">Quick prompt</span>Prompt 5: you challenge the AI <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h3>
+  <p>Copy into the same chat:</p>
+  <div class="copy"><div class="copy-head"><span>Prompt 5</span><button type="button">Copy</button></div>
+<pre>Which of your criticisms are based on the RFQ and our notes, and which are your own assumptions? Rank the three most important to fix.</pre></div>
+  <p>The AI's reasoning deserves the same scrutiny as its drafts.</p>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul><li>Do you agree with its top three?</li><li>Would you rank any of them differently? Why?</li></ul>
+  </div>
+  <label class="field" for="top3">My top three things to fix</label>
+  <textarea id="top3" data-save></textarea>
+
+  <details><summary>If you get stuck</summary>
+    <p>Try these in order. Only move to the next one if you need it.</p>
+    <ol>
+      <li>Read the plan as if you were the GM. Would you sign off on these dates?</li>
+      <li>Go back to your Step 2 table. Is every problem you found dealt with in the plan?</li>
+      <li>Which Module 1 technique turns the AI's guesses into questions? Where could you use it here?</li>
+    </ol>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">4</span>Check your work <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>Tick each one you can honestly say yes to.</p>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="k1"><span>My plan addresses everything on the client's list from Step 1.</span></li>
+    <li><input type="checkbox" data-save id="k2"><span>Every note in Dataset B is reflected somewhere in the plan: a date, an owner, a risk or a question.</span></li>
+    <li><input type="checkbox" data-save id="k3"><span>Every fact in the plan traces back to Dataset A, Dataset B or my own answers. Nothing was invented.</span></li>
+    <li><input type="checkbox" data-save id="k4"><span>Anything the AI assumed is either confirmed by me or turned into a question for the client.</span></li>
+    <li><input type="checkbox" data-save id="k5"><span>The key dates work backwards from the 10-day deadline and allow for sign-off.</span></li>
+    <li><input type="checkbox" data-save id="k6"><span>I have a list of clarification questions I could send the client today.</span></li>
+    <li><input type="checkbox" data-save id="k7"><span>I challenged at least one thing the AI said, instead of accepting it.</span></li>
+  </ul>
+  <p><strong>Ticked fewer than five?</strong> Go back to the checks under Prompt 3.</p>
+</section>
+
+<section>
+  <h2>What to take away</h2>
+  <ul>
+    <li><strong>Simple prompts for simple jobs.</strong> Understanding an email or asking for a critique needs one line.</li>
+    <li><strong>Build the critical prompt properly.</strong> When the output matters, RCTF+C is worth the extra two minutes.</li>
+    <li><strong>Do your own thinking first.</strong> Your Step 2 table is what lets you judge whether the AI's plan is any good.</li>
+    <li><strong>Let it ask before it answers.</strong> Its questions often reveal what you haven't thought of.</li>
+    <li><strong>"We don't know yet" is a valid answer.</strong> Unknowns become questions for the client, not guesses in your plan.</li>
+    <li><strong>Critique the critic.</strong> Even the AI's criticism can contain assumptions.</li>
+    <li><strong>The judgement stays with you.</strong> AI reasons with you, not for you.</li>
+  </ul>
+  <p class="saved">Your notes and ticks are saved in this browser only.</p>
+</section>
+
+</main>
+<script>
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Copied','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Press Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-ex1-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>

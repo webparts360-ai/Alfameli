@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise 4-5: HR Pulse Survey Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Alfameli AI Training, Module 4 Hands-on Lab</p>
+  <h1>Exercise 4-5: HR Pulse Survey Analysis</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>14 minutes</dd>
+    <dt>Tool</dt><dd>Microsoft 365 Copilot Chat, signed in with your work account</dd>
+    <dt>You'll produce</dt><dd>A verified theme table, a confidential follow-up note for HR, and a management report with themes, frequency, sentiment, insights and recommendations</dd>
+  </dl>
+  <p class="fab">All names, companies and comments are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <p>You're in HR. The monthly pulse survey has closed with 30 free-text comments. The HR Manager needs a one-page summary for Thursday's management meeting. Next month there'll be another 30, and the month after.</p>
+  <p>Reading, grouping and counting comments by hand takes an hour. AI does it in seconds. But survey comments are about <strong>feelings, not facts</strong>, and that creates new ways for AI to get it wrong: the loudest comment wins, quotes get tidied up, and the one comment that really matters gets buried in a theme.</p>
+  <p><strong>New techniques in this exercise:</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th>Technique</th><th>What it means</th></tr>
+    <tr><td>Data sensitivity check</td><td>Stop and check before pasting personal or sensitive information into any AI tool.</td></tr>
+    <tr><td>Evidence rules</td><td>Every claim needs proof: a count, the respondent numbers, and quotes word for word.</td></tr>
+    <tr><td>Exception prompting</td><td>Ask what <em>doesn't</em> fit the summary, so the unusual comment isn't lost among the common ones.</td></tr>
+    <tr><td>Splitting by audience</td><td>One analysis, two outputs: a confidential note for HR, and a report for management.</td></tr>
+    <tr><td>Finding, insight, action</td><td>Separate what the data shows, what it means, and what to do about it, so opinions can't pass as facts.</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Two kinds of prompt</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What you do</th><th>Which</th></tr>
+    <tr><td><span class="tag quick">Quick prompt</span></td><td>Copy and paste it as given</td><td>Prompts 1, 3 and 4</td></tr>
+    <tr><td><span class="tag crit">Critical prompt</span></td><td><strong>You build it yourself</strong>, using RCTF+C</td><td>Prompt 2, the theme analysis</td></tr>
+    <tr><td><span class="tag crit">Your prompt</span></td><td><strong>You write it</strong> from a short brief of what's expected</td><td>Prompt 5, the management report</td></tr>
+  </table></div>
+  <p>The follow-up note and the management report are both built on the theme table from Prompt 2, so that's where your effort goes. <strong>Anything in a grey box can be copied.</strong></p>
+</section>
+
+<section>
+  <h2>Before you start</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Minutes</th><th>Step</th></tr>
+    <tr><td>0 to 2</td><td>Step 1: Understand the request (Prompt 1)</td></tr>
+    <tr><td>2 to 4.5</td><td>Step 2: Before you paste, then skim the comments</td></tr>
+    <tr><td>4.5 to 8.5</td><td>Step 3: Theme analysis (Prompt 2)</td></tr>
+    <tr><td>8.5 to 10</td><td>Step 4: What doesn't fit? (Prompt 3)</td></tr>
+    <tr><td>10 to 11</td><td>Step 5: Confidential note for HR (Prompt 4)</td></tr>
+    <tr><td>11 to 13</td><td>Step 6: Management report (Prompt 5)</td></tr>
+    <tr><td>13 to 14</td><td>Step 7: Check your work</td></tr>
+  </table></div>
+  <ul>
+    <li>Open a <strong>new</strong> Copilot Chat and use it for every step.</li>
+    <li><strong>Read each response before moving on.</strong></li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">1</span>Understand the request <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <div class="copy"><div class="copy-head"><span>Dataset A: request from the HR Manager</span><button type="button">Copy</button></div>
+<pre>From: Nadia (HR Manager)
+Subject: October pulse survey summary for Thursday
+
+Hi,
+
+The October pulse survey has closed. Please prepare a one-page summary for Thursday&#x27;s management meeting:
+
+- The main themes, and how many people raised each
+- What people said, in their own words
+- A suggested action for each theme
+
+Management tends to react to whatever sounds most dramatic, so please keep it proportionate. And as always, nothing that could identify anyone.
+
+Thanks,
+Nadia</pre></div>
+  <p>Copy Prompt 1, paste Dataset A underneath it in the same message, and send.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 1: AI as teacher</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Copy</button></div>
+<pre>Here is a request from our HR Manager about this month&#x27;s pulse survey summary. List exactly what she needs. Then suggest quality requirements for a survey summary that is fair, accurate and anonymous.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Did it pick up every part of the request, including the two warnings at the end?</li>
+      <li>Which quality requirements will you hold the summary to? Write them below.</li>
+    </ul>
+  </div>
+  <label class="field" for="s1">What the HR Manager needs, and my quality requirements</label>
+  <textarea id="s1" data-save></textarea>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Before you paste, then skim <span style="font-weight:400;color:var(--muted)">(2.5 minutes)</span></h2>
+  <p><strong>1. Before you paste anything, check.</strong> Survey comments are some of the most sensitive data in any company.</p>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="b1"><span>I'm using an approved AI tool, signed in with my work account.</span></li>
+    <li><input type="checkbox" data-save id="b2"><span>I've checked whether the comments contain names or details that identify someone, and removed anything I don't need.</span></li>
+    <li><input type="checkbox" data-save id="b3"><span>Company policy allows this kind of data in this tool. If I'm not sure, I ask first.</span></li>
+  </ul>
+  <p class="note">Today's comments are fabricated, so it's safe to continue. With real survey data, don't skip this.</p>
+
+  <p><strong>2. Skim the comments for 90 seconds.</strong> Don't read every word.</p>
+  <div class="copy"><div class="copy-head"><span>Dataset B: October pulse survey comments</span><button type="button">Copy</button></div>
+<pre>Survey question: What is one thing we should improve, and why?
+
+Respondent | Department | Satisfaction (1 to 5) | Comment
+R01 | Catering | 3 | The menu repeats every week. Same curry on Monday, same fried rice on Wednesday. Some variety would help morale.
+R02 | Operations | 2 | wifi slow gila, cannot video call family at night
+R03 | Maintenance | 3 | Crew change boat was delayed again, 6 hours waiting at the jetty with no updates.
+R04 | Operations | 4 | Food is ok but not enough vegetables and fruit. Hard to eat healthy for 14 days.
+R05 | Admin | 1 | MY OVERTIME CLAIM FOR AUGUST STILL NOT PAID. I submitted everything on time, followed up three times, and nobody replies. This is the second time this year. It is absolutely unacceptable that we work extra hours and then have to beg for our own money. Fix the claims process NOW.
+R06 | Housekeeping | 3 | Internet in the accommodation block is useless after 9pm when everyone is online.
+R07 | Operations | 3 | Supervisors only talk to us when something goes wrong. A simple thank you once in a while would go a long way.
+R08 | Catering | 4 | Makanan kurang pilihan untuk yang vegetarian.
+R09 | Operations | 2 | Transport to the heliport is always late and we end up rushing. When we&#x27;re behind schedule on the platform, the toolbox talk gets skipped so we can start work faster.
+R10 | Maintenance | 3 | Aircon in Block C keeps breaking. Hard to sleep after a 12 hour shift.
+R11 | HSE | 4 | Would like more chances to attend external training and certification courses. It has been two years since my last one.
+R12 | Operations | 3 | Wifi keeps dropping. Please upgrade.
+R13 | Catering | 2 | Same menu every rotation. Please ask the crew what they want to eat, even a simple survey.
+R14 | Operations | 1 | Overtime claims take FOREVER. Two months to get paid is a joke. Finance keeps losing forms and blaming us. People are talking about leaving because of this. Someone needs to take responsibility.
+R15 | Admin | 4 | Crew change schedule is sent too late. We only find out the day before, which makes family arrangements difficult.
+R16 | Operations | 3 | As the only female rigger on Platform B, I sometimes miss out on information because briefings happen informally in the men&#x27;s rest area.
+R17 | Housekeeping | 2 | Room next to the generator room, very noisy, cannot sleep properly.
+R18 | Maintenance | 4 | Boleh tambah buah-buahan dan salad? Makanan terlalu berminyak.
+R19 | Operations | 3 | Internet ok in the mess hall but no signal in the rooms.
+R20 | Catering | 5 | Good team, good management. Nothing major to improve, keep it up.
+R21 | Operations | 3 | Boat delays at the jetty with no information. At least tell us the new time.
+R22 | HSE | 3 | Supervisors should explain the reasons behind changes to the work plan instead of just giving instructions.
+R23 | Maintenance | 2 | Line internet teruk, susah nak hubungi keluarga.
+R24 | Housekeeping | 3 | Food portions got smaller this month.
+R25 | Operations | 3 | The aircon in my room is broken again, I reported it twice. Also, I&#x27;m not comfortable with the way one of the night shift supervisors speaks to the younger female staff. I&#x27;ll leave it at that.
+R26 | Admin | 4 | It would be great to have short online courses we can do during off days, like Excel or first aid refreshers.
+R27 | Operations | 3 | Recognition only goes to the same few people. Others work just as hard.
+R28 | Catering | 3 | Wifi password changes every week and nobody tells us.
+R29 | Maintenance | 2 | Crew change helicopter cancelled twice this month, no one explained why.
+R30 | Operations | 3 | Breakfast options are very limited, same thing every day.</pre></div>
+  <label class="field" for="g1">My gut feel: the top 3 themes</label>
+  <textarea id="g1" data-save></textarea>
+  <label class="field" for="g2">Anything that worries me, or that I wouldn't want in a management summary</label>
+  <textarea id="g2" data-save></textarea>
+
+  <details><summary>Hints if you're stuck</summary>
+    <ul>
+      <li><strong>Loud isn't the same as common.</strong> Which comments are longest or angriest? How many people actually said the same thing?</li>
+      <li><strong>Read to the end.</strong> Some comments change subject halfway through.</li>
+      <li><strong>Think about who could be identified.</strong> How many people are in each department?</li>
+      <li><strong>Don't skip the Bahasa Malaysia comments.</strong> They count just as much.</li>
+    </ul>
+  </details>
+</section>
+
+<section class="critical">
+  <h2><span class="num">3</span>Prompt 2: the critical prompt, theme analysis <span style="font-weight:400;color:var(--muted)">(4 minutes)</span></h2>
+  <div class="banner">
+    <p><strong>This is the one you build yourself.</strong> Use RCTF+C, and put your evidence rules in the Format and Constraints lines.</p>
+    <p>Everything after this is built on this table, so get it right here.</p>
+  </div>
+
+  <p><strong>1. Copy this skeleton</strong> into Copilot Chat. Don't send it yet.</p>
+  <div class="copy"><div class="copy-head"><span>RCTF+C skeleton</span><button type="button">Copy</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div>
+
+  <p><strong>2. Replace each "..." with your own words.</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:18%">Line</th><th>Ask yourself</th></tr>
+    <tr><td><strong>Role</strong></td><td>Who normally analyses survey feedback?</td></tr>
+    <tr><td><strong>Context</strong></td><td>What was the survey question? What are you pasting in?</td></tr>
+    <tr><td><strong>Task</strong></td><td>What do you want it to do with the comments?</td></tr>
+    <tr><td><strong>Format</strong></td><td>What columns would let you <em>check</em> the result? Think: how many, which respondents, what they said. What order should themes be in? Should the counts add up to something?</td></tr>
+    <tr><td><strong>Constraints</strong></td><td><strong>Your evidence rules.</strong> Can it tidy up quotes? What about the Bahasa Malaysia comments? What about department names and identifying details? Should strong wording affect the ranking?</td></tr>
+  </table></div>
+
+  <p><strong>3. Paste Dataset B</strong> underneath your prompt, then send.</p>
+
+  <p><strong>4. Check the table:</strong></p>
+  <div class="check">
+    <ul>
+      <li>Do the counts add up to 30? Is any comment missing, or counted twice?</li>
+      <li>Pick one theme. Check its respondent numbers against Dataset B. Is the count right?</li>
+      <li>Search for every quote in Dataset B (Ctrl+F). Is each one word for word?</li>
+      <li>Were the Bahasa Malaysia comments counted and translated correctly?</li>
+      <li>Is the order based on counts, or on how angry the comments sound?</li>
+      <li>Could any quote identify someone?</li>
+      <li>Compare with your gut feel from Step 2. What surprised you?</li>
+    </ul>
+  </div>
+  <p>If something is wrong, fix it with Draft, Diagnose, Direct:</p>
+  <div class="copy"><div class="copy-head"><span>Correction template</span><button type="button">Copy</button></div>
+<pre>In your [theme table / note / report], [what is wrong]. Change it to [what it should be], and keep everything else the same.</pre></div>
+
+  <details><summary>Stuck or out of time? Show an example critical prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example critical prompt</span><button type="button">Copy</button></div>
+<pre>Role: You are an HR analyst summarising employee survey feedback.
+Context: Below are 30 comments from our October pulse survey. The question was: &quot;What is one thing we should improve, and why?&quot;
+Task: Group the comments into themes.
+Format: A table with these columns: Theme | Number of comments | Respondent numbers | Two quotes. Order the themes by number of comments, highest first. Every comment must appear in exactly one theme, and the counts must add up to 30.
+Constraints: Quote comments word for word. Never tidy, shorten or paraphrase inside quotation marks. Quote Bahasa Malaysia comments exactly as written, with an English translation in brackets. Do not include department names with quotes, and leave out any quote that could identify a person. Base the order on counts, not on how strongly something is worded. British spelling.
+
+[paste Dataset B]</pre></div>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">4</span>What doesn't fit? <span style="font-weight:400;color:var(--muted)">(1.5 minutes)</span></h2>
+  <p>A theme table shows what's <strong>common</strong>. It can hide what's <strong>serious</strong>. Ask for the exceptions.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 3: exception prompting</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Copy</button></div>
+<pre>Which comments didn&#x27;t fit neatly into any theme? Then list any comment that suggests a safety, conduct or wellbeing concern that needs individual follow-up rather than being summarised. Quote each one exactly, give the respondent number, and say why.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Read every comment it flags. Do you agree each one needs individual follow-up?</li>
+      <li>Did it miss any? Compare with what worried you in Step 2.</li>
+      <li>Where were these comments hiding in the theme table?</li>
+    </ul>
+  </div>
+  <details><summary>Hint</summary>
+    <p>Serious concerns often appear at the end of an ordinary complaint. Reread the last sentence of the longer comments.</p>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">5</span>Confidential note for HR <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h2>
+  <p>Deal with the serious comments first, and keep them away from the management report.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 4: the confidential note</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Copy</button></div>
+<pre>Using only the comments you flagged for individual follow-up, write a short confidential note to the HR Manager. For each one, give the respondent number, quote the comment exactly, and say why it needs individual follow-up rather than being included in a summary. Keep it factual and do not speculate about who is involved.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Is each comment quoted exactly, with its respondent number?</li>
+      <li>Does the note stick to facts, without guessing who is involved?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">6</span>Management report <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>Now chain from your verified table to the report management will actually read. <strong>This time you write the prompt.</strong></p>
+  <h3><span class="tag crit">Your prompt</span>Prompt 5: the management report</h3>
+  <p><strong>What management expects</strong> (two pages at most):</p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:26%">Section</th><th>What it should show</th></tr>
+    <tr><td>Headline</td><td>The overall picture in a few sentences</td></tr>
+    <tr><td>Themes</td><td>Each theme with how many people raised it, the percentage, the sentiment and the average satisfaction score</td></tr>
+    <tr><td>Insights</td><td>For the top themes: what the data shows, what it means for the business, and the evidence</td></tr>
+    <tr><td>Recommendations</td><td>A short, ranked list, each with an owner and a first step</td></tr>
+    <tr><td>Limits</td><td>What this survey can't tell us</td></tr>
+  </table></div>
+  <p>And it must: rank by the numbers, not by tone; show what's fact and what's interpretation; and leave out anything confidential or identifying.</p>
+  <p><strong>Tip:</strong> write it as a short RCTF+C prompt. Refer to "the verified theme table above" and the scores in Dataset B instead of pasting data again.</p>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Do the percentages add up to about 100%?</li>
+      <li>Pick one theme. Work out its average satisfaction score yourself from Dataset B. Does it match?</li>
+      <li>Does the sentiment for each theme match what people actually wrote?</li>
+      <li>Is every insight backed by a count and a real quote? Is anything presented as fact that is really an opinion?</li>
+      <li>Look at the recommendation ranking. Does it reflect <em>how many</em> people are affected, <em>how badly</em>, or both? Is a small, very unhappy group given the right priority?</li>
+      <li>Does the "can't tell us" section make sense for a 30-person monthly survey?</li>
+      <li>Is anything from the confidential note, or anything identifying, in the report?</li>
+      <li>Does the report meet the quality requirements you wrote in Step 1?</li>
+    </ul>
+  </div>
+  <label class="field" for="top3">What I'd change before this goes to management</label>
+  <textarea id="top3" data-save></textarea>
+  <details><summary>Stuck or out of time? Show an example report prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example report prompt</span><button type="button">Copy</button></div>
+<pre>Using only the verified theme table above and the satisfaction scores in Dataset B, write a management report for Thursday&#x27;s meeting with these sections:
+
+1. Headline: three sentences on the overall picture.
+2. Theme overview: a table with Theme | Number of comments | % of the 30 responses | Overall sentiment (positive, mixed or negative) | Average satisfaction score for that theme&#x27;s respondents. Show the respondent numbers used for each average.
+3. Key insights: for each of the top four themes, give the Finding (what the data shows), the Insight (what it means for the business) and the Evidence (the count and one short quote, word for word).
+4. Recommendations: up to five, ranked by how many people are affected and how serious the issue is. For each, suggest an owner and a first step.
+5. What this survey can&#x27;t tell us: the limits of this data.
+
+Rules: rank by the numbers, not by how strongly comments are worded. Label anything that is interpretation rather than fact. Do not include anything from the confidential note, or anything that could identify anyone. British spelling. No more than two pages.</pre></div>
+  </details>
+  <details><summary>Optional: finish in Word</summary>
+    <p>Copy the report into Word. If you have Copilot in Word, ask it to format the report with headings and a clean table, keeping every figure and quote exactly as it is.</p>
+  </details>
+  <details><summary>If you get stuck</summary>
+    <ol>
+      <li>Read the report as a manager who wasn't in the survey. What would they think the biggest problem is? Is that right?</li>
+      <li>Read it as the person who wrote each flagged comment. Would they feel safe?</li>
+      <li>Which Module 1 technique checks every fact before you sign it off? Apply it to the counts, averages and quotes.</li>
+    </ol>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">7</span>Check your work <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h2>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="k1"><span>I ran the "before you paste" check.</span></li>
+    <li><input type="checkbox" data-save id="k2"><span>My theme counts add up to 30, and I checked at least one theme's respondent numbers.</span></li>
+    <li><input type="checkbox" data-save id="k3"><span>Every quote is word for word, including the Bahasa Malaysia comments.</span></li>
+    <li><input type="checkbox" data-save id="k4"><span>Themes are ranked by how many people raised them, not by how loudly.</span></li>
+    <li><input type="checkbox" data-save id="k5"><span>I asked what didn't fit, and every comment needing follow-up is in the confidential note.</span></li>
+    <li><input type="checkbox" data-save id="k6"><span>Nothing in the management report could identify anyone, or reveal the confidential note.</span></li>
+    <li><input type="checkbox" data-save id="k8"><span>I checked at least one average satisfaction score myself.</span></li>
+    <li><input type="checkbox" data-save id="k9"><span>Every insight in the report is backed by a count and a real quote.</span></li>
+    <li><input type="checkbox" data-save id="k7"><span>The report meets the quality requirements I set in Step 1.</span></li>
+  </ul>
+  <p><strong>Ticked fewer than seven?</strong> Go back to the checks under Prompt 2.</p>
+</section>
+
+<section>
+  <h2>What to take away</h2>
+  <ul>
+    <li><strong>Check before you paste.</strong> The more personal the data, the more it matters which tool you use.</li>
+    <li><strong>Counts keep AI honest.</strong> AI notices strong feelings. Only counts show how many people share them.</li>
+    <li><strong>Quotes are evidence.</strong> A tidied-up quote is no longer the employee's voice.</li>
+    <li><strong>Ask what doesn't fit.</strong> Summaries can bury the one comment that matters most.</li>
+    <li><strong>Some things aren't themes.</strong> A safety or conduct concern goes to a person, not into a percentage.</li>
+    <li><strong>In HR, anonymity is part of accuracy.</strong> A correct quote that identifies someone is still a failure.</li>
+    <li><strong>Finding, insight, action.</strong> Keep what the data shows separate from what you think it means.</li>
+    <li><strong>How many and how badly.</strong> Frequency and sentiment together tell you what to fix first.</li>
+  </ul>
+  <p class="note"><strong>Next month:</strong> save your Prompt 2 in Copilot so you can reuse it on the next survey.</p>
+  <p class="saved">Your notes and ticks are saved in this browser only.</p>
+</section>
+</main>
+<script>
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Copied','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Press Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-ex45-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>

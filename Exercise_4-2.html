@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise 4-2: Client Reporting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <p class="kicker">Alfameli AI Training, Module 4 Hands-on Lab</p>
+  <h1>Exercise 4-2: Client Reporting</h1>
+  <dl class="meta">
+    <dt>Time</dt><dd>10 minutes</dd>
+    <dt>Tool</dt><dd>Microsoft 365 Copilot Chat</dd>
+    <dt>You'll produce</dt><dd>A one-page weekly update for the client, and a list of anything you need to confirm before it goes out</dd>
+  </dl>
+  <p class="fab">All names, companies and details are fabricated for training purposes.</p>
+</header>
+
+<section>
+  <h2>The job</h2>
+  <p>You're a site coordinator. Every Friday, the client expects a weekly site update. During the week you've jotted down rough notes. Now you need to turn them into something the client can rely on.</p>
+  <p>Writing the update is the easy part. The hard part is making sure everything in it is <strong>accurate</strong>, because once it leaves you, the client treats it as fact.</p>
+  <p>You'll use AI in four ways:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>What the AI does</th></tr>
+    <tr><td>Teacher</td><td>Pulls out exactly what the client wants, and what quality looks like</td></tr>
+    <tr><td>Interviewer</td><td>Questions your notes before it writes anything</td></tr>
+    <tr><td>Drafter</td><td>Turns rough notes into a clean update</td></tr>
+    <tr><td>Critic</td><td>Reads your update as the client would</td></tr>
+  </table></div>
+  <p>You stay the decision-maker. Read everything the AI gives you before moving on.</p>
+  <details><summary>Terms used in this exercise</summary>
+    <ul>
+      <li><strong>POB:</strong> persons on board, the number of people on site</li>
+      <li><strong>PTW:</strong> permit to work</li>
+      <li><strong>H2S:</strong> hydrogen sulphide, a toxic gas monitored on site</li>
+    </ul>
+  </details>
+</section>
+
+<section>
+  <h2>Two kinds of prompt</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Type</th><th>What you do</th><th>Which</th></tr>
+    <tr><td><span class="tag quick">Quick prompt</span></td><td>Copy and paste it as given</td><td>Prompts 1, 2, 4 and 5</td></tr>
+    <tr><td><span class="tag crit">Critical prompt</span></td><td><strong>You build it yourself</strong>, using RCTF+C from Module 2</td><td>Prompt 3</td></tr>
+  </table></div>
+  <p>Spend your time on the critical prompt. <strong>Anything in a grey box can be copied.</strong> Press its Copy button, then paste into Copilot Chat.</p>
+</section>
+
+<section>
+  <h2>Before you start</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Minutes</th><th>Step</th></tr>
+    <tr><td>0 to 1.5</td><td>Step 1: Understand what the client wants (Prompt 1)</td></tr>
+    <tr><td>1.5 to 3.5</td><td>Step 2: Review your own notes</td></tr>
+    <tr><td>3.5 to 9</td><td>Step 3: Write the update with AI (Prompts 2 to 4, Prompt 5 if time)</td></tr>
+    <tr><td>9 to 10</td><td>Step 4: Check your work</td></tr>
+  </table></div>
+  <ul>
+    <li>Open a <strong>new</strong> Copilot Chat.</li>
+    <li>Use <strong>one chat for all prompts</strong>. Each prompt builds on the answers before it.</li>
+    <li><strong>Read each response before moving on.</strong></li>
+  </ul>
+  <p class="note">At work, you'd point Copilot at the client's email and your notes in OneNote or Teams, as practised in Module 3. Today, you'll paste them in.</p>
+</section>
+
+<section>
+  <h2><span class="num">1</span>Understand what the client wants <span style="font-weight:400;color:var(--muted)">(1.5 minutes)</span></h2>
+  <p><strong>1. Read the client's email once yourself.</strong></p>
+
+  <div class="copy"><div class="copy-head"><span>Dataset A: client's email</span><button type="button">Copy</button></div>
+<pre>From: ops.rep@petrolarisenergy.com
+Subject: Weekly site update
+
+Hi,
+
+Please send your weekly site update by 5pm every Friday. Keep it to one page and cover the full week. Put HSE first, then manning, including the average POB for the week, then any service issues and how they were handled. Please flag anything that needs action from our side.
+
+This goes straight to our operations manager, so it needs to be accurate.
+
+Thanks</pre></div>
+
+  <p><strong>2. Copy Prompt 1</strong> into Copilot Chat, paste Dataset A underneath it in the same message, and send.</p>
+  <h3><span class="tag quick">Quick prompt</span>Prompt 1: AI as teacher</h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Copy</button></div>
+<pre>Here is an email from our client about the weekly update they expect. List exactly what they want the update to contain, in their order, and every rule they've set, and suggest quality requirements to meet their expectations.</pre></div>
+
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Is every item on the AI's list actually in the email?</li>
+      <li>Is any rule harder to meet than it first looks?</li>
+      <li>Which quality requirements come from the email, and which are the AI's own suggestions? Do you agree with each one?</li>
+    </ul>
+  </div>
+
+  <p class="note"><strong>Why the quality requirements matter:</strong> they become your checklist. Write down the ones you agree with below. In Step 3 you'll use them to check whether the AI's draft is good enough to send.</p>
+
+  <label class="field" for="s1">What the client wants, their rules, and the quality requirements you'll hold the update to</label>
+  <textarea id="s1" data-save></textarea>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Review your own notes <span style="font-weight:400;color:var(--muted)">(2 minutes)</span></h2>
+  <p>These are the notes you jotted down during the week.</p>
+
+  <div class="copy"><div class="copy-head"><span>Dataset B: your site notes</span><button type="button">Copy</button></div>
+<pre>Mon: POB 94, normal ops
+Tue: H2S alarm test, all clear
+Tue: sling inspection found wear on one sling. Taken out of service, replaced before next lift
+Catering delivery delayed 2 days, boat schedule. Used backup stock, no shortage
+Thu: 3 new crew mobilised, POB now 97
+Fri: PTW audit, no findings
+Average POB this week around 95 (site log says 91)</pre></div>
+
+  <p><strong>Your task:</strong> decide whether your notes are ready to become a client update. You don't need AI for this step. This is your own thinking, and you'll use it to judge the AI's draft later.</p>
+  <p><strong>For each note, ask yourself:</strong></p>
+  <ol>
+    <li>Which section of the client's update does it belong in?</li>
+    <li>Is it complete and clear enough for someone who wasn't there?</li>
+    <li>Is there anything I'd need to confirm before it goes to the client?</li>
+  </ol>
+
+  <div class="table-wrap"><table>
+    <tr><th style="width:26%">Note</th><th>Which section?</th><th>Complete and clear?</th><th>Anything to confirm?</th></tr>
+    <tr><td>Mon: POB 94</td><td><textarea data-save id="n1a"></textarea></td><td><textarea data-save id="n1b"></textarea></td><td><textarea data-save id="n1c"></textarea></td></tr>
+    <tr><td>Tue: H2S alarm test</td><td><textarea data-save id="n2a"></textarea></td><td><textarea data-save id="n2b"></textarea></td><td><textarea data-save id="n2c"></textarea></td></tr>
+    <tr><td>Tue: sling inspection</td><td><textarea data-save id="n3a"></textarea></td><td><textarea data-save id="n3b"></textarea></td><td><textarea data-save id="n3c"></textarea></td></tr>
+    <tr><td>Catering delivery delayed</td><td><textarea data-save id="n4a"></textarea></td><td><textarea data-save id="n4b"></textarea></td><td><textarea data-save id="n4c"></textarea></td></tr>
+    <tr><td>Thu: 3 new crew, POB 97</td><td><textarea data-save id="n5a"></textarea></td><td><textarea data-save id="n5b"></textarea></td><td><textarea data-save id="n5c"></textarea></td></tr>
+    <tr><td>Fri: PTW audit</td><td><textarea data-save id="n6a"></textarea></td><td><textarea data-save id="n6b"></textarea></td><td><textarea data-save id="n6c"></textarea></td></tr>
+    <tr><td>Average POB</td><td><textarea data-save id="n7a"></textarea></td><td><textarea data-save id="n7b"></textarea></td><td><textarea data-save id="n7c"></textarea></td></tr>
+  </table></div>
+
+  <details><summary>Hints if you're stuck</summary>
+    <ul>
+      <li><strong>Look for numbers.</strong> Does any figure appear more than once? Do the numbers in your notes support each other?</li>
+      <li><strong>Look at the days.</strong> Which days do your notes cover? What period does the client want covered, and when is it due?</li>
+      <li><strong>Look for loose ends.</strong> Is there an item where the client would ask "and then what?"</li>
+      <li><strong>Read it as the client would.</strong> Could any note be read as more serious, or less serious, than it really was?</li>
+    </ul>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">3</span>Write the update with AI <span style="font-weight:400;color:var(--muted)">(5.5 minutes)</span></h2>
+
+  <h3><span class="tag quick">Quick prompt</span>Prompt 2: AI as interviewer <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h3>
+  <p>Copy the prompt, paste Dataset B underneath it in the same message, and send.</p>
+  <div class="copy"><div class="copy-head"><span>Prompt 2</span><button type="button">Copy</button></div>
+<pre>Here are my rough notes for this week's client update. Before you write anything, review them against the client's requirements and ask me about anything that is unclear, missing or inconsistent.</pre></div>
+
+  <p><strong>Answer the AI's questions honestly.</strong></p>
+  <ul>
+    <li>Only answer with what you actually know from your notes.</li>
+    <li>If you don't know, say so. Don't pick a figure or invent a detail to fill the gap.</li>
+  </ul>
+  <p>For any question you can't answer, copy this:</p>
+  <div class="copy"><div class="copy-head"><span>Reply for an unknown</span><button type="button">Copy</button></div>
+<pre>I can't confirm that from my notes. Don't assume an answer. Flag it in the update as something I need to confirm before sending, and add it to a separate list of items to check.</pre></div>
+
+  <div class="check"><strong>Check before moving on</strong>
+    <ul>
+      <li>Did the AI find the same issues you found in Step 2? Did it find any you missed?</li>
+      <li>Did you make anything up to answer it? If so, go back and correct it.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="critical">
+  <h2><span class="num">3</span>Prompt 3: the critical prompt <span style="font-weight:400;color:var(--muted)">(3 minutes)</span></h2>
+  <div class="banner">
+    <p><strong>This is the one you build yourself.</strong> Use RCTF+C from Module 2.</p>
+    <p>This prompt produces the update the client will read. Fill in every line.</p>
+  </div>
+
+  <p><strong>1. Copy this skeleton</strong> into Copilot Chat. Don't send it yet.</p>
+  <div class="copy"><div class="copy-head"><span>RCTF+C skeleton</span><button type="button">Copy</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div>
+
+  <p><strong>2. Replace each "..." with your own words.</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th style="width:18%">Line</th><th>Ask yourself</th></tr>
+    <tr><td><strong>Role</strong></td><td>Who normally writes this update? Ask the AI to act as that person.</td></tr>
+    <tr><td><strong>Context</strong></td><td>The AI already has the client's email, your notes and your answers in this chat. Refer to them. Who will read the update?</td></tr>
+    <tr><td><strong>Task</strong></td><td>What exactly should it produce?</td></tr>
+    <tr><td><strong>Format</strong></td><td>What did the client ask for? Think about length, the order of sections, and anything they want flagged.</td></tr>
+    <tr><td><strong>Constraints</strong></td><td>How will you stop it inventing facts? What should it do when two figures disagree? How will you stop it making an item sound more or less serious than your notes say? Spelling?</td></tr>
+  </table></div>
+
+  <p><strong>3. Before you press enter, check:</strong></p>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="c1"><span>All five lines are filled in.</span></li>
+    <li><input type="checkbox" data-save id="c2"><span>The Format line follows the client's own instructions.</span></li>
+    <li><input type="checkbox" data-save id="c3"><span>The Constraints line stops the AI inventing or choosing facts.</span></li>
+    <li><input type="checkbox" data-save id="c4"><span>The Constraints line keeps the meaning of each note unchanged.</span></li>
+  </ul>
+
+  <p><strong>4. Check the draft before moving on:</strong></p>
+  <div class="check">
+    <ul>
+      <li>Does the draft meet every quality requirement you wrote down in Step 1?</li>
+      <li>Pick any sentence. Can you point to the note it came from?</li>
+      <li>Which average POB figure did it use? Should it have used either?</li>
+      <li>Does the update say what period it covers? Is that accurate?</li>
+      <li>Is any item worded as more serious, or less serious, than your note?</li>
+      <li>Has it added anything that isn't in your notes, such as a reason, an outcome or a reassurance?</li>
+      <li>Is there anything flagged for the client's action?</li>
+    </ul>
+  </div>
+
+  <p><strong>If the draft gets something wrong,</strong> don't start again. Tell the AI exactly what to fix (Draft, Diagnose, Direct):</p>
+  <div class="copy"><div class="copy-head"><span>Correction template</span><button type="button">Copy</button></div>
+<pre>In your draft, [what is wrong]. Change it to [what it should say], and keep everything else the same.</pre></div>
+
+  <details><summary>Stuck or out of time? Show an example critical prompt</summary>
+    <p><strong>Only open this after you've written your own</strong>, then compare.</p>
+    <div class="copy"><div class="copy-head"><span>Example critical prompt</span><button type="button">Copy</button></div>
+<pre>Role: You are a site coordinator writing to a client.
+Context: Use the client's email, my notes and my answers above. The update goes to the client's operations manager.
+Task: Draft this week's site update.
+Format: One page. HSE first, then manning with the average POB, then service issues and how they were handled, then any actions needed from the client. State the period covered.
+Constraints: British spelling. Only use facts from my notes and answers. Do not choose between conflicting figures; flag them as to be confirmed. Do not make any item sound more or less serious than my notes. Do not add reasons, outcomes or reassurances that aren't in my notes. List anything I need to confirm before sending, separately at the end.</pre></div>
+    <p>If yours is stronger in places, good. There's no single right prompt.</p>
+  </details>
+</section>
+
+<section>
+  <h3 style="margin-top:0"><span class="tag quick">Quick prompt</span>Prompt 4: AI as critic <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Copy</button></div>
+<pre>Now act as the client's operations manager reading this update. What would you question, find unclear, or need to follow up on? Be direct.</pre></div>
+  <div class="check"><strong>Check before moving on</strong>
+    <ul><li>Would you be comfortable if the client asked you these questions tomorrow? Which ones should the update answer now?</li></ul>
+  </div>
+
+  <h3><span class="tag quick">Quick prompt</span>Prompt 5 (if you have time): you challenge the AI <span style="font-weight:400;color:var(--muted)">(0.5 minutes)</span></h3>
+  <div class="copy"><div class="copy-head"><span>Prompt 5</span><button type="button">Copy</button></div>
+<pre>Which of your questions come from the update and my notes, and which are your own assumptions? Rank the three most important to fix before I send it.</pre></div>
+
+  <label class="field" for="top3">What I'll fix or confirm before sending</label>
+  <textarea id="top3" data-save></textarea>
+
+  <details><summary>If you get stuck</summary>
+    <p>Try these in order. Only move to the next one if you need it.</p>
+    <ol>
+      <li>Imagine the client phones you after reading it. What's the first thing they'd ask?</li>
+      <li>Go back to your Step 2 table. Is everything in your "Anything to confirm?" column dealt with in the draft?</li>
+      <li>Which Module 1 technique checks every fact before you sign it? Run it now.</li>
+    </ol>
+  </details>
+</section>
+
+<section>
+  <h2><span class="num">4</span>Check your work <span style="font-weight:400;color:var(--muted)">(1 minute)</span></h2>
+  <p>Tick each one you can honestly say yes to.</p>
+  <ul class="ticks">
+    <li><input type="checkbox" data-save id="k1"><span>The update follows the client's order and fits on one page.</span></li>
+    <li><input type="checkbox" data-save id="k8"><span>The update meets the quality requirements I set in Step 1.</span></li>
+    <li><input type="checkbox" data-save id="k2"><span>Every fact in the update traces back to my notes or my own answers.</span></li>
+    <li><input type="checkbox" data-save id="k3"><span>Where my notes disagree, the update flags it rather than picking one.</span></li>
+    <li><input type="checkbox" data-save id="k4"><span>The update is honest about the period it covers.</span></li>
+    <li><input type="checkbox" data-save id="k5"><span>No item sounds more or less serious than it really was.</span></li>
+    <li><input type="checkbox" data-save id="k6"><span>I have a list of things to confirm before I send it.</span></li>
+    <li><input type="checkbox" data-save id="k7"><span>I challenged at least one thing the AI wrote.</span></li>
+  </ul>
+  <p><strong>Ticked fewer than five?</strong> Go back to the checks under Prompt 3.</p>
+</section>
+
+<section>
+  <h2>What to take away</h2>
+  <ul>
+    <li><strong>Start from what the reader wants.</strong> The client's email is your format brief.</li>
+    <li><strong>Let the AI question your notes before it writes.</strong> Rough notes always have gaps.</li>
+    <li><strong>Never let AI choose between conflicting figures.</strong> That decision needs a source, not a guess.</li>
+    <li><strong>Watch the wording, not just the facts.</strong> AI can quietly make things sound better or worse than they were.</li>
+    <li><strong>Read it as the client.</strong> Their questions tomorrow are your fixes today.</li>
+    <li><strong>A polished draft is not a checked draft.</strong> The Accountability Pass still applies.</li>
+  </ul>
+  <p class="saved">Your notes and ticks are saved in this browser only.</p>
+</section>
+
+</main>
+
+<script>
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Copied','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Press Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-ex42-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>
