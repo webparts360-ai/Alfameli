@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modul 4: Makmal Amali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin:0 0 20px}
+.card .k{margin:0;color:var(--muted);font-weight:500;font-size:.9rem}
+.card h2{margin:2px 0 6px}
+.card .when{color:var(--muted);font-size:.92rem;margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px;padding:0;list-style:none}
+.chips li{background:var(--sea-soft);color:var(--sea);font-size:.82rem;font-weight:600;padding:3px 10px;border-radius:999px;margin:0}
+a.btn{display:inline-block;background:var(--sea);color:var(--paper);font-weight:600;text-decoration:none;padding:8px 18px;border-radius:6px}
+a.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli</p>
+  <h1>Modul 4: Makmal Amali</h1>
+  <dl class="meta"><dt>Masa</dt><dd>11:10 hingga 12:30 (80 minit)</dd><dt>Format</dt><dd>Enam latihan berturutan, setiap satu berdasarkan tugas harian</dd><dt>Alat utama</dt><dd>Microsoft 365 Copilot Chat, log masuk dengan akaun kerja anda</dd></dl>
+  <p class="fab">Semua nama, syarikat dan angka dalam latihan adalah rekaan untuk tujuan latihan. Arahan dalam Bahasa Malaysia; prompt dan data dalam bahasa Inggeris.</p>
+</header>
+<section class=""><h2>Jadual</h2>
+<div class="table-wrap"><table><tr><th>Masa</th><th>Aktiviti</th><th>Tempoh</th></tr><tr><td>11:10 hingga 11:13</td><td>Pengenalan</td><td>3 min</td></tr><tr><td>11:13 hingga 11:27</td><td>Latihan 4-1 Merancang Respons RFQ dengan AI</td><td>14 min</td></tr><tr><td>11:27 hingga 11:37</td><td>Latihan 4-2 Pelaporan Pelanggan</td><td>10 min</td></tr><tr><td>11:37 hingga 11:49</td><td>Latihan 4-3 Penyelarasan Syif dan Tapak</td><td>12 min</td></tr><tr><td>11:49 hingga 12:01</td><td>Latihan 4-4 Perbandingan Sebut Harga Perolehan</td><td>12 min</td></tr><tr><td>12:01 hingga 12:15</td><td>Latihan 4-5 Analisis Tinjauan Denyut HR</td><td>14 min</td></tr><tr><td>12:15 hingga 12:25</td><td>Latihan 4-6 Varians Kos Bulanan</td><td>10 min</td></tr><tr><td>12:25 hingga 12:30</td><td>Penutup</td><td>5 min</td></tr></table></div>
+</section><section class=""><h2>Bagaimana setiap latihan berjalan</h2>
+<ul><li><strong>Mulakan dengan pembaca.</strong> Setiap latihan bermula dengan menggunakan AI untuk memahami apa yang diminta, dan menetapkan keperluan kualiti anda sendiri.</li><li><strong>Fikir sebelum anda beri prompt.</strong> Satu langkah pendek tanpa AI, di mana anda menyemak data sendiri. Anda akan menggunakannya untuk menilai keluaran AI.</li><li><strong>Prompt pantas dan satu prompt kritikal.</strong> Prompt pantas disalin seperti diberi. Prompt kritikal anda bina sendiri dengan RCTF+C.</li><li><strong>Semak, jangan percaya membuta tuli.</strong> Setiap prompt diikuti soalan semakan. Petunjuk dan contoh prompt disembunyikan sehingga anda perlukannya.</li><li><strong>Satu perkara baharu setiap kali.</strong> Setiap latihan menambah satu cara baharu menggunakan AI, dibina atas yang sebelumnya.</li></ul><p>Setiap prompt dan data dalam panduan berada dalam kotak kelabu dengan butang <strong>Salin</strong>. Setiap panduan bermula dengan <strong>senario perniagaan</strong> dan penerangan <strong>data yang anda akan guna</strong>.</p>
+</section><article class="card"><p class="k">Latihan 4-1</p><h2>Merancang Respons RFQ dengan AI</h2><p class="when">11:13 hingga 11:27 &nbsp;|&nbsp; 14 minit &nbsp;|&nbsp; Copilot Chat</p>
+<p><strong>Matlamat:</strong> Belajar menggunakan AI sebagai rakan berfikir, bukan sekadar penulis: fahami permintaan dengan cepat, biar AI bertanya apa yang ia perlukan, bina pelan berstruktur, kemudian minta AI mengkritiknya dan cabar kritikan itu pula.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk memahami apa yang RFQ pelanggan minta dan apa yang ia biarkan tidak jelas.</li><li>Semak nota dalaman sendiri untuk mengesan apa yang boleh bertembung dengan jangkaan pelanggan.</li><li>Biar AI bertanya soalan tentang situasi anda sendiri sebelum ia mencadangkan apa-apa.</li><li>Bina prompt RCTF+C untuk pelan respons dengan aliran kerja, pemilik, tarikh, risiko dan soalan pelanggan.</li><li>Minta AI mengkritik pelan sebagai penilai pelanggan, kemudian cabar kritikan yang hanya andaian.</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>AI sebagai guru, penemu bual, perancang dan pengkritik</li><li>Tandakan andaian</li><li>Kritik si pengkritik</li></ul><a class="btn" href="https://claude.ai/artifact/PSYtTXm2DGq33JvhdTB4TB" target="_blank" rel="noopener">Buka panduan</a></article>
+<article class="card"><p class="k">Latihan 4-2</p><h2>Pelaporan Pelanggan</h2><p class="when">11:27 hingga 11:37 &nbsp;|&nbsp; 10 minit &nbsp;|&nbsp; Copilot Chat</p>
+<p><strong>Matlamat:</strong> Belajar menukar nota tapak yang kasar kepada kemas kini pelanggan yang tepat, di mana setiap fakta boleh dijejak kepada sumber dan perkataannya kekal benar kepada apa yang sebenarnya berlaku.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk menyenaraikan apa yang pelanggan mahu dan mencadangkan keperluan kualiti untuk kemas kini.</li><li>Semak nota sendiri untuk jurang, ketidaksepadanan dan hujung yang longgar.</li><li>Biar AI menyoal nota anda sebelum ia menulis apa-apa.</li><li>Bina prompt RCTF+C untuk menggubal kemas kini, kemudian semak setiap ayat terhadap nota anda.</li><li>Minta AI membaca kemas kini sebagai pelanggan, kemudian betulkan apa yang mereka akan persoalkan.</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>Keperluan kualiti daripada arahan pembaca</li><li>Tanya sebelum menulis</li><li>Kekalkan perkataan benar kepada sumber</li></ul><a class="btn" href="https://claude.ai/artifact/AsYipTkgKz8E9AU5aNo2qB" target="_blank" rel="noopener">Buka panduan</a></article>
+<article class="card"><p class="k">Latihan 4-3</p><h2>Penyelarasan Syif dan Tapak</h2><p class="when">11:37 hingga 11:49 &nbsp;|&nbsp; 12 minit &nbsp;|&nbsp; Copilot Chat (pilihan: Teams, papan pemuka SharePoint)</p>
+<p><strong>Matlamat:</strong> Belajar menggunakan AI sebagai penguji senario, menyemak apa yang akan rosak sebelum meluluskan perubahan, dan menyampaikan satu keputusan dengan jelas kepada beberapa orang.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk memahami dengan tepat apa yang dua kru minta, dan apa yang tiada.</li><li>Uji sendiri setiap permintaan tukar syif terhadap jadual dan peraturan tapak.</li><li>Minta AI memainkan setiap pertukaran terhadap setiap peraturan.</li><li>Bina prompt RCTF+C untuk keputusan, jadual dikemas kini dan mesej untuk setiap orang yang terjejas.</li><li>Minta AI menilai keputusan sebagai Pengurus Kem, kemudian sahkan pada papan pemuka jadual (pilihan).</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>AI sebagai penguji senario</li><li>Beri AI peraturan</li><li>Satu keputusan, beberapa khalayak</li></ul><a class="btn" href="https://claude.ai/artifact/EWU7nCSvbq8YEC8jE2mAZt" target="_blank" rel="noopener">Buka panduan</a></article>
+<article class="card"><p class="k">Latihan 4-4</p><h2>Perbandingan Sebut Harga Perolehan</h2><p class="when">11:49 hingga 12:01 &nbsp;|&nbsp; 12 minit &nbsp;|&nbsp; Copilot Chat (pilihan: Excel)</p>
+<p><strong>Matlamat:</strong> Belajar menukar balasan pembekal yang bersepah dan tidak seragam kepada jadual yang boleh dipercayai, dengan memberi AI format tepat dan peraturan jelas, kemudian membina cadangan langkah demi langkah di atas keluaran yang telah disahkan.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk memahami apa yang sebut harga lengkap dan boleh dibandingkan mesti ada.</li><li>Imbas enam balasan pembekal dan putuskan lajur jadual serta peraturan untuk data bersepah.</li><li>Bina prompt pengekstrakan RCTF+C, kemudian semak sampel dua pembekal terhadap balasan mereka.</li><li>Rantai prompt susulan yang hanya menggunakan jadual yang disahkan untuk menyemak pembekal, menyenarai pendek dan menandakan risiko.</li><li>Semak sendiri satu penukaran harga, dan kekalkan keputusan pada anda.</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>Prompt skema</li><li>Peraturan untuk data bersepah</li><li>Pensampelan semakan</li><li>Rantaian prompt</li></ul><a class="btn" href="https://claude.ai/artifact/HE1h1dLcKThG5Y1PmqS5HT" target="_blank" rel="noopener">Buka panduan</a></article>
+<article class="card"><p class="k">Latihan 4-5</p><h2>Analisis Tinjauan Denyut HR</h2><p class="when">12:01 hingga 12:15 &nbsp;|&nbsp; 14 minit &nbsp;|&nbsp; Copilot Chat, akaun kerja (pilihan: Word)</p>
+<p><strong>Matlamat:</strong> Belajar menggunakan AI untuk menganalisis pendapat dan bukan fakta: pastikan analisis seimbang, tepat dan tanpa nama, kenal pasti kebimbangan serius, dan tukar hasil yang disahkan kepada laporan pengurusan.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk memahami apa yang Pengurus HR perlukan, dan tetapkan keperluan kualiti anda.</li><li>Jalankan semakan "sebelum anda tampal", kemudian imbas 30 komen untuk tema dan kebimbangan sendiri.</li><li>Bina prompt RCTF+C untuk tema dengan kiraan, nombor responden dan petikan perkataan demi perkataan, kemudian sahkannya.</li><li>Tanya AI apa yang tidak sesuai, dan hasilkan nota susulan sulit untuk HR.</li><li>Tulis prompt sendiri untuk laporan pengurusan dengan kekerapan, sentimen, pandangan dan cadangan.</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>Sebelum anda tampal</li><li>Peraturan bukti</li><li>Prompt pengecualian</li><li>Penemuan, pandangan, tindakan</li></ul><a class="btn" href="https://claude.ai/artifact/8i49vwGWyLTQfk8chfvLr3" target="_blank" rel="noopener">Buka panduan</a></article>
+<article class="card"><p class="k">Latihan 4-6</p><h2>Varians Kos Bulanan</h2><p class="when">12:15 hingga 12:25 &nbsp;|&nbsp; 10 minit &nbsp;|&nbsp; Excel dengan Copilot dalam Excel, atau Copilot Chat</p>
+<p><strong>Matlamat:</strong> Belajar menggunakan AI untuk membina alat dan bukan memberi jawapan: dapatkan formula Excel yang berfungsi setiap bulan, dan minta AI menerangkan formula yang diwarisi sebelum anda bergantung padanya.</p><p><strong>Tugas</strong></p><ul><li>Gunakan AI untuk memahami apa yang Pengurus Kewangan perlukan, termasuk peraturan penanda yang tepat.</li><li>Periksa buku kerja yang diwarisi untuk membezakan formula daripada nombor yang ditaip.</li><li>Bina prompt RCTF+C yang meminta formula, bukan hasil, kemudian uji satu baris dengan tangan.</li><li>Semak setiap penanda terhadap peraturan, dan gantikan jumlah yang ditaip dengan formula.</li><li>Minta AI menerangkan formula ramalan yang diwarisi. Bonus: biar Copilot dalam Excel membuat suntingan.</li></ul><p><strong>Teknik baharu</strong></p><ul class="chips"><li>Minta kaedah, bukan hasil</li><li>AI sebagai penjelas</li><li>Uji satu baris dengan tangan</li></ul><a class="btn" href="https://claude.ai/artifact/Hrwh63UXZVRXiFvo1MrXq1" target="_blank" rel="noopener">Buka panduan</a></article>
+<section class=""><h2>Merentasi enam latihan</h2>
+<div class="table-wrap"><table><tr><th>Latihan</th><th>Kerja</th><th>AI membantu anda untuk</th></tr><tr><td>4-1</td><td>Merancang</td><td>Memikirkannya dengan teliti</td></tr><tr><td>4-2</td><td>Melapor</td><td>Menulis dengan tepat</td></tr><tr><td>4-3</td><td>Memutuskan</td><td>Menguji sebelum bertindak</td></tr><tr><td>4-4</td><td>Membandingkan</td><td>Menstrukturkan data bersepah</td></tr><tr><td>4-5</td><td>Menganalisis</td><td>Menimbang pendapat dengan adil</td></tr><tr><td>4-6</td><td>Mengira</td><td>Membina alat yang boleh digunakan semula</td></tr></table></div>
+</section>
+
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm0-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

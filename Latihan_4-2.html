@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-2: Pelaporan Pelanggan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-2: Pelaporan Pelanggan</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>10 minit</dd>
+    <dt>Alat</dt><dd>Microsoft 365 Copilot Chat</dd>
+    <dt>Hasil anda</dt><dd>Kemas kini mingguan satu muka surat untuk pelanggan, dan senarai perkara yang perlu anda sahkan sebelum ia dihantar</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda ialah penyelaras tapak (<em>site coordinator</em>) di sebuah tapak luar pesisir. Setiap Jumaat, pelanggan menjangkakan <strong>kemas kini tapak mingguan</strong>. Sepanjang minggu, anda mencatat nota kasar. Kini anda perlu menukarkannya kepada sesuatu yang boleh dipercayai oleh pelanggan.</p>
+<p><strong>Ketegangan:</strong> menulis kemas kini itu mudah. Yang sukar ialah memastikan semuanya tepat, kerana sebaik sahaja ia meninggalkan anda, pelanggan menganggapnya sebagai fakta. E-mel ini terus ke pengurus operasi pelanggan.</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Data A: e-mel pelanggan</strong></td><td>Arahan pelanggan tentang kemas kini mingguan: apa yang mesti ada, urutannya, panjangnya dan tarikh akhirnya</td><td>Wakil operasi Petrolaris Energy</td><td>Langkah 1</td></tr><tr><td><strong>Data B: nota tapak anda</strong></td><td>Tujuh nota kasar yang anda catat sepanjang minggu. Ada yang tidak lengkap, dan satu angka tidak sepadan dengan log tapak</td><td>Catatan harian anda</td><td>Langkah 2 dan 3</td></tr></table></div><p><strong>Istilah yang digunakan:</strong></p><ul><li><strong>POB</strong> (<em>persons on board</em>): bilangan orang di tapak</li><li><strong>PTW</strong> (<em>permit to work</em>): permit untuk bekerja</li><li><strong>H2S</strong>: hidrogen sulfida, gas toksik yang dipantau di tapak</li></ul>
+</section>
+<section><h2>Tugas anda</h2>
+<p>Anda akan menggunakan AI dalam <strong>empat cara</strong>. Anda kekal sebagai pembuat keputusan, jadi baca semua jawapan AI sebelum bergerak.</p><div class="table-wrap"><table><tr><th>Peranan AI</th><th>Apa yang AI lakukan</th></tr><tr><td>Guru</td><td>Mengeluarkan dengan tepat apa yang pelanggan mahu, dan apa itu kualiti yang baik</td></tr><tr><td>Penemu bual</td><td>Menyoal nota anda sebelum menulis apa-apa</td></tr><tr><td>Penggubal</td><td>Menukar nota kasar kepada kemas kini yang kemas</td></tr><tr><td>Pengkritik</td><td>Membaca kemas kini anda seperti pelanggan</td></tr></table></div>
+</section>
+<section><h2>Dua jenis prompt</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Yang mana</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Prompt 1, 2, 4 dan 5</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong>, menggunakan RCTF+C daripada Modul 2</td><td>Prompt 3</td></tr></table></div><p>Luangkan masa anda pada prompt kritikal. <strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Tekan butang <strong>Salin</strong>, kemudian tampal ke dalam Copilot Chat. Prompt dan data kekal dalam bahasa Inggeris; arahan dalam panduan ini dalam Bahasa Malaysia.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 1.5</td><td>Langkah 1: Fahami apa yang pelanggan mahu (Prompt 1)</td></tr><tr><td>1.5 hingga 3.5</td><td>Langkah 2: Semak nota anda sendiri</td></tr><tr><td>3.5 hingga 9</td><td>Langkah 3: Tulis kemas kini dengan AI (Prompt 2 hingga 4, Prompt 5 jika ada masa)</td></tr><tr><td>9 hingga 10</td><td>Langkah 4: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka sembang Copilot Chat yang baharu.</li><li>Gunakan satu sembang untuk semua prompt. Setiap prompt dibina atas jawapan sebelumnya.</li><li>Baca setiap jawapan sebelum bergerak.</li></ul><p class="note">Di tempat kerja, anda akan mengarahkan Copilot ke e-mel pelanggan dan nota anda dalam OneNote atau Teams, seperti dalam Modul 3. Hari ini, anda tampal sahaja.</p>
+</section>
+<section><h2><span class="num">1</span>Fahami apa yang pelanggan mahu <span style="font-weight:400;color:var(--muted)">(1.5 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI mengeluarkan dengan tepat apa yang pelanggan mahu, termasuk peraturan mereka, dan mencadangkan keperluan kualiti.</p><ol><li>Baca e-mel pelanggan sekali sendiri.</li></ol><div class="copy"><div class="copy-head"><span>Data A: e-mel pelanggan</span><button type="button">Salin</button></div>
+<pre>From: ops.rep@petrolarisenergy.com
+Subject: Weekly site update
+
+Hi,
+
+Please send your weekly site update by 5pm every Friday. Keep it to one page and cover the full week. Put HSE first, then manning, including the average POB for the week, then any service issues and how they were handled. Please flag anything that needs action from our side.
+
+This goes straight to our operations manager, so it needs to be accurate.
+
+Thanks</pre></div><ol start="2"><li>Salin Prompt 1 ke dalam Copilot Chat, tampal Data A di bawahnya dalam mesej yang sama, dan hantar.</li></ol><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here is an email from our client about the weekly update they expect. List exactly what they want the update to contain, in their order, and every rule they've set, and suggest quality requirements to meet their expectations.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah setiap item dalam senarai AI benar-benar ada dalam e-mel?</li><li>Adakah mana-mana peraturan lebih sukar dipenuhi daripada yang disangka?</li><li>Keperluan kualiti yang mana datang daripada e-mel, dan yang mana cadangan AI sendiri? Adakah anda bersetuju dengan setiap satu?</li></ul></div><p><strong>Kenapa keperluan kualiti penting:</strong> ia menjadi senarai semak anda. Tulis yang anda setuju di bawah. Dalam Langkah 3, anda akan menggunakannya untuk menilai sama ada draf AI cukup baik untuk dihantar.</p><label class="field" for="s1">Apa yang pelanggan mahu, peraturan mereka, dan keperluan kualiti yang akan anda pegang</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Semak nota anda sendiri <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Ini nota yang anda catat sepanjang minggu. Ia nota kasar, jadi ia mungkin tidak lengkap atau tidak sepadan sesama sendiri.</p><div class="copy"><div class="copy-head"><span>Data B: nota tapak anda</span><button type="button">Salin</button></div>
+<pre>Mon: POB 94, normal ops
+Tue: H2S alarm test, all clear
+Tue: sling inspection found wear on one sling. Taken out of service, replaced before next lift
+Catering delivery delayed 2 days, boat schedule. Used backup stock, no shortage
+Thu: 3 new crew mobilised, POB now 97
+Fri: PTW audit, no findings
+Average POB this week around 95 (site log says 91)</pre></div><p><strong>Tugas anda:</strong> tentukan sama ada nota anda sudah sedia untuk menjadi kemas kini pelanggan. <strong>Anda tidak perlukan AI untuk langkah ini.</strong> Ini pemikiran anda sendiri, dan anda akan menggunakannya untuk menilai draf AI kemudian.</p><p>Untuk setiap nota, tanya diri anda:</p><ul><li>Ia tergolong dalam bahagian mana dalam kemas kini pelanggan?</li><li>Adakah ia cukup lengkap dan jelas untuk orang yang tidak berada di situ?</li><li>Adakah ada apa-apa yang perlu saya sahkan sebelum ia sampai kepada pelanggan?</li></ul><div class="table-wrap"><table><tr><th>Nota</th><th>Bahagian mana?</th><th>Lengkap dan jelas?</th><th>Ada apa-apa untuk disahkan?</th></tr><tr><td>Isn: POB 94</td><td><textarea id="n0a" data-save aria-label="n0a"></textarea></td><td><textarea id="n0b" data-save aria-label="n0b"></textarea></td><td><textarea id="n0c" data-save aria-label="n0c"></textarea></td></tr><tr><td>Sel: ujian penggera H2S</td><td><textarea id="n1a" data-save aria-label="n1a"></textarea></td><td><textarea id="n1b" data-save aria-label="n1b"></textarea></td><td><textarea id="n1c" data-save aria-label="n1c"></textarea></td></tr><tr><td>Sel: pemeriksaan tali sling</td><td><textarea id="n2a" data-save aria-label="n2a"></textarea></td><td><textarea id="n2b" data-save aria-label="n2b"></textarea></td><td><textarea id="n2c" data-save aria-label="n2c"></textarea></td></tr><tr><td>Penghantaran katering lewat</td><td><textarea id="n3a" data-save aria-label="n3a"></textarea></td><td><textarea id="n3b" data-save aria-label="n3b"></textarea></td><td><textarea id="n3c" data-save aria-label="n3c"></textarea></td></tr><tr><td>Kha: 3 kru baharu, POB 97</td><td><textarea id="n4a" data-save aria-label="n4a"></textarea></td><td><textarea id="n4b" data-save aria-label="n4b"></textarea></td><td><textarea id="n4c" data-save aria-label="n4c"></textarea></td></tr><tr><td>Jum: audit PTW</td><td><textarea id="n5a" data-save aria-label="n5a"></textarea></td><td><textarea id="n5b" data-save aria-label="n5b"></textarea></td><td><textarea id="n5c" data-save aria-label="n5c"></textarea></td></tr><tr><td>POB purata</td><td><textarea id="n6a" data-save aria-label="n6a"></textarea></td><td><textarea id="n6b" data-save aria-label="n6b"></textarea></td><td><textarea id="n6c" data-save aria-label="n6c"></textarea></td></tr></table></div><details><summary>Tersekat? Petunjuk</summary><ul><li><strong>Cari nombor.</strong> Adakah mana-mana angka muncul lebih daripada sekali? Adakah angka dalam nota anda menyokong satu sama lain?</li><li><strong>Lihat hari.</strong> Hari mana yang nota anda liputi? Tempoh apa yang pelanggan mahu liputi, dan bila ia perlu dihantar?</li><li><strong>Cari hujung yang longgar.</strong> Adakah ada perkara yang pelanggan akan tanya "lepas tu apa?"</li><li><strong>Baca seperti pelanggan.</strong> Adakah mana-mana nota boleh dibaca sebagai lebih serius, atau kurang serius, daripada hakikatnya?</li></ul></details><p class="note">Nota: dalam jadual, "Isn" ialah Isnin, "Sel" Selasa, "Kha" Khamis dan "Jum" Jumaat. Dalam Data B, hari ditulis dalam bahasa Inggeris (Mon, Tue, Thu, Fri).</p>
+</section>
+<section><h2><span class="num">3</span>Tulis kemas kini dengan AI <span style="font-weight:400;color:var(--muted)">(5.5 minit)</span></h2>
+<h3><span class="tag quick">Prompt pantas</span>Prompt 2: AI sebagai penemu bual (1 minit)</h3><p>Salin prompt, tampal Data B di bawahnya dalam mesej yang sama, dan hantar.</p><div class="copy"><div class="copy-head"><span>Prompt 2</span><button type="button">Salin</button></div>
+<pre>Here are my rough notes for this week's client update. Before you write anything, review them against the client's requirements and ask me about anything that is unclear, missing or inconsistent.</pre></div><p>Jawab soalan AI dengan jujur.</p><ul><li>Jawab hanya dengan apa yang anda tahu daripada nota anda.</li><li>Jika anda tidak tahu, katakan begitu. Jangan pilih angka atau reka butiran untuk mengisi jurang.</li></ul><p>Untuk soalan yang anda tidak boleh jawab, salin ini:</p><div class="copy"><div class="copy-head"><span>Jawapan untuk perkara yang tidak diketahui</span><button type="button">Salin</button></div>
+<pre>I can't confirm that from my notes. Don't assume an answer. Flag it in the update as something I need to confirm before sending, and add it to a separate list of items to check.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah AI menemui isu yang sama seperti yang anda temui dalam Langkah 2? Adakah ia menemui yang anda terlepas?</li><li>Adakah anda mereka-reka apa-apa untuk menjawab? Jika ya, kembali dan betulkan.</li></ul></div>
+</section>
+<section class="critical"><h2><span class="tag crit">Prompt kritikal</span>Prompt 3: Prompt kritikal <span style="font-weight:400;color:var(--muted)">(3 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Prompt ini menghasilkan kemas kini yang akan dibaca oleh pelanggan. Isi setiap baris.</p></div><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri</strong> (dalam bahasa Inggeris). Gunakan panduan ini.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa yang biasanya menulis kemas kini ini? Minta AI bertindak sebagai orang itu.</td></tr><tr><td><strong>Context</strong></td><td>AI sudah ada e-mel pelanggan, nota anda dan jawapan anda dalam sembang ini. Rujuk kepadanya. Siapa yang akan membaca kemas kini?</td></tr><tr><td><strong>Task</strong></td><td>Apa sebenarnya yang ia perlu hasilkan?</td></tr><tr><td><strong>Format</strong></td><td>Apa yang pelanggan minta? Fikirkan panjang, urutan bahagian, dan apa-apa yang mereka mahu ditandakan.</td></tr><tr><td><strong>Constraints</strong></td><td>Bagaimana anda akan halang ia mereka fakta? Apa yang ia perlu buat apabila dua angka tidak sepadan? Bagaimana anda akan halang ia menjadikan sesuatu kedengaran lebih atau kurang serius daripada nota anda? Ejaan?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Baris Format mengikut arahan pelanggan sendiri.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Baris Constraints menghalang AI mereka atau memilih fakta.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Baris Constraints mengekalkan maksud setiap nota tanpa diubah.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are a site coordinator writing to a client.
+Context: Use the client's email, my notes and my answers above. The update goes to the client's operations manager.
+Task: Draft this week's site update.
+Format: One page. HSE first, then manning with the average POB, then service issues and how they were handled, then any actions needed from the client. State the period covered.
+Constraints: British spelling. Only use facts from my notes and answers. Do not choose between conflicting figures; flag them as to be confirmed. Do not make any item sound more or less serious than my notes. Do not add reasons, outcomes or reassurances that aren't in my notes. List anything I need to confirm before sending, separately at the end.</pre></div><p>Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul.</p></details><p><strong>4. Semak hasil sebelum bergerak:</strong></p><ul><li>Adakah draf memenuhi setiap keperluan kualiti yang anda tulis dalam Langkah 1?</li><li>Pilih mana-mana ayat. Boleh anda tunjuk nota asalnya?</li><li>Angka POB purata yang mana digunakan? Patutkah ia menggunakan salah satunya?</li><li>Adakah kemas kini menyatakan tempoh yang dilitupinya? Adakah itu tepat?</li><li>Adakah mana-mana item dibunyikan lebih serius, atau kurang serius, daripada nota anda?</li><li>Adakah ia menambah sesuatu yang tiada dalam nota, seperti sebab, hasil atau jaminan?</li><li>Adakah ada apa-apa yang ditandakan untuk tindakan pelanggan?</li></ul><p>Jika draf tersilap, jangan mula semula. Beritahu AI dengan tepat apa yang perlu dibetulkan (Draft, Diagnose, Direct):</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>In your draft, [what is wrong]. Change it to [what it should say], and keep everything else the same.</pre></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 4: AI sebagai pengkritik <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Salin</button></div>
+<pre>Now act as the client's operations manager reading this update. What would you question, find unclear, or need to follow up on? Be direct.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah anda selesa jika pelanggan bertanya soalan-soalan ini esok? Yang mana patut dijawab oleh kemas kini sekarang?</li></ul></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 5 (jika ada masa): anda cabar AI <span style="font-weight:400;color:var(--muted)">(0.5 minit)</span></h2>
+<div class="copy"><div class="copy-head"><span>Prompt 5</span><button type="button">Salin</button></div>
+<pre>Which of your questions come from the update and my notes, and which are your own assumptions? Rank the three most important to fix before I send it.</pre></div><label class="field" for="top3">Apa yang saya akan baiki atau sahkan sebelum menghantar</label><textarea id="top3" data-save></textarea><details><summary>Tersekat? Cuba ini mengikut turutan</summary><ol><li>Bayangkan pelanggan menelefon selepas membacanya. Apa soalan pertama mereka?</li><li>Kembali ke jadual Langkah 2. Adakah semua dalam lajur "Ada apa-apa untuk disahkan?" ditangani dalam draf?</li><li>Teknik Modul 1 yang mana menyemak setiap fakta sebelum anda tandatangan? Jalankannya sekarang.</li></ol></details>
+</section>
+<section><h2><span class="num">4</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Kemas kini mengikut urutan pelanggan dan muat dalam satu muka surat.</label></li><li><input type="checkbox" id="k8" data-save><label for="k8">Kemas kini memenuhi keperluan kualiti yang saya tetapkan dalam Langkah 1.</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Setiap fakta dalam kemas kini boleh dijejak kepada nota atau jawapan saya sendiri.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Apabila nota saya tidak sepadan, kemas kini menandakannya dan tidak memilih satu.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Kemas kini jujur tentang tempoh yang dilitupinya.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Tiada item yang kedengaran lebih atau kurang serius daripada hakikatnya.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Saya ada senarai perkara untuk disahkan sebelum menghantar.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Saya mencabar sekurang-kurangnya satu perkara yang AI tulis.</label></li></ul><p>Menanda kurang daripada lima? Kembali ke semakan di bawah Prompt 3.</p>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Mulakan daripada apa yang pembaca mahu.</strong> E-mel pelanggan ialah arahan format anda.</li><li><strong>Biar AI menyoal nota anda sebelum ia menulis.</strong> Nota kasar sentiasa ada jurang.</li><li><strong>Jangan biar AI memilih antara angka yang bercanggah.</strong> Keputusan itu memerlukan sumber, bukan tekaan.</li><li><strong>Perhatikan perkataan, bukan fakta sahaja.</strong> AI boleh senyap-senyap menjadikan sesuatu kedengaran lebih baik atau lebih teruk.</li><li><strong>Baca sebagai pelanggan.</strong> Soalan mereka esok ialah pembetulan anda hari ini.</li><li><strong>Draf yang kemas bukan draf yang telah disemak.</strong> Accountability Pass masih terpakai.</li></ul>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm2-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

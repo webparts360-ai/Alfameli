@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-6: Varians Kos Bulanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-6: Varians Kos Bulanan</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>10 minit</dd>
+    <dt>Alat</dt><dd>Excel, dengan Copilot dalam Excel jika ada, atau Microsoft 365 Copilot Chat</dd>
+    <dt>Hasil anda</dt><dd>Laporan varians dipacu formula yang berfungsi setiap bulan, dan semakan bahasa mudah terhadap formula ramalan yang diwarisi</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda bekerja dalam kawalan kos. Setiap bulan anda membandingkan <strong>kos sebenar tapak dengan bajet</strong>, mengira varians, dan menandakan baris yang perlukan penjelasan. Anda baru mewarisi buku kerja (<em>workbook</em>) daripada rakan sekerja, Amir, yang telah berpindah ke projek lain.</p>
+<p><strong>Ketegangan:</strong> sehingga kini hari ini, anda telah meminta AI untuk <strong>jawapan</strong>. Dengan nombor, itu berisiko: AI boleh tersilap jumlah, dan nombor yang ditaip ke dalam sel tidak boleh disemak. Kali ini anda akan meminta AI <strong>membina alat</strong>, dan biar Excel yang mengira. Anda juga mewarisi lajur ramalan setahun penuh yang tiada siapa faham.</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Buku kerja kos tapak</strong> (fail Excel)</td><td>Tujuh baris kos (bahan api, tenaga kerja, katering, penyelenggaraan, pengangkutan, utiliti penginapan, komunikasi) dengan bajet Oktober, sebenar Oktober, sebenar YTD (Jan hingga Okt) dan ramalan setahun penuh. Jumlah ada di baris 12</td><td>Fail Alfameli_Exercise_4-6_Site_Cost_Report.xlsx dalam folder kongsi, atau kotak "Bina dalam 30 saat" di bawah</td><td>Langkah 2 hingga 4</td></tr><tr><td><strong>Data A: permintaan Pengurus Kewangan</strong></td><td>E-mel Siti yang menyatakan apa yang beliau perlukan, peraturan penanda, dan permintaan menyemak ramalan Amir</td><td>Pengurus Kewangan</td><td>Langkah 1</td></tr></table></div><p><strong>Istilah:</strong> <strong>varians</strong> ialah perbezaan antara sebenar dan bajet. <strong>YTD</strong> (<em>year to date</em>) ialah jumlah dari awal tahun hingga bulan semasa. Untuk kos, melebihi bajet ialah keadaan <em>tidak menguntungkan</em> (<em>unfavourable</em>).</p>
+</section>
+<section><h2>Tugas anda</h2>
+<div class="table-wrap"><table><tr><th>Teknik baharu</th><th>Maksudnya</th></tr><tr><td>Minta kaedah, bukan hasil</td><td>Minta AI formula Excel dan bukannya nombor. Excel mengira, setiap bulan, dan sesiapa boleh menyemak caranya.</td></tr><tr><td>AI sebagai penjelas</td><td>Minta AI menerangkan formula yang bukan anda tulis dalam bahasa mudah, dan menunjukkan apa yang ditetapkan keras atau akan rosak.</td></tr><tr><td>Uji satu baris dengan tangan</td><td>Sebelum mempercayai formula merentas helaian, semak satu baris dengan kalkulator.</td></tr></table></div>
+</section>
+<section><h2>Dua jenis prompt</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Yang mana</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Prompt 1 dan 3</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong>, menggunakan RCTF+C daripada Modul 2</td><td>Prompt 2, formula</td></tr></table></div><p>Luangkan masa anda pada prompt kritikal. <strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Tekan butang <strong>Salin</strong>, kemudian tampal ke dalam Copilot Chat. Prompt dan data kekal dalam bahasa Inggeris; arahan dalam panduan ini dalam Bahasa Malaysia.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 1.5</td><td>Langkah 1: Fahami permintaan (Prompt 1)</td></tr><tr><td>1.5 hingga 3</td><td>Langkah 2: Lihat dalam buku kerja</td></tr><tr><td>3 hingga 7</td><td>Langkah 3: Minta formula, bukan jawapan (Prompt 2)</td></tr><tr><td>7 hingga 9</td><td>Langkah 4: Terangkan formula yang diwarisi (Prompt 3)</td></tr><tr><td>9 hingga 10</td><td>Langkah 5: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka buku kerja <strong>Alfameli_Exercise_4-6_Site_Cost_Report.xlsx</strong> daripada folder kongsi.</li><li>Buka Copilot Chat dalam tab pelayar, atau anak tetingkap Copilot dalam Excel jika ada.</li></ul><details><summary>Tidak boleh buka buku kerja? Bina dalam 30 saat</summary><p>Buka helaian Excel kosong, klik sel <strong>A4</strong>, dan tampal ini. Formula akan masuk sebagai formula.</p><div class="copy"><div class="copy-head"><span>Data buku kerja (tampal ke sel A4)</span><button type="button">Salin</button></div>
+<pre>Category	Budget (Oct, RM)	Actual (Oct, RM)	Actual YTD (Jan to Oct, RM)	Full-year forecast (RM)
+Fuel	42000	45500	418000	=D5/9*12
+Manpower	128000	124200	1262000	=D6/9*12
+Catering	36500	38900	371500	=D7/9*12
+Maintenance	19000	21300	196400	=D8/9*12
+Transport	24000	25100	243800	=D9/9*12
+Accommodation utilities	8500	9600	88300	=D10/9*12
+Communications	3000	5400	33600	=D11/9*12
+Total	=SUM(B5:B11)	271000	=SUM(D5:D11)	=SUM(E5:E11)</pre></div></details>
+</section>
+<section><h2><span class="num">1</span>Fahami permintaan <span style="font-weight:400;color:var(--muted)">(1.5 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI mengeluarkan dengan tepat apa yang Siti perlukan, termasuk peraturan penanda, dan mencadangkan keperluan kualiti.</p><div class="copy"><div class="copy-head"><span>Data A: permintaan daripada Pengurus Kewangan</span><button type="button">Salin</button></div>
+<pre>From: Siti (Finance Manager)
+Subject: October site cost variance report
+
+Hi,
+
+Please update the site cost report for October. For each cost line I need:
+
+- The variance against budget in RM and in %
+- Whether it's over or under budget
+- A flag on any line that needs an explanation: more than 5% AND more than RM 2,000 away from budget, over or under
+
+I'll reuse this every month, so please make sure it works without anyone retyping numbers. Also, Amir built the full-year forecast column before he moved to the Kuantan project, and I'm not sure anyone understands it. Can you check it?
+
+Thanks,
+Siti</pre></div><p>Salin Prompt 1, tampal Data A di bawahnya dalam mesej yang sama, dan hantar.</p><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here is a request from our Finance Manager about the monthly cost variance report. List exactly what she needs, including every rule she sets. Then suggest quality requirements for a report that others can check and reuse every month.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah ia menangkap peraturan penanda dengan tepat? Baca peraturan dalam e-mel semula, perkataan demi perkataan.</li><li>Keperluan kualiti yang mana akan anda gunakan? Tulis di bawah.</li></ul></div><label class="field" for="s1">Apa yang Siti perlukan, peraturan penanda yang tepat, dan keperluan kualiti saya</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Lihat dalam buku kerja <span style="font-weight:400;color:var(--muted)">(1.5 minit)</span></h2>
+<p>Sebelum mengubah apa-apa, ketahui apa yang anda warisi. Klik ke dalam setiap sel ini dan lihat bar formula.</p><div class="table-wrap"><table><tr><th>Sel</th><th>Formula atau nombor yang ditaip?</th><th>Ada apa-apa yang membimbangkan anda?</th></tr><tr><td>B12 (jumlah Bajet)</td><td><textarea id="w1a" data-save aria-label="w1a"></textarea></td><td><textarea id="w1b" data-save aria-label="w1b"></textarea></td></tr><tr><td>C12 (jumlah Sebenar)</td><td><textarea id="w2a" data-save aria-label="w2a"></textarea></td><td><textarea id="w2b" data-save aria-label="w2b"></textarea></td></tr><tr><td>E5 (ramalan Bahan api)</td><td><textarea id="w3a" data-save aria-label="w3a"></textarea></td><td><textarea id="w3b" data-save aria-label="w3b"></textarea></td></tr></table></div><details><summary>Tersekat? Petunjuk</summary><ul><li>Sel yang menunjukkan nombor tanpa "=" dalam bar formula telah <strong>ditaip</strong>. Adakah ia akan dikemas kini bulan depan?</li><li>Pilih C5 hingga C11. Excel menunjukkan jumlah di penjuru kanan bawah tetingkap. Bandingkan dengan C12.</li><li>Baca pengepala lajur. Bulan apa ini, dan berapa bulan yang diliputi oleh "YTD"?</li></ul></details>
+</section>
+<section class="critical"><h2><span class="num">3</span><span class="tag crit">Prompt kritikal</span>Prompt 2: Prompt kritikal, minta formula <span style="font-weight:400;color:var(--muted)">(4 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Perbezaan utama daripada setiap latihan lain: anda meminta <strong>formula, bukan nombor</strong>.</p></div><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri</strong> (dalam bahasa Inggeris). Gunakan panduan ini.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa yang membina laporan Excel yang boleh dipercayai?</td></tr><tr><td><strong>Context</strong></td><td>AI tidak dapat melihat helaian anda. Huraikannya: lajur mana mengandungi apa, baris mana data berada, di mana baris jumlah. Masukkan peraturan penanda Siti dengan tepat.</td></tr><tr><td><strong>Task</strong></td><td>Lajur baharu apa yang anda perlukan, dalam huruf lajur yang mana? Adakah ada apa-apa dalam baris jumlah yang perlu dibetulkan?</td></tr><tr><td><strong>Format</strong></td><td>Apa yang anda perlukan bagi setiap lajur untuk memasukkannya ke Excel sendiri? Fikirkan: pengepala, formula, cara mengisi ke bawah, penjelasan ringkas.</td></tr><tr><td><strong>Constraints</strong></td><td>Patutkah ia mengira sebarang hasil? Bagaimana tepatnya ia patut menggunakan peraturan penanda? Bagaimana lebih dan kurang bajet patut diterangkan untuk kos? Bagaimana jika bajet sifar?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Context menghuraikan lajur, baris dan baris jumlah, dan memasukkan peraturan penanda dengan tepat.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Task dan Format meminta formula yang saya boleh masukkan sendiri, bukan nombor.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Constraints melarang AI mengira hasil dan menyatakan cara melayan bajet sifar.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are a financial analyst who builds clear, reusable Excel reports.
+Context: My sheet has cost categories in A5:A11, monthly budget in column B, monthly actual in column C, and a total row in row 12. Finance wants each line's variance in RM and %, whether it is over or under budget, and a flag on lines more than 5% AND more than RM 2,000 away from budget, in either direction.
+Task: Give me the Excel formulas for three new columns, F, G and H, starting in row 5, and a formula to replace anything in the total row that should be calculated.
+Format: For each column: the header, the formula for row 5, how to fill it down, and one sentence explaining what it does.
+Constraints: Give formulas only. Do not calculate any results yourself. Apply the flag rule exactly as written, with both conditions. For costs, over budget is unfavourable, so label the direction in words. Handle a zero budget without an error. British spelling.</pre></div><p>Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul.</p></details><p><strong>4. Hantar, kemudian masukkan formula ke Excel</strong> di baris 5 dan isi ke bawah hingga baris 11.</p><p><strong>5. Semak hasil:</strong></p><ul><li>Pilih satu baris. Kira varians dan varians % dengan kalkulator. Adakah Excel bersetuju?</li><li>Semak penanda pada setiap baris terhadap peraturan Siti, terutamanya mana-mana baris yang hanya memenuhi satu daripada dua syarat.</li><li>Adakah "melebihi bajet" diterangkan sebagai tidak menguntungkan? Adakah pengurus akan membaca arahnya dengan betul?</li><li>Adakah jumlah Sebenar kini formula? Apa yang berubah apabila anda membetulkannya?</li></ul><p>Jika formula salah, betulkan dengan Draft, Diagnose, Direct:</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>The formula for [column] is wrong: [what is wrong]. Give me a corrected formula and keep everything else the same.</pre></div><details><summary>Petua bonus: biar Copilot membuat suntingan untuk anda</summary><p>Jika anda ada Copilot dalam Excel, anda tidak perlu menyalin formula. Buka anak tetingkap Copilot dalam buku kerja dan minta ia membuat perubahan terus dalam helaian:</p><div class="copy"><div class="copy-head"><span>Bonus: prompt Copilot dalam Excel</span><button type="button">Salin</button></div>
+<pre>Add three columns to this table. Variance (RM): Actual minus Budget. Variance %: the variance divided by Budget. Flag: show "Explain" only when the variance is more than 5% AND more than RM 2,000 away from budget, in either direction. Use formulas, not typed values. Then check the total row and replace any typed total with a SUM formula.</pre></div><p>Ia masih helaian anda, jadi semak kerjanya: klik ke dalam sel baharu untuk membaca formula, atau tekan Ctrl + ` untuk menunjukkan semua formula sekali gus. Uji satu baris dengan tangan, semak penanda terhadap peraturan, dan gunakan Undo jika ada yang nampak salah.</p></details>
+</section>
+<section><h2><span class="num">4</span>Terangkan formula yang diwarisi <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Lajur ramalan Amir kini milik anda. Sebelum bergantung padanya, ketahui apa yang ia sebenarnya lakukan.</p><h3><span class="tag quick">Prompt pantas</span>Prompt 3: AI sebagai penjelas</h3><div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Salin</button></div>
+<pre>Explain this Excel formula in plain English, step by step: =D5/9*12
+It's in the "Full-year forecast" column of our October 2026 site cost report. Column D is "Actual YTD (Jan to Oct, RM)".
+Point out anything hardcoded, anything that is wrong this month, and anything that will break next month. Then suggest a more reliable version.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah anda kini faham setiap bahagian formula?</li><li>Adakah ramalan semasa terlalu tinggi, terlalu rendah, atau betul? Lebih kurang berapa?</li><li>Adakah versi yang dicadangkan masih berfungsi pada bulan November tanpa sesiapa menyunting?</li><li>Cuba versi yang dicadangkan pada baris Bahan api. Adakah hasilnya masuk akal?</li></ul></div><p class="note"><strong>Dengan Copilot dalam Excel:</strong> pilih sel E5 dan minta Copilot menerangkan formula. Ia membaca helaian sendiri, jadi anda tidak perlu menghuraikan lajur.</p><label class="field" for="top3">Apa yang saya temui dalam formula yang diwarisi, dan apa yang saya akan beritahu Siti</label><textarea id="top3" data-save></textarea><details><summary>Tersekat? Cuba ini mengikut turutan</summary><ol><li>Lihat pengepala lajur D. Berapa bulan perbelanjaan yang ia mengandungi?</li><li>Apa yang diwakili oleh angka 9 dalam formula? Adakah itu betul untuk Oktober?</li><li>Apa yang perlu berubah setiap bulan supaya formula ini kekal betul?</li></ol></details>
+</section>
+<section><h2><span class="num">5</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Saya menyemak sel mana formula dan mana ditaip, sebelum mengubah apa-apa.</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Saya meminta formula, bukan nombor.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Saya menguji sekurang-kurangnya satu baris dengan tangan, dan Excel bersetuju.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Setiap penanda sepadan dengan peraturan Siti, dengan kedua-dua syarat.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Tiada jumlah dalam laporan ialah nombor yang ditaip.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Saya faham formula ramalan yang diwarisi dan apa yang salah padanya.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Laporan akan berfungsi bulan depan tanpa sesiapa menaip semula nombor.</label></li></ul><p>Menanda kurang daripada lima? Kembali ke semakan di bawah Prompt 2.</p><details><summary>Siap awal? Tambah ulasan varians</summary><p>Minta Copilot menulis ulasan daripada hasil Excel anda, supaya nombor datang daripada Excel dan hanya perkataan datang daripada AI.</p><div class="copy"><div class="copy-head"><span>Prompt ulasan</span><button type="button">Salin</button></div>
+<pre>Here are my October variance results from Excel: [paste columns A, B, C, F, G and H]. Write a short variance commentary for the lines flagged "Explain" only. Use my numbers exactly and do not recalculate anything. Where the data doesn't give a reason for a variance, write "Reason to be confirmed with the budget owner" instead of guessing.</pre></div></details>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Minta kaedah, bukan hasil.</strong> Formula boleh disemak dan digunakan semula. Nombor daripada sembang tidak boleh.</li><li><strong>Excel mengira, AI menerangkan.</strong> Gunakan setiap satu untuk apa yang ia baik.</li><li><strong>Huraikan helaian anda.</strong> AI tidak dapat melihat buku kerja anda kecuali ia bekerja di dalamnya, jadi beritahu di mana semuanya.</li><li><strong>Uji satu baris dengan tangan.</strong> Formula yang salah dalam satu baris salah dalam setiap baris.</li><li><strong>Hamparan yang diwarisi menyembunyikan andaian.</strong> Minta AI menerangkannya sebelum anda bergantung padanya.</li><li><strong>Tiada jumlah yang ditaip.</strong> Jika ia boleh dikira, ia patut menjadi formula.</li></ul>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm6-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

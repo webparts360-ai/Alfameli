@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-5: Analisis Tinjauan Denyut HR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-5: Analisis Tinjauan Denyut HR</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>14 minit</dd>
+    <dt>Alat</dt><dd>Microsoft 365 Copilot Chat, log masuk dengan akaun kerja anda</dd>
+    <dt>Hasil anda</dt><dd>Jadual tema yang telah disahkan, nota susulan sulit untuk HR, dan laporan pengurusan dengan tema, kekerapan, sentimen, pandangan dan cadangan</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda bekerja dalam HR. Tinjauan denyut (<em>pulse survey</em>) bulanan telah ditutup dengan <strong>30 komen teks bebas</strong>. Pengurus HR memerlukan ringkasan satu muka surat untuk mesyuarat pengurusan hari Khamis. Bulan depan akan ada 30 lagi, dan bulan seterusnya.</p>
+<p>Membaca, mengumpul dan mengira komen secara manual mengambil sejam. AI melakukannya dalam beberapa saat. <strong>Tetapi komen tinjauan adalah tentang perasaan, bukan fakta</strong>, dan itu mewujudkan cara baharu untuk AI tersilap: komen yang paling lantang menang, petikan dikemaskan, dan satu komen yang benar-benar penting terkubur dalam satu tema.</p>
+<p><strong>Ketegangan:</strong> pengurusan cenderung bertindak balas kepada apa yang kedengaran paling dramatik, jadi ringkasan mesti <em>seimbang</em>. Dan tiada apa yang boleh mengenal pasti sesiapa.</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Data A: permintaan Pengurus HR</strong></td><td>E-mel Nadia yang meminta ringkasan satu muka surat, dengan dua amaran di hujungnya (kekal seimbang, dan jangan kenal pasti sesiapa)</td><td>Pengurus HR</td><td>Langkah 1</td></tr><tr><td><strong>Data B: komen tinjauan Oktober</strong></td><td>30 komen: nombor responden (R01 hingga R30), jabatan, skor kepuasan 1 hingga 5, dan komen. Soalan tinjauan: "Apakah satu perkara yang patut kami baiki, dan mengapa?" Sebahagian komen dalam Bahasa Malaysia atau Manglish</td><td>Sistem tinjauan</td><td>Langkah 2 hingga 6</td></tr></table></div><p>Skor kepuasan dalam Data B digunakan dalam Langkah 6 untuk mengira purata bagi setiap tema.</p>
+</section>
+<section><h2>Tugas anda</h2>
+<div class="table-wrap"><table><tr><th>Teknik baharu</th><th>Maksudnya</th></tr><tr><td>Semakan kepekaan data</td><td>Berhenti dan semak sebelum menampal maklumat peribadi atau sensitif ke dalam mana-mana alat AI.</td></tr><tr><td>Peraturan bukti</td><td>Setiap dakwaan perlukan bukti: kiraan, nombor responden, dan petikan perkataan demi perkataan.</td></tr><tr><td>Prompt pengecualian</td><td>Tanya apa yang tidak sesuai dengan ringkasan, supaya komen yang luar biasa tidak hilang di antara yang biasa.</td></tr><tr><td>Pecah mengikut khalayak</td><td>Satu analisis, dua keluaran: nota sulit untuk HR, dan laporan untuk pengurusan.</td></tr><tr><td>Penemuan, pandangan, tindakan</td><td>Pisahkan apa yang data tunjukkan, apa maksudnya, dan apa yang patut dibuat, supaya pendapat tidak menyamar sebagai fakta.</td></tr></table></div>
+</section>
+<section><h2>Tiga jenis prompt</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Yang mana</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Prompt 1, 3 dan 4</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong> menggunakan RCTF+C</td><td>Prompt 2, analisis tema</td></tr><tr><td><span class="tag crit">Prompt anda</span></td><td>Anda tulis daripada ringkasan pendek apa yang dijangka</td><td>Prompt 5, laporan pengurusan</td></tr></table></div><p>Nota susulan dan laporan pengurusan kedua-duanya dibina atas jadual tema daripada Prompt 2, jadi di situlah usaha anda. <strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Prompt dan data kekal dalam bahasa Inggeris.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 2</td><td>Langkah 1: Fahami permintaan (Prompt 1)</td></tr><tr><td>2 hingga 4.5</td><td>Langkah 2: Sebelum anda tampal, kemudian imbas komen</td></tr><tr><td>4.5 hingga 8.5</td><td>Langkah 3: Analisis tema (Prompt 2)</td></tr><tr><td>8.5 hingga 10</td><td>Langkah 4: Apa yang tidak sesuai? (Prompt 3)</td></tr><tr><td>10 hingga 11</td><td>Langkah 5: Nota sulit untuk HR (Prompt 4)</td></tr><tr><td>11 hingga 13</td><td>Langkah 6: Laporan pengurusan (Prompt 5)</td></tr><tr><td>13 hingga 14</td><td>Langkah 7: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka sembang Copilot Chat yang baharu dan gunakannya untuk setiap langkah.</li><li>Baca setiap jawapan sebelum bergerak.</li></ul>
+</section>
+<section><h2><span class="num">1</span>Fahami permintaan <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI mengeluarkan semua yang Pengurus HR perlukan, dan mencadangkan keperluan kualiti.</p><div class="copy"><div class="copy-head"><span>Data A: permintaan daripada Pengurus HR</span><button type="button">Salin</button></div>
+<pre>From: Nadia (HR Manager)
+Subject: October pulse survey summary for Thursday
+
+Hi,
+
+The October pulse survey has closed. Please prepare a one-page summary for Thursday's management meeting:
+
+- The main themes, and how many people raised each
+- What people said, in their own words
+- A suggested action for each theme
+
+Management tends to react to whatever sounds most dramatic, so please keep it proportionate. And as always, nothing that could identify anyone.
+
+Thanks,
+Nadia</pre></div><p>Salin Prompt 1, tampal Data A di bawahnya dalam mesej yang sama, dan hantar.</p><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here is a request from our HR Manager about this month's pulse survey summary. List exactly what she needs. Then suggest quality requirements for a survey summary that is fair, accurate and anonymous.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah ia menangkap setiap bahagian permintaan, termasuk dua amaran di hujung?</li><li>Keperluan kualiti yang mana akan anda pegang untuk ringkasan? Tulis di bawah.</li></ul></div><label class="field" for="s1">Apa yang Pengurus HR perlukan, dan keperluan kualiti saya</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Sebelum anda tampal, kemudian imbas <span style="font-weight:400;color:var(--muted)">(2.5 minit)</span></h2>
+<p><strong>1. Sebelum anda tampal apa-apa, semak.</strong> Komen tinjauan ialah antara data paling sensitif dalam mana-mana syarikat.</p><ul class="ticks"><li><input type="checkbox" id="b1" data-save><label for="b1">Saya menggunakan alat AI yang diluluskan, log masuk dengan akaun kerja saya.</label></li><li><input type="checkbox" id="b2" data-save><label for="b2">Saya telah menyemak sama ada komen mengandungi nama atau butiran yang mengenal pasti seseorang, dan membuang apa yang saya tidak perlukan.</label></li><li><input type="checkbox" id="b3" data-save><label for="b3">Dasar syarikat membenarkan data seperti ini dalam alat ini. Jika saya tidak pasti, saya tanya dahulu.</label></li></ul><p>Komen hari ini direka, jadi selamat untuk diteruskan. Dengan data tinjauan sebenar, jangan langkau semakan ini.</p><p><strong>2. Imbas komen selama 90 saat.</strong> Jangan baca setiap perkataan.</p><div class="copy"><div class="copy-head"><span>Data B: komen tinjauan denyut Oktober</span><button type="button">Salin</button></div>
+<pre>Survey question: What is one thing we should improve, and why?
+
+Respondent | Department | Satisfaction (1 to 5) | Comment
+R01 | Catering | 3 | The menu repeats every week. Same curry on Monday, same fried rice on Wednesday. Some variety would help morale.
+R02 | Operations | 2 | wifi slow gila, cannot video call family at night
+R03 | Maintenance | 3 | Crew change boat was delayed again, 6 hours waiting at the jetty with no updates.
+R04 | Operations | 4 | Food is ok but not enough vegetables and fruit. Hard to eat healthy for 14 days.
+R05 | Admin | 1 | MY OVERTIME CLAIM FOR AUGUST STILL NOT PAID. I submitted everything on time, followed up three times, and nobody replies. This is the second time this year. It is absolutely unacceptable that we work extra hours and then have to beg for our own money. Fix the claims process NOW.
+R06 | Housekeeping | 3 | Internet in the accommodation block is useless after 9pm when everyone is online.
+R07 | Operations | 3 | Supervisors only talk to us when something goes wrong. A simple thank you once in a while would go a long way.
+R08 | Catering | 4 | Makanan kurang pilihan untuk yang vegetarian.
+R09 | Operations | 2 | Transport to the heliport is always late and we end up rushing. When we're behind schedule on the platform, the toolbox talk gets skipped so we can start work faster.
+R10 | Maintenance | 3 | Aircon in Block C keeps breaking. Hard to sleep after a 12 hour shift.
+R11 | HSE | 4 | Would like more chances to attend external training and certification courses. It has been two years since my last one.
+R12 | Operations | 3 | Wifi keeps dropping. Please upgrade.
+R13 | Catering | 2 | Same menu every rotation. Please ask the crew what they want to eat, even a simple survey.
+R14 | Operations | 1 | Overtime claims take FOREVER. Two months to get paid is a joke. Finance keeps losing forms and blaming us. People are talking about leaving because of this. Someone needs to take responsibility.
+R15 | Admin | 4 | Crew change schedule is sent too late. We only find out the day before, which makes family arrangements difficult.
+R16 | Operations | 3 | As the only female rigger on Platform B, I sometimes miss out on information because briefings happen informally in the men's rest area.
+R17 | Housekeeping | 2 | Room next to the generator room, very noisy, cannot sleep properly.
+R18 | Maintenance | 4 | Boleh tambah buah-buahan dan salad? Makanan terlalu berminyak.
+R19 | Operations | 3 | Internet ok in the mess hall but no signal in the rooms.
+R20 | Catering | 5 | Good team, good management. Nothing major to improve, keep it up.
+R21 | Operations | 3 | Boat delays at the jetty with no information. At least tell us the new time.
+R22 | HSE | 3 | Supervisors should explain the reasons behind changes to the work plan instead of just giving instructions.
+R23 | Maintenance | 2 | Line internet teruk, susah nak hubungi keluarga.
+R24 | Housekeeping | 3 | Food portions got smaller this month.
+R25 | Operations | 3 | The aircon in my room is broken again, I reported it twice. Also, I'm not comfortable with the way one of the night shift supervisors speaks to the younger female staff. I'll leave it at that.
+R26 | Admin | 4 | It would be great to have short online courses we can do during off days, like Excel or first aid refreshers.
+R27 | Operations | 3 | Recognition only goes to the same few people. Others work just as hard.
+R28 | Catering | 3 | Wifi password changes every week and nobody tells us.
+R29 | Maintenance | 2 | Crew change helicopter cancelled twice this month, no one explained why.
+R30 | Operations | 3 | Breakfast options are very limited, same thing every day.</pre></div><label class="field" for="g1">Rasa hati saya: tiga tema teratas</label><textarea id="g1" data-save></textarea><label class="field" for="g2">Apa yang membimbangkan saya, atau yang saya tidak mahu dalam ringkasan pengurusan</label><textarea id="g2" data-save></textarea><details><summary>Tersekat? Petunjuk</summary><ul><li><strong>Lantang tidak sama dengan biasa.</strong> Komen mana yang paling panjang atau paling marah? Berapa orang sebenarnya berkata perkara yang sama?</li><li><strong>Baca hingga ke akhir.</strong> Sesetengah komen bertukar topik di tengah jalan.</li><li><strong>Fikir siapa yang boleh dikenal pasti.</strong> Berapa orang dalam setiap jabatan?</li><li><strong>Jangan langkau komen Bahasa Malaysia.</strong> Ia dikira sama seperti yang lain.</li></ul></details>
+</section>
+<section class="critical"><h2><span class="num">3</span><span class="tag crit">Prompt kritikal</span>Prompt 2: Prompt kritikal, analisis tema <span style="font-weight:400;color:var(--muted)">(4 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Semua selepas ini dibina atas jadual ini, jadi pastikan ia betul di sini. Letakkan peraturan bukti anda dalam baris Format dan Constraints.</p></div><p><strong>Tampal Data B di bawah prompt anda sebelum menghantar.</strong></p><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri</strong> (dalam bahasa Inggeris). Gunakan panduan ini.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa yang biasanya menganalisis maklum balas tinjauan?</td></tr><tr><td><strong>Context</strong></td><td>Apa soalan tinjauan? Apa yang anda tampal?</td></tr><tr><td><strong>Task</strong></td><td>Apa yang anda mahu ia lakukan dengan komen?</td></tr><tr><td><strong>Format</strong></td><td>Lajur apa yang membolehkan anda menyemak hasil? Fikirkan: berapa, responden mana, apa yang mereka kata. Dalam urutan apa tema patut disusun? Patutkah kiraan berjumlah sesuatu?</td></tr><tr><td><strong>Constraints</strong></td><td>Peraturan bukti anda. Bolehkah ia mengemaskan petikan? Bagaimana dengan komen Bahasa Malaysia? Nama jabatan dan butiran pengenalan? Patutkah perkataan yang kuat menjejaskan kedudukan?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Format meminta kiraan, nombor responden dan petikan.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Constraints melarang mengemaskan petikan dan mengenal pasti orang.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Constraints menetapkan bagaimana komen Bahasa Malaysia dikendalikan.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are an HR analyst summarising employee survey feedback.
+Context: Below are 30 comments from our October pulse survey. The question was: "What is one thing we should improve, and why?"
+Task: Group the comments into themes.
+Format: A table with these columns: Theme | Number of comments | Respondent numbers | Two quotes. Order the themes by number of comments, highest first. Every comment must appear in exactly one theme, and the counts must add up to 30.
+Constraints: Quote comments word for word. Never tidy, shorten or paraphrase inside quotation marks. Quote Bahasa Malaysia comments exactly as written, with an English translation in brackets. Do not include department names with quotes, and leave out any quote that could identify a person. Base the order on counts, not on how strongly something is worded. British spelling.
+
+[paste Dataset B]</pre></div><p>Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul.</p></details><p><strong>4. Semak hasil sebelum bergerak:</strong></p><ul><li>Adakah kiraan berjumlah 30? Adakah mana-mana komen tertinggal atau dikira dua kali?</li><li>Pilih satu tema. Semak nombor responden terhadap Data B. Adakah kiraan betul?</li><li>Cari setiap petikan dalam Data B (Ctrl+F). Adakah setiap satu perkataan demi perkataan?</li><li>Adakah komen Bahasa Malaysia dikira dan diterjemah dengan betul?</li><li>Adakah urutan berdasarkan kiraan, atau berdasarkan betapa marahnya bunyi komen?</li><li>Adakah mana-mana petikan boleh mengenal pasti seseorang?</li><li>Bandingkan dengan rasa hati anda dalam Langkah 2. Apa yang mengejutkan anda?</li></ul><p>Jika ada yang tidak kena, betulkan dengan Draft, Diagnose, Direct:</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>In your [theme table / note / report], [what is wrong]. Change it to [what it should be], and keep everything else the same.</pre></div>
+</section>
+<section><h2><span class="num">4</span>Apa yang tidak sesuai? <span style="font-weight:400;color:var(--muted)">(1.5 minit)</span></h2>
+<p>Jadual tema menunjukkan apa yang biasa. Ia boleh menyembunyikan apa yang serius. Minta pengecualian.</p><h3><span class="tag quick">Prompt pantas</span>Prompt 3: prompt pengecualian</h3><div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Salin</button></div>
+<pre>Which comments didn't fit neatly into any theme? Then list any comment that suggests a safety, conduct or wellbeing concern that needs individual follow-up rather than being summarised. Quote each one exactly, give the respondent number, and say why.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Baca setiap komen yang ia tandakan. Adakah anda bersetuju setiap satu perlukan susulan individu?</li><li>Adakah ia terlepas apa-apa? Bandingkan dengan apa yang membimbangkan anda dalam Langkah 2.</li><li>Di mana komen ini bersembunyi dalam jadual tema?</li></ul></div><details><summary>Petunjuk</summary><p>Kebimbangan serius sering muncul di hujung aduan biasa. Baca semula ayat terakhir komen yang lebih panjang.</p></details>
+</section>
+<section><h2><span class="num">5</span>Nota sulit untuk HR <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Uruskan komen serius dahulu, dan jauhkan ia daripada laporan pengurusan.</p><h3><span class="tag quick">Prompt pantas</span>Prompt 4: nota sulit</h3><div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Salin</button></div>
+<pre>Using only the comments you flagged for individual follow-up, write a short confidential note to the HR Manager. For each one, give the respondent number, quote the comment exactly, and say why it needs individual follow-up rather than being included in a summary. Keep it factual and do not speculate about who is involved.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah setiap komen dipetik dengan tepat, dengan nombor respondennya?</li><li>Adakah nota itu berpegang pada fakta, tanpa meneka siapa yang terlibat?</li></ul></div>
+</section>
+<section><h2><span class="num">6</span><span class="tag crit">Prompt anda</span>Laporan pengurusan <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Kini rantai daripada jadual yang telah disahkan kepada laporan yang akan benar-benar dibaca pengurusan. <strong>Kali ini anda tulis prompt itu sendiri</strong>, dalam bahasa Inggeris.</p><p><strong>Apa yang pengurusan jangka (dua muka surat paling banyak):</strong></p><div class="table-wrap"><table><tr><th>Bahagian</th><th>Apa yang ia patut tunjukkan</th></tr><tr><td>Headline</td><td>Gambaran keseluruhan dalam beberapa ayat</td></tr><tr><td>Themes</td><td>Setiap tema dengan berapa orang menyebutnya, peratusan, sentimen dan purata skor kepuasan</td></tr><tr><td>Insights</td><td>Untuk tema teratas: apa yang data tunjukkan, apa maksudnya untuk perniagaan, dan buktinya</td></tr><tr><td>Recommendations</td><td>Senarai pendek yang disusun, setiap satu dengan pemilik dan langkah pertama</td></tr><tr><td>Limits</td><td>Apa yang tinjauan ini tidak boleh beritahu kita</td></tr></table></div><p>Dan ia mesti: menyusun mengikut nombor, bukan nada; menunjukkan apa yang fakta dan apa yang tafsiran; dan mengecualikan apa-apa yang sulit atau mengenal pasti seseorang.</p><p class="note"><strong>Petua:</strong> tulis sebagai prompt RCTF+C yang pendek. Rujuk "the verified theme table above" dan skor dalam Data B dan bukannya menampal data semula.</p><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah peratusan berjumlah lebih kurang 100%?</li><li>Pilih satu tema. Kira sendiri purata skor kepuasannya daripada Data B. Adakah ia sepadan?</li><li>Adakah sentimen setiap tema sepadan dengan apa yang orang sebenarnya tulis?</li><li>Adakah setiap pandangan disokong oleh kiraan dan petikan sebenar? Adakah apa-apa dipersembahkan sebagai fakta padahal pendapat?</li><li>Lihat kedudukan cadangan. Adakah ia mencerminkan berapa ramai terjejas, betapa teruk, atau kedua-duanya? Adakah kumpulan kecil yang sangat tidak puas hati diberi keutamaan yang betul?</li><li>Adakah bahagian "tidak boleh beritahu kita" masuk akal untuk tinjauan bulanan 30 orang?</li><li>Adakah apa-apa daripada nota sulit, atau apa-apa yang mengenal pasti seseorang, ada dalam laporan?</li><li>Adakah laporan memenuhi keperluan kualiti yang anda tulis dalam Langkah 1?</li></ul></div><label class="field" for="top3">Apa yang saya akan ubah sebelum ini sampai kepada pengurusan</label><textarea id="top3" data-save></textarea><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt laporan</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri.</p><div class="copy"><div class="copy-head"><span>Contoh prompt laporan</span><button type="button">Salin</button></div>
+<pre>Using only the verified theme table above and the satisfaction scores in Dataset B, write a management report for Thursday's meeting with these sections:
+
+1. Headline: three sentences on the overall picture.
+2. Theme overview: a table with Theme | Number of comments | % of the 30 responses | Overall sentiment (positive, mixed or negative) | Average satisfaction score for that theme's respondents. Show the respondent numbers used for each average.
+3. Key insights: for each of the top four themes, give the Finding (what the data shows), the Insight (what it means for the business) and the Evidence (the count and one short quote, word for word).
+4. Recommendations: up to five, ranked by how many people are affected and how serious the issue is. For each, suggest an owner and a first step.
+5. What this survey can't tell us: the limits of this data.
+
+Rules: rank by the numbers, not by how strongly comments are worded. Label anything that is interpretation rather than fact. Do not include anything from the confidential note, or anything that could identify anyone. British spelling. No more than two pages.</pre></div></details><details><summary>Pilihan: tamatkan dalam Word</summary><p>Salin laporan ke Word. Jika anda ada Copilot dalam Word, minta ia memformat laporan dengan tajuk dan jadual yang kemas, sambil mengekalkan setiap angka dan petikan seperti asal.</p></details><details><summary>Tersekat? Cuba ini mengikut turutan</summary><ol><li>Baca laporan sebagai pengurus yang tidak ikut tinjauan. Apa yang mereka akan fikir masalah terbesar? Adakah itu betul?</li><li>Baca sebagai orang yang menulis setiap komen yang ditandakan. Adakah mereka akan rasa selamat?</li><li>Teknik Modul 1 yang mana menyemak setiap fakta sebelum anda tandatangan? Gunakan pada kiraan, purata dan petikan.</li></ol></details>
+</section>
+<section><h2><span class="num">7</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Saya menjalankan semakan "sebelum anda tampal".</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Kiraan tema saya berjumlah 30, dan saya menyemak nombor responden sekurang-kurangnya satu tema.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Setiap petikan perkataan demi perkataan, termasuk komen Bahasa Malaysia.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Tema disusun mengikut berapa orang menyebutnya, bukan seberapa lantang.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Saya bertanya apa yang tidak sesuai, dan setiap komen yang perlukan susulan ada dalam nota sulit.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Tiada apa dalam laporan pengurusan yang boleh mengenal pasti sesiapa, atau mendedahkan nota sulit.</label></li><li><input type="checkbox" id="k8" data-save><label for="k8">Saya menyemak sekurang-kurangnya satu purata skor kepuasan sendiri.</label></li><li><input type="checkbox" id="k9" data-save><label for="k9">Setiap pandangan dalam laporan disokong oleh kiraan dan petikan sebenar.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Laporan memenuhi keperluan kualiti yang saya tetapkan dalam Langkah 1.</label></li></ul><p>Menanda kurang daripada tujuh? Kembali ke semakan di bawah Prompt 2.</p>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Semak sebelum anda tampal.</strong> Semakin peribadi data, semakin penting alat yang anda guna.</li><li><strong>Kiraan menjaga AI jujur.</strong> AI perasan perasaan yang kuat. Hanya kiraan menunjukkan berapa ramai berkongsinya.</li><li><strong>Petikan ialah bukti.</strong> Petikan yang dikemaskan bukan lagi suara pekerja itu.</li><li><strong>Tanya apa yang tidak sesuai.</strong> Ringkasan boleh mengubur satu komen yang paling penting.</li><li><strong>Sesetengah perkara bukan tema.</strong> Kebimbangan keselamatan atau tingkah laku pergi kepada seseorang, bukan ke dalam peratusan.</li><li><strong>Dalam HR, kerahsiaan identiti ialah sebahagian daripada ketepatan.</strong> Petikan yang betul tetapi mengenal pasti seseorang tetap satu kegagalan.</li><li><strong>Penemuan, pandangan, tindakan.</strong> Pisahkan apa yang data tunjukkan daripada apa yang anda fikir ia maksudkan.</li><li><strong>Berapa ramai dan seteruk mana.</strong> Kekerapan dan sentimen bersama memberitahu apa yang patut dibaiki dahulu.</li></ul><p class="note">Bulan depan: simpan Prompt 2 anda dalam Copilot supaya boleh digunakan semula pada tinjauan seterusnya.</p>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm5-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

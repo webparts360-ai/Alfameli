@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-1: Merancang respons RFQ dengan AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-1: Merancang respons RFQ dengan AI</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>14 minit</dd>
+    <dt>Alat</dt><dd>Microsoft 365 Copilot Chat</dd>
+    <dt>Hasil anda</dt><dd>Pelan satu muka surat untuk membalas RFQ, termasuk senarai soalan untuk dihantar kepada pelanggan</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda bekerja dalam pembangunan perniagaan (<em>business development</em>) di syarikat yang menyediakan katering dan pengurusan kem luar pesisir. Sebuah bakal pelanggan, <strong>Petrolaris Energy</strong>, baru menghantar <strong>RFQ</strong> (<em>request for quotation</em>, permintaan sebut harga). Anda ada <strong>10 hari bekerja</strong> untuk membalas.</p>
+<p>Sebelum sesiapa menulis respons, pasukan bida yang baik akan merancang dahulu: apa yang diminta, apa yang kita belum tahu, siapa buat apa, dan apa yang boleh menjadi masalah.</p>
+<p><strong>Ketegangan dalam permintaan ini:</strong> pelanggan mahukan harga, rujukan dan jadual yang ketat, tetapi pasukan dalaman anda mungkin ada had sendiri. Tugas anda ialah mengenal pasti di mana kedua-duanya bertembung, sebelum menulis satu perkataan pun dalam respons.</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<p>Tiada fail untuk dimuat turun. Semua data berada dalam kotak salin di bawah.</p><div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Data A: e-mel RFQ</strong></td><td>E-mel pendek daripada pelanggan yang menyatakan apa yang mereka mahu</td><td>Bahagian perolehan Petrolaris Energy</td><td>Langkah 1</td></tr><tr><td><strong>Data B: nota dalaman</strong></td><td>Tiga nota ringkas daripada rakan sekerja (Operasi, BD dan Kewangan) tentang keupayaan dan kekangan kita sendiri</td><td>Rakan sekerja anda, selepas anda memajukan RFQ kepada mereka</td><td>Langkah 2 dan 3</td></tr></table></div><p>Kedua-dua data dirujuk silang dalam latihan ini. RFQ memberitahu anda apa yang pelanggan mahu. Nota dalaman memberitahu anda apa yang syarikat anda boleh sebenarnya lakukan. Jurang di antara keduanya ialah tempat risiko bersembunyi.</p>
+</section>
+<section><h2>Tugas anda</h2>
+<p>Anda akan menggunakan AI dalam <strong>empat cara berbeza</strong>. Inilah teknik baharu dalam latihan ini:</p><div class="table-wrap"><table><tr><th>Peranan AI</th><th>Apa yang AI lakukan</th></tr><tr><td>Guru</td><td>Membantu anda memahami permintaan dengan cepat</td></tr><tr><td>Penemu bual</td><td>Bertanya kepada anda apa yang diperlukan, bukannya meneka</td></tr><tr><td>Perancang</td><td>Menukar maklumat yang bertaburan kepada pelan berstruktur</td></tr><tr><td>Pengkritik</td><td>Menunjukkan pelan anda dari sisi meja pelanggan</td></tr></table></div><p>Sepanjang latihan, <strong>anda kekal sebagai pembuat keputusan</strong>. Baca semua jawapan AI sebelum bergerak ke langkah seterusnya.</p>
+</section>
+<section><h2>Dua jenis prompt dalam latihan ini</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Berapa banyak</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Empat (Prompt 1, 2, 4 dan 5)</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong>, menggunakan RCTF+C daripada Modul 2</td><td>Satu (Prompt 3)</td></tr></table></div><p>Prompt pantas melakukan tugas ringkas. Prompt kritikal ialah tempat kerja sebenar berlaku, dan kualiti pelan anda bergantung padanya. Luangkan masa anda di situ.</p>
+<p><strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Tekan butang <strong>Salin</strong> di penjuru kanan atas kotak, kemudian tampal ke dalam Copilot Chat. Prompt dan data kekal dalam bahasa Inggeris kerana AI menjawab dalam bahasa yang sama dengan prompt anda dan kerana RFQ ialah dokumen Inggeris.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 2</td><td>Langkah 1: Fahami RFQ (Prompt 1)</td></tr><tr><td>2 hingga 4</td><td>Langkah 2: Baca nota dalaman</td></tr><tr><td>4 hingga 12</td><td>Langkah 3: Rancang dengan AI (Prompt 2 hingga 5)</td></tr><tr><td>12 hingga 14</td><td>Langkah 4: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka <strong>sembang Copilot Chat yang baharu</strong>.</li><li>Gunakan <strong>satu sembang untuk kelima-lima prompt</strong>. Setiap prompt dibina atas jawapan sebelumnya, jadi jangan mulakan sembang baharu di tengah jalan.</li><li><strong>Baca setiap jawapan sebelum bergerak.</strong> Soalan semakan di bawah setiap prompt memberitahu apa yang perlu diperhatikan.</li></ul><p class="note">Di tempat kerja, anda akan mengarahkan Copilot terus ke e-mel dan mesej rakan sekerja, seperti yang dilatih dalam Modul 3. Hari ini, anda tampal sahaja.</p>
+</section>
+<section><h2><span class="num">1</span>Fahami RFQ <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI menyenaraikan apa yang pelanggan jangka daripada kita, dan apa yang RFQ tidak beritahu.</p><div class="copy"><div class="copy-head"><span>Data A: e-mel RFQ</span><button type="button">Salin</button></div>
+<pre>From: procurement@petrolarisenergy.com
+Subject: RFQ, Offshore Catering and Camp Management
+
+We are seeking a quotation for offshore catering and camp management services for our platform operations. Mobilisation required within 45 days of contract award. Crew headcount will range between 80 and 120 depending on operational phase. Please provide pricing and references from similar offshore contracts. Submissions are due within 10 working days of this email.</pre></div><ol><li><strong>Baca e-mel itu sekali sendiri</strong> (30 saat).</li><li><strong>Salin Prompt 1</strong> ke dalam Copilot Chat.</li><li><strong>Salin Data A</strong> dan tampal terus di bawah prompt, dalam mesej yang sama. Kemudian hantar.</li></ol><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here is an RFQ we received. List everything the client expects from us. Then list anything important the RFQ doesn't tell us.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah setiap item dalam senarai AI benar-benar ada dalam e-mel? Potong apa-apa yang AI tambah tetapi tiada dalam e-mel.</li><li>Adakah senarai "RFQ tidak beritahu kita" munasabah? Adakah ada yang tertinggal?</li></ul></div><label class="field" for="s1">Apa yang pelanggan jangka (tulis item yang telah anda semak)</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Baca nota dalaman <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Anda telah memajukan RFQ kepada tiga rakan sekerja. Inilah jawapan mereka. Nota ini menerangkan <strong>keupayaan dan kekangan syarikat anda sendiri</strong>.</p><div class="copy"><div class="copy-head"><span>Data B: nota dalaman</span><button type="button">Salin</button></div>
+<pre>Ops: We can cover up to 100 crew from current staff. Above 100, we need about 60 days to recruit and certify extra crew.
+
+BD: Two past offshore contracts could serve as references, but we haven't yet asked those clients for permission.
+
+Finance: Pricing needs sign-off from the GM, who is travelling for 4 of the next 10 working days.</pre></div><p><strong>Tugas anda:</strong> fikirkan maksud setiap nota terhadap respons kita. <strong>Anda tidak perlukan AI untuk langkah ini.</strong> Ini pemikiran anda sendiri, dan anda akan menggunakannya untuk menilai pelan AI kemudian.</p>
+<p><strong>Cara melakukannya.</strong> Untuk setiap nota, tanya tiga soalan:</p><ol><li><strong>Jangkaan pelanggan yang mana</strong> (daripada Langkah 1) terjejas oleh nota ini?</li><li>Boleh tak ia <strong>menghalang kita</strong> memenuhi jangkaan itu, atau melewatkan respons kita?</li><li>Jika ya, apa yang perlu kita <strong>buat atau tanya</strong> untuk mengatasinya?</li></ol><p>Isi jadual ini:</p><div class="table-wrap"><table><tr><th>Nota</th><th>Jangkaan pelanggan yang mana terjejas?</th><th>Boleh timbulkan masalah? Bagaimana?</th><th>Apa yang perlu kita buat atau tanya?</th></tr><tr><td>Ops</td><td><textarea id="t1a" data-save aria-label="t1a"></textarea></td><td><textarea id="t1b" data-save aria-label="t1b"></textarea></td><td><textarea id="t1c" data-save aria-label="t1c"></textarea></td></tr><tr><td>BD</td><td><textarea id="t2a" data-save aria-label="t2a"></textarea></td><td><textarea id="t2b" data-save aria-label="t2b"></textarea></td><td><textarea id="t2c" data-save aria-label="t2c"></textarea></td></tr><tr><td>Kewangan</td><td><textarea id="t3a" data-save aria-label="t3a"></textarea></td><td><textarea id="t3b" data-save aria-label="t3b"></textarea></td><td><textarea id="t3c" data-save aria-label="t3c"></textarea></td></tr></table></div><details><summary>Tersekat? Petunjuk</summary><ul><li><strong>Cari nombor.</strong> Ada nombor yang muncul dalam RFQ dan juga dalam nota. Letakkan bersebelahan. Adakah ia sepadan?</li><li><strong>Cari masa.</strong> RFQ ada dua had masa. Nota ada dua lagi. Yang mana boleh bertembung?</li><li><strong>Cari orang.</strong> Sebahagian daripada apa yang pelanggan mahu bergantung pada seseorang di luar pasukan kita, atau seseorang yang tidak sentiasa ada.</li><li><strong>Cari apa yang pelanggan tak sebut.</strong> Kembali ke senarai "RFQ tidak beritahu kita" daripada Langkah 1. Adakah nota membuatkan jurang itu lebih mendesak?</li></ul></details><p>Simpan jadual ini. Anda akan menggunakannya untuk menilai pelan AI dalam Langkah 3.</p>
+</section>
+<section><h2><span class="num">3</span>Rancang dengan AI <span style="font-weight:400;color:var(--muted)">(8 minit)</span></h2>
+<h3><span class="tag quick">Prompt pantas</span>Prompt 2: AI sebagai penemu bual (kira-kira 1.5 minit)</h3><p><strong>Apa yang berlaku:</strong> daripada AI membuat andaian, AI bertanya kepada anda dahulu tentang situasi syarikat anda. Ini teknik "tanya, jangan teka" daripada Modul 1.</p><p>Salin dan tampal ke dalam sembang yang sama:</p><div class="copy"><div class="copy-head"><span>Prompt 2</span><button type="button">Salin</button></div>
+<pre>We need to plan our response. Before you suggest anything, ask me the questions you need answered about our own situation.</pre></div><p><strong>Kini jawab soalan AI</strong> menggunakan Data B. Anda boleh menyalin baris daripada kotak Data B di Langkah 2.</p><p><strong>Peraturan menjawab:</strong></p><ul><li>Jawab hanya dengan apa yang anda benar-benar tahu daripada Data B.</li><li>Jika jawapannya tiada dalam Data B, katakan "We don't know yet." Itu jawapan yang baik. Ia mungkin menjadi soalan untuk pelanggan.</li><li>Jangan reka fakta untuk mengisi jurang. Jika anda reka, AI akan membina pelan atas tekaan anda.</li></ul><p>Jika anda tidak pasti cara menyatakan perkara yang tidak diketahui, salin ini:</p><div class="copy"><div class="copy-head"><span>Jawapan untuk perkara yang tidak diketahui</span><button type="button">Salin</button></div>
+<pre>We don't know yet. Please treat this as an open question and include it in the list of clarification questions for the client.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah anda menjawab setiap soalan?</li><li>Adakah anda mereka-reka apa-apa? Jika ya, kembali dan betulkan.</li></ul></div>
+</section>
+<section class="critical"><h2><span class="tag crit">Prompt kritikal</span>Prompt 3: Prompt kritikal <span style="font-weight:400;color:var(--muted)">(kira-kira 3.5 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Semua sebelum ini ialah persediaan. Prompt ini menukarkannya kepada pelan. Ambil masa dan isi setiap baris.</p></div><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri.</strong> Gunakan panduan ini. Tulis prompt anda dalam bahasa Inggeris.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa dalam syarikat yang biasanya merancang respons bida? Minta AI bertindak sebagai orang itu.</td></tr><tr><td><strong>Context</strong></td><td>Apa yang AI perlu tahu? Ia sudah ada RFQ dan jawapan anda dalam sembang ini, jadi anda boleh merujuknya ("Use the RFQ and my answers above"). Ingatkan ia tentang tarikh akhir.</td></tr><tr><td><strong>Task</strong></td><td>Apa sebenarnya yang anda mahu ia hasilkan? Jadilah spesifik: pelan untuk apa, siap bila?</td></tr><tr><td><strong>Format</strong></td><td>Apa yang anda perlukan di hadapan anda untuk menjalankan bida ini esok? Pertimbangkan: aliran kerja, pemilik setiap satu, tarikh penting, risiko, dan soalan untuk dihantar kepada pelanggan. Berapa panjang?</td></tr><tr><td><strong>Constraints</strong></td><td>Peraturan apa yang mesti diikuti? Fikirkan: bagaimana anda akan halang ia mereka fakta? Bagaimana anda akan lihat bahagian mana yang ia teka? Ejaan?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Baris Format menyenaraikan apa yang mesti ada dalam pelan.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Baris Constraints menghalang AI mereka fakta.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Baris Constraints membuat AI menunjukkan apa yang ia andaikan.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are an experienced bid manager.
+Context: Use the RFQ and my answers above. We have 10 working days to submit.
+Task: Build a plan for responding to this RFQ within the deadline.
+Format: A one-page plan with workstreams, owners, key dates, risks, and a list of clarification questions to send the client.
+Constraints: British spelling. Only use facts I've given you. Mark anything you've assumed.</pre></div><p>Bagaimana prompt anda berbanding? Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul, hanya prompt yang memberi AI segala yang ia perlukan.</p></details><p><strong>4. Semak pelan sebelum bergerak:</strong></p><ul><li>Lihat tarikh. Adakah pelan berfungsi mengikut setiap nota dalam Data B?</li><li>Adakah GM ada apabila pelan memerlukan kelulusan?</li><li>Apa yang AI tandakan sebagai andaian? Adakah anda bersetuju dengan setiap satu?</li><li>Adakah soalan pelanggan merangkumi semua yang ada dalam senarai "RFQ tidak beritahu kita" dari Langkah 1?</li><li>Adakah pelan menangani setiap masalah dalam jadual Langkah 2 anda?</li></ul><p><strong>Jika pelan terlepas sesuatu,</strong> jangan mula semula. Beritahu AI dengan tepat apa yang perlu dibetulkan (Draft, Diagnose, Direct daripada Modul 2). Salin ini dan isi jurang:</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>Your plan doesn't address [what's missing]. Revise the plan to deal with it, and keep everything else the same.</pre></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 4: AI sebagai pengkritik <span style="font-weight:400;color:var(--muted)">(kira-kira 1 minit)</span></h2>
+<p>Anda tidak boleh duduk di sebelah meja pelanggan. AI boleh. Biar ia cari kelemahan sebelum pelanggan melakukannya. Salin dan tampal ke dalam sembang yang sama:</p><div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Salin</button></div>
+<pre>Now act as the client's evaluator. Critique this plan. What is weak, missing or risky? Be direct.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah kritikan itu mengangkat sesuatu yang anda belum fikirkan?</li></ul></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 5: anda cabar AI <span style="font-weight:400;color:var(--muted)">(kira-kira 2 minit)</span></h2>
+<p>Penaakulan AI patut diteliti sama seperti draf-drafnya. Salin dan tampal ke dalam sembang yang sama:</p><div class="copy"><div class="copy-head"><span>Prompt 5</span><button type="button">Salin</button></div>
+<pre>Which of your criticisms are based on the RFQ and our notes, and which are your own assumptions? Rank the three most important to fix.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah anda bersetuju dengan tiga teratas pilihannya?</li><li>Adakah anda akan menyusun mana-mana yang berbeza? Kenapa?</li></ul></div><label class="field" for="top3">Tiga perkara teratas yang saya akan baiki</label><textarea id="top3" data-save></textarea><details><summary>Tersekat? Cuba petunjuk ini mengikut turutan</summary><ol><li>Baca pelan seolah-olah anda GM. Adakah anda akan meluluskan tarikh-tarikh ini?</li><li>Kembali ke jadual Langkah 2. Adakah setiap masalah yang anda jumpa ditangani dalam pelan?</li><li>Teknik Modul 1 yang mana menukar tekaan AI kepada soalan? Di mana anda boleh gunakannya di sini?</li></ol></details>
+</section>
+<section><h2><span class="num">4</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Jalankan senarai semak ini sebelum sesi bincang. Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Pelan saya menangani segala yang ada dalam senarai pelanggan dari Langkah 1.</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Setiap nota dalam Data B tercermin dalam pelan: tarikh, pemilik, risiko atau soalan.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Setiap fakta dalam pelan boleh dijejak kepada Data A, Data B atau jawapan saya sendiri. Tiada yang direka.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Apa-apa yang AI andaikan sama ada telah saya sahkan atau ditukar kepada soalan untuk pelanggan.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Tarikh-tarikh penting dikira ke belakang daripada tarikh akhir 10 hari dan memberi ruang untuk kelulusan.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Saya ada senarai soalan penjelasan yang boleh dihantar kepada pelanggan hari ini.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Saya mencabar sekurang-kurangnya satu perkara yang AI katakan, bukannya menerimanya.</label></li></ul><p><strong>Jika anda menanda kurang daripada lima,</strong> kembali ke semakan di bawah Prompt 3.</p>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Prompt ringkas untuk tugas ringkas.</strong> Memahami e-mel atau meminta kritikan hanya perlukan satu baris.</li><li><strong>Bina prompt kritikal dengan betul.</strong> Apabila hasilnya penting, RCTF+C berbaloi dengan dua minit tambahan.</li><li><strong>Berfikir sendiri dahulu.</strong> Jadual Langkah 2 anda ialah apa yang membolehkan anda menilai sama ada pelan AI itu bagus.</li><li><strong>Biar ia bertanya sebelum menjawab.</strong> Soalannya sering mendedahkan apa yang anda belum fikirkan.</li><li><strong>"We don't know yet" ialah jawapan yang sah.</strong> Perkara yang tidak diketahui menjadi soalan untuk pelanggan, bukan tekaan dalam pelan anda.</li><li><strong>Kritik si pengkritik.</strong> Malah kritikan AI boleh mengandungi andaian.</li><li><strong>Pertimbangan kekal pada anda.</strong> AI berfikir bersama anda, bukan untuk anda.</li></ul>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm1-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

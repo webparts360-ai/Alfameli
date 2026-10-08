@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-4: Perbandingan Sebut Harga Perolehan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-4: Perbandingan Sebut Harga Perolehan</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>12 minit</dd>
+    <dt>Alat</dt><dd>Microsoft 365 Copilot Chat, kemudian Excel (pilihan)</dd>
+    <dt>Hasil anda</dt><dd>Jadual perbandingan sebut harga, dan senarai pendek dengan risiko, nilai terpencil dan soalan susulan</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda ialah pegawai perolehan (<em>procurement officer</em>). Anda menghantar <strong>RFQ</strong> untuk sarung tangan, kasut keselamatan dan <em>coverall</em>. <strong>Enam pembekal</strong> telah membalas, dan setiap satu dalam format yang berbeza: ada e-mel panjang, ada jadual, ada mesej pendek bergaya WhatsApp. Pengurus anda mahu semuanya dalam <strong>satu jadual perbandingan</strong> sebelum waktu makan tengah hari.</p>
+<p><strong>Ketegangan:</strong> menaip semula enam balasan yang bersepah ke dalam jadual itu membosankan, perlahan dan mudah tersilap. Ini tepat jenis kerja yang AI paling baik lakukan, <em>jika</em> anda memberitahunya dengan tepat apa yang anda mahu dan menyemak apa yang ia berikan. Perhatikan bahawa pembekal tidak menawarkan benda yang sama dengan cara yang sama: unit, cukai dan syarat berbeza.</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Data A: RFQ</strong></td><td>RFQ yang kita hantar: tiga item dengan kuantiti, dan empat perkara yang pembekal mesti nyatakan bagi setiap item (harga seunit, SST, tempoh penghantaran, kesahan sebut harga)</td><td>Jabatan perolehan kita</td><td>Langkah 1 dan 3</td></tr><tr><td><strong>Data B: balasan pembekal</strong></td><td>Enam balasan sebenar yang dicampur dalam satu kotak, dalam gaya penulisan berbeza. Ada yang tidak jawab semua, ada yang guna unit lain, ada yang sudah luput</td><td>Enam pembekal</td><td>Langkah 2 dan 3</td></tr></table></div><p><strong>Istilah yang digunakan:</strong></p><ul><li><strong>RFQ:</strong> <em>request for quotation</em>, permintaan sebut harga</li><li><strong>SST:</strong> cukai jualan dan perkhidmatan</li><li><strong>Kesahan (<em>validity</em>):</strong> berapa lama pembekal akan mengekalkan harga mereka</li><li><strong>Pesanan minimum:</strong> kuantiti terkecil yang pembekal sanggup jual pada harga itu</li></ul>
+</section>
+<section><h2>Tugas anda</h2>
+<p>Teknik <strong>baharu</strong> dalam latihan ini:</p><div class="table-wrap"><table><tr><th>Teknik</th><th>Maksudnya</th></tr><tr><td>Prompt skema (<em>schema prompting</em>)</td><td>Beritahu AI lajur yang tepat, urutannya dan nilai yang dibenarkan. Ia mengisi struktur anda dan tidak mencipta struktur sendiri.</td></tr><tr><td>Peraturan untuk data bersepah</td><td>Beritahu ia apa yang perlu dibuat apabila maklumat tiada, tidak jelas atau dalam unit lain, supaya ia menandakan dan tidak meneka.</td></tr><tr><td>Rantaian prompt (<em>prompt chaining</em>)</td><td>Pecahkan kerja kepada peringkat. Semak hasil satu peringkat, kemudian bina peringkat seterusnya di atasnya, supaya AI bekerja daripada data yang telah disahkan, bukan input mentah.</td></tr><tr><td>Pensampelan semakan</td><td>Anda tidak boleh menyemak setiap baris keluaran pukal. Pilih beberapa secara rawak dan jejaki ke sumber.</td></tr></table></div>
+</section>
+<section><h2>Dua jenis prompt</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Yang mana</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Prompt 1 dan 3</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong>, menggunakan RCTF+C daripada Modul 2</td><td>Prompt 2, prompt pengekstrakan</td></tr></table></div><p>Luangkan masa anda pada prompt kritikal. <strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Tekan butang <strong>Salin</strong>, kemudian tampal ke dalam Copilot Chat. Prompt dan data kekal dalam bahasa Inggeris; arahan dalam panduan ini dalam Bahasa Malaysia.</p><p>Prompt kritikal lebih penting daripada biasa di sini, kerana cadangan dalam Langkah 4 dibina atas hasilnya.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 2</td><td>Langkah 1: Fahami apa yang sebut harga lengkap perlukan (Prompt 1)</td></tr><tr><td>2 hingga 4</td><td>Langkah 2: Lihat balasan dan reka jadual anda</td></tr><tr><td>4 hingga 9</td><td>Langkah 3: Ekstrak dan semak sampel (Prompt 2)</td></tr><tr><td>9 hingga 11</td><td>Langkah 4: Rantai kepada cadangan (Prompt 3)</td></tr><tr><td>11 hingga 12</td><td>Langkah 5: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka sembang Copilot Chat yang baharu dan gunakannya untuk setiap langkah.</li><li>Baca setiap jawapan sebelum bergerak.</li></ul>
+</section>
+<section><h2><span class="num">1</span>Fahami apa yang sebut harga lengkap perlukan <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI menyenaraikan apa yang sebut harga lengkap mesti ada, berdasarkan RFQ, dan mencadangkan keperluan kualiti untuk jadual anda.</p><ol><li>Baca RFQ yang kita hantar.</li></ol><div class="copy"><div class="copy-head"><span>Data A: RFQ</span><button type="button">Salin</button></div>
+<pre>From: Procurement &lt;procurement@ourcompany.example&gt;
+Sent: Monday 9 November 2026
+Subject: RFQ: Site PPE, reply by 13 November
+
+Dear Supplier,
+
+Please quote for the following, delivered to our Kemaman supply base:
+
+1. Nitrile-coated work gloves, size L: 600 pairs
+2. Steel-toe safety boots, sizes 7 to 11: 80 pairs
+3. Fire-retardant coveralls, sizes M to XL: 120 pieces
+
+Please state for each item:
+- Unit price in RM
+- Whether SST is included
+- Delivery lead time
+- How long your quote is valid (minimum 30 days)
+
+Regards,
+Procurement</pre></div><ol start="2"><li>Salin Prompt 1, tampal Data A di bawahnya dalam mesej yang sama, dan hantar.</li></ol><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here is an RFQ we sent to vendors. List everything each vendor needs to tell us for their quote to be complete and comparable. Then suggest quality requirements for a comparison table of their replies.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah senarainya sepadan dengan apa yang RFQ benar-benar minta?</li><li>Keperluan kualiti yang mana akan anda gunakan? Tulis di bawah.</li></ul></div><label class="field" for="s1">Apa yang sebut harga lengkap perlukan, dan keperluan kualiti saya untuk jadual</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Lihat balasan dan reka jadual anda <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Ini enam balasan. <strong>Jangan baca semuanya secara terperinci.</strong> Imbas untuk melihat betapa berbezanya mereka.</p><div class="copy"><div class="copy-head"><span>Data B: balasan pembekal</span><button type="button">Salin</button></div>
+<pre>=== Reply from Jaya Safety Supply ===
+Dear Procurement,
+Thank you for your RFQ. Gloves are RM 4.20 per pair, safety boots RM 118.00 per pair and coveralls RM 89.00 each. All prices include SST. Delivery within 7 working days of PO. This quote is valid for 30 days from 10 November 2026.
+Best regards, Aishah, Jaya Safety Supply
+
+=== Reply from Pantai Industrial ===
+Hi, please see our prices below.
+
+Item | Unit | Price (RM)
+Nitrile gloves L | Box of 12 pairs | 46.80
+Safety boots steel toe | Pair | 125.00
+FR coveralls | Piece | 85.00
+
+All prices exclude SST. Lead time 10 days. Valid until 30 November 2026.
+Kevin, Pantai Industrial
+
+=== Reply from Mega Protect ===
+hi
+gloves 4.00/pr, boots 110/pr, coverall 92/pc incl SST. can deliver in 2 weeks.
+tq
+Raj
+
+=== Reply from Borneo Workwear ===
+Dear Sir/Madam,
+Thank you for your enquiry. Unfortunately we do not carry work gloves. For the other items please refer to our current price list (dated 1 October 2026, prices valid for 30 days): steel-toe safety boots RM 105.00 per pair, FR coveralls RM 95.00 per piece. Prices include SST. Delivery 5 working days.
+Regards, Borneo Workwear Sales Team
+
+=== Reply from Sinar Utama Trading ===
+Good afternoon,
+We are pleased to offer nitrile gloves at RM 3.90 per pair (minimum order 1,000 pairs), steel-toe boots at RM 120.00 per pair and FR coveralls at RM 88.00 per piece. Delivery 10 working days. Quote valid 45 days.
+Thank you, Lim Siew Ling, Sinar Utama Trading
+
+=== Reply from Kemaman Supplies ===
+Dear Procurement Team,
+We can supply all three items as specified. Total for everything: RM 27,500.00, including SST and delivery to your supply base. Delivery in 3 weeks. Valid 30 days.
+Regards, Azlan, Kemaman Supplies</pre></div><p><strong>Tugas anda:</strong> tentukan rupa jadual perbandingan anda, dan apa yang AI patut buat apabila balasan bersepah. AI akan mengikut reka bentuk anda, jadi di sinilah kualiti datang.</p><div class="table-wrap"><table><tr><th>Soalan</th><th>Keputusan saya</th></tr><tr><td>Lajur apa yang saya perlukan, dalam urutan apa?</td><td><textarea id="d1" data-save aria-label="d1"></textarea></td></tr><tr><td>Apa yang ia patut tulis apabila sesuatu tiada?</td><td><textarea id="d2" data-save aria-label="d2"></textarea></td></tr><tr><td>Apa yang ia patut buat apabila pembekal guna unit berbeza, atau melayan cukai secara berbeza?</td><td><textarea id="d3" data-save aria-label="d3"></textarea></td></tr><tr><td>Apa yang ia patut tandakan untuk saya susuli?</td><td><textarea id="d4" data-save aria-label="d4"></textarea></td></tr></table></div><details><summary>Tersekat? Petunjuk</summary><ul><li><strong>Bandingkan unit.</strong> Adakah setiap pembekal meletakkan harga pada benda yang sama? Perhatikan sarung tangan dengan teliti.</li><li><strong>Bandingkan tarikh.</strong> Bila setiap sebut harga luput? Adakah mana-mana sudah lapuk?</li><li><strong>Cari yang tiada.</strong> Balasan mana yang tidak menjawab semua yang RFQ minta?</li><li><strong>Cari syarat.</strong> Adakah mana-mana harga hanya terpakai jika kita membuat sesuatu atau membeli jumlah tertentu?</li><li><strong>Putuskan tentang pengiraan.</strong> Patutkah AI menukar atau mengira apa-apa, atau hanya menyalin apa yang pembekal tulis? Apa risiko kedua-duanya?</li></ul></details>
+</section>
+<section class="critical"><h2><span class="num">3</span><span class="tag crit">Prompt kritikal</span>Prompt 2: Prompt kritikal, pengekstrakan <span style="font-weight:400;color:var(--muted)">(4 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Bina dengan teliti. Dalam Langkah 4, cadangan dibina atas jadual ini, jadi sebarang kesilapan di sini terbawa ke hadapan. Letakkan reka bentuk Langkah 2 anda ke dalamnya.</p></div><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri</strong> (dalam bahasa Inggeris). Gunakan panduan ini.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa yang biasanya membina perbandingan sebut harga?</td></tr><tr><td><strong>Context</strong></td><td>Apa yang anda akan tampal? RFQ dan balasan.</td></tr><tr><td><strong>Task</strong></td><td>Apa yang anda mahu semula: jadual sahaja, atau soalan susulan juga?</td></tr><tr><td><strong>Format</strong></td><td>Ini skema. Senaraikan lajur tepat anda mengikut urutan. Berapa baris bagi setiap pembekal? Nilai apa dibenarkan dalam setiap lajur?</td></tr><tr><td><strong>Constraints</strong></td><td>Ini peraturan anda untuk data bersepah, daripada Langkah 2. Maklumat tiada? Unit atau cukai berbeza? Pengiraan? Meneka?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Format menyenaraikan lajur tepat dalam urutan tetap.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Constraints memberitahu AI apa yang perlu dibuat dengan maklumat yang tiada atau tidak jelas.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Constraints menghalang AI menukar atau mengira harga di peringkat ini.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are a procurement officer preparing a quote comparison.
+Context: Below are the RFQ we sent and the replies from six vendors.
+Task: Extract every quote into one comparison table, then list the follow-up questions for each vendor.
+Format: One row per vendor per item, with these columns in this order: Vendor | Item | Price as quoted | Unit as quoted | SST (Included / Excluded / Not stated) | Delivery as quoted | Valid until | Flags. After the table, a short list of follow-up questions for each vendor.
+Constraints: Copy every figure exactly as the vendor wrote it. Do not convert units, currency or tax, and do not calculate anything. Write "Not stated" for anything missing and never guess. In Flags, note anything that stops a like-for-like comparison, such as a different unit, tax treatment, minimum order, partial quote, expired or missing validity, or a lump sum. British spelling.
+
+[paste the RFQ]
+[paste Dataset B]</pre></div><p>Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul.</p></details><p><strong>4. Tampal RFQ (Data A) dan Data B di bawah prompt anda, kemudian hantar.</strong></p><p><strong>5. Semak sampel.</strong> Anda tidak boleh menyemak setiap baris jadual besar, jadi ambil sampel:</p><ul><li>Pilih dua pembekal secara rawak. Semak setiap angka dalam baris mereka terhadap balasan mereka dalam Data B.</li><li>Adakah setiap "Not stated" benar-benar tiada dalam balasan?</li><li>Adakah ia menyalin setiap harga dengan tepat, atau ia menukar atau mengira sesuatu?</li><li>Adakah setiap baris yang tidak boleh dibandingkan sama-sama ditandakan?</li></ul><p>Jika ada yang tidak kena, jangan mula semula. Betulkan dengan Draft, Diagnose, Direct:</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>In your [table / recommendation], [what is wrong]. Change it to [what it should be], and keep everything else the same.</pre></div><details><summary>Pilihan: pindahkan jadual ke Excel</summary><p>Salin jadual daripada Copilot Chat dan tampal ke helaian Excel kosong. Jika anda ada Copilot dalam Excel, minta ia menyerlahkan setiap baris yang mempunyai tanda. Excel ialah tempat anda akan menyusun, menapis dan menjumlahkan harga kemudian.</p></details>
+</section>
+<section><h2><span class="num">4</span>Rantai kepada cadangan <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p>Jadual anda telah disemak. Sekarang bina di atasnya. Daripada meminta AI membaca enam balasan bersepah dan mencadangkan sekali gus, anda minta ia bekerja <strong>hanya daripada jadual yang telah anda sahkan</strong>. Itulah <em>prompt chaining</em>.</p><p>Hantar ini dalam sembang yang sama:</p><h3><span class="tag quick">Prompt pantas</span>Prompt 3: daripada jadual kepada cadangan</h3><div class="copy"><div class="copy-head"><span>Prompt 3</span><button type="button">Salin</button></div>
+<pre>Using only the table above, check each vendor against every requirement in the RFQ and mark it Pass, Fail or Unclear. Then shortlist up to two vendors with reasons, and list the risks and outliers. Where you need to convert a price to compare it, show the working in a separate column. The final decision is mine.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah senarai pendek bergantung pada apa-apa yang tiada dalam jadual anda?</li><li>Pilih satu penukaran harga dan semak pengiraannya sendiri.</li><li>Adakah setiap sebut harga yang tidak boleh dibandingkan sama-sama dikecualikan atau ditandakan, dan bukannya diberi kedudukan secara senyap?</li><li>Berapa pembekal sebenarnya lulus setiap keperluan? Apa yang itu beritahu anda tentang langkah seterusnya?</li><li>Adakah ia meninggalkan keputusan akhir kepada anda?</li></ul></div><label class="field" for="top3">Senarai pendek saya, dan apa yang saya akan tanya pembekal sebelum membuat keputusan</label><textarea id="top3" data-save></textarea><details><summary>Tersekat? Cuba ini mengikut turutan</summary><ol><li>Baca senarai pendek seperti pengurus anda. Apa soalan pertama mereka?</li><li>Kembali ke keputusan Langkah 2. Adakah cadangan menghormati setiap peraturan yang anda tetapkan?</li><li>Teknik Modul 1 yang mana menyemak setiap fakta sebelum anda tandatangan? Gunakan pada cadangan.</li></ol></details>
+</section>
+<section><h2><span class="num">5</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Prompt saya menetapkan lajur tepat, dalam urutan tetap.</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Prompt saya memberitahu AI apa yang perlu dibuat dengan maklumat yang tiada atau tidak jelas.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Setiap harga dalam jadual saya sama seperti yang pembekal sebut.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Setiap sebut harga yang tidak boleh dibandingkan sama-sama ditandakan.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Saya menyemak sampel sekurang-kurangnya dua pembekal terhadap balasan mereka.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Saya menyemak jadual sebelum meminta cadangan.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Saya menyemak sekurang-kurangnya satu penukaran harga dalam cadangan sendiri.</label></li><li><input type="checkbox" id="k8" data-save><label for="k8">Keputusan akhir kekal pada saya.</label></li></ul><p>Menanda kurang daripada lima? Kembali ke semakan di bawah Prompt 2.</p>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Beri AI struktur anda.</strong> Skema menukar balasan bersepah kepada jadual yang boleh dipercayai dan dibandingkan.</li><li><strong>Peraturan mengalahkan harapan.</strong> Beritahu ia apa yang perlu dibuat dengan data yang tiada, tidak jelas atau berbeza, atau ia akan memutuskan untuk anda.</li><li><strong>Salin dahulu, kira kemudian.</strong> Pisahkan pengekstrakan dan pengiraan supaya anda boleh menyemak setiap satu.</li><li><strong>Rantai, jangan sumbat.</strong> Ekstrak, semak, kemudian cadang. Setiap peringkat dibina atas keluaran yang telah anda sahkan.</li><li><strong>Ambil sampel keluaran pukal.</strong> Semak beberapa baris secara rawak, setiap kali.</li><li><strong>AI menyenarai pendek, anda memutuskan.</strong> Cadangan ialah input kepada keputusan anda, bukan keputusannya.</li></ul><p class="note">Minggu depan: simpan prompt pengekstrakan anda dalam Copilot supaya boleh digunakan semula pada kumpulan balasan seterusnya.</p>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm4-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

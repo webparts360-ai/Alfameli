@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan 4-3: Penyelarasan Syif dan Tapak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#F5F7F8; --paper:#FFFFFF; --ink:#1B2A33; --muted:#51626D; --line:#D5DDE2;
+  --sea:#0E6E73; --sea-soft:#E3F1F1; --amber:#A8660A; --amber-soft:#FDF3E1;
+  --box:#EEF2F4; --box-ink:#1B2A33;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+    --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+    --box:#1F2B32; --box-ink:#E4EBEE;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171B; --paper:#172127; --ink:#E4EBEE; --muted:#A3B3BB; --line:#2E3C44;
+  --sea:#5BB8BC; --sea-soft:#17312F; --amber:#E0A847; --amber-soft:#2E2413;
+  --box:#1F2B32; --box-ink:#E4EBEE;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:760px;margin:0 auto;padding:40px 20px 80px}
+header.top{border-left:6px solid var(--sea);padding:4px 0 4px 20px;margin-bottom:32px}
+header.top p.kicker{margin:0 0 6px;color:var(--muted);font-weight:500}
+h1{font-size:2rem;line-height:1.2;margin:0 0 14px;letter-spacing:-0.01em}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.fab{color:var(--muted);font-size:.9rem;margin:14px 0 0}
+section{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:26px 26px 22px;margin:0 0 22px}
+h2{font-size:1.35rem;margin:0 0 12px;line-height:1.3}
+h2 .num{display:inline-block;min-width:1.9em;height:1.9em;line-height:1.9em;text-align:center;border-radius:50%;background:var(--sea);color:var(--paper);font-size:.8em;margin-right:10px;vertical-align:.1em}
+h3{font-size:1.08rem;margin:26px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.3em} li{margin:3px 0}
+.table-wrap{overflow-x:auto;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--sea-soft);font-weight:600}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px;vertical-align:.1em}
+.tag.quick{background:var(--sea-soft);color:var(--sea)}
+.tag.crit{background:var(--amber);color:var(--paper)}
+.copy{border:1px solid var(--line);border-radius:8px;background:var(--box);margin:10px 0 16px;overflow:hidden}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--muted);font-weight:500}
+.copy button{font:inherit;font-weight:600;font-size:.88rem;color:var(--paper);background:var(--sea);border:0;border-radius:6px;padding:6px 14px;cursor:pointer;min-width:84px}
+.copy button:hover{filter:brightness(1.08)}
+.copy button:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.copy button.done{background:var(--amber)}
+.copy pre{margin:0;padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9rem;line-height:1.55;color:var(--box-ink);user-select:text}
+.check{background:var(--sea-soft);border-radius:8px;padding:12px 16px;margin:12px 0}
+.check strong{display:block;margin-bottom:4px}
+.check ul{margin:0}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);margin:12px 0}
+.critical{border:2px solid var(--amber);background:var(--paper)}
+.critical .banner{background:var(--amber-soft);border-radius:8px;padding:14px 16px;margin:0 0 16px}
+.critical .banner p{margin:0}
+.critical .banner p+p{margin-top:6px}
+.critical h2 .num{background:var(--amber)}
+.critical .copy button{background:var(--amber)}
+textarea{width:100%;min-height:74px;font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical}
+td textarea{min-height:64px;border:0;padding:4px;background:transparent}
+label.field{display:block;font-weight:600;margin:14px 0 6px}
+.ticks{list-style:none;padding:0}
+.ticks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.ticks input{width:18px;height:18px;margin-top:4px;accent-color:var(--sea);flex:none}
+details{border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:12px 0}
+summary{cursor:pointer;font-weight:600;color:var(--sea)}
+details[open] summary{margin-bottom:10px}
+.saved{font-size:.85rem;color:var(--muted);margin:0}
+@media (max-width:560px){ section{padding:20px 16px} h1{font-size:1.6rem} }
+@media print{
+  body{background:#fff} section{break-inside:avoid;border-color:#bbb}
+  .copy button,.saved{display:none}
+  details{border:0;padding:0} details>*{display:block}
+}
+
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <p class="kicker">Latihan AI Alfameli, Makmal Amali Modul 4</p>
+  <h1>Latihan 4-3: Penyelarasan Syif dan Tapak</h1>
+  <dl class="meta">
+    <dt>Masa</dt><dd>12 minit</dd>
+    <dt>Alat</dt><dd>Microsoft 365 Copilot Chat (penamat pilihan dalam Copilot di Teams)</dd>
+    <dt>Hasil anda</dt><dd>Keputusan untuk dua permintaan tukar syif, jadual bertugas yang dikemas kini, dan mesej untuk setiap orang yang terjejas</dd>
+  </dl>
+  <p class="fab">Semua nama, syarikat dan butiran dalam latihan ini adalah rekaan untuk tujuan latihan.</p>
+</header>
+<section><h2>Senario perniagaan</h2>
+<p>Anda ialah penyelaras tapak. Dua orang kru meminta untuk bertukar syif. Mengatakan ya mengambil sepuluh saat. Mendapati kemudian bahawa pertukaran itu menyebabkan tapak kekurangan peranan penting mengambil masa yang jauh lebih lama untuk dibetulkan.</p>
+<p><strong>Ketegangan:</strong> tugas anda bukan sekadar mengemas kini jadual bertugas (<em>roster</em>). Anda mesti <strong>menguji setiap perubahan sebelum meluluskannya</strong>, kemudian memberitahu semua yang terjejas dengan jelas. Salah satu permintaan itu juga tidak lengkap dan tidak jelas.</p>
+<p><strong>Teknik baharu:</strong> menggunakan AI sebagai <em>penguji senario</em> yang bertanya "jika kita buat ini, apa yang akan rosak?"</p>
+</section>
+<section><h2>Data yang anda akan guna</h2>
+<div class="table-wrap"><table><tr><th>Data</th><th>Apa ia</th><th>Dari mana</th><th>Digunakan di</th></tr><tr><td><strong>Data A: permintaan tukar</strong></td><td>Dua mesej: e-mel daripada Kumar dan WhatsApp ringkas daripada Nurul</td><td>Kru yang memohon</td><td>Langkah 1</td></tr><tr><td><strong>Data B: jadual bertugas semasa</strong></td><td>Senarai 16 orang: peranan, jenis giliran, sama ada di tapak atau tidak hari ini, baki hari sebelum pertukaran kru, dan pasangan <em>back-to-back</em></td><td>Jadual bertugas tapak. Hari ini ialah Isnin 2 November 2026</td><td>Langkah 2 dan 3</td></tr><tr><td><strong>Data C: peraturan tapak</strong></td><td>Empat peraturan tukar syif daripada Pengurus Kem</td><td>Pengurus Kem</td><td>Langkah 2 dan 3</td></tr></table></div><p><strong>Istilah yang digunakan:</strong></p><ul><li><strong>Giliran 14/14:</strong> 14 hari di tapak, kemudian 14 hari cuti. 28/28 ialah yang sama dalam blok 28 hari.</li><li><strong>Onsite / Offsite:</strong> sama ada seseorang sedang bekerja di tapak atau sedang bercuti.</li><li><strong>Pertukaran kru (<em>crew change</em>):</strong> hari sesetengah orang tiba di tapak dan yang lain pulang.</li><li><strong>Pasangan back-to-back:</strong> orang dalam giliran bertentangan yang menggantikan peranan anda semasa anda bercuti.</li></ul><p>Jadual bertugas juga tersedia sebagai fail <strong>Crew.csv</strong> jika fasilitator anda berkongsinya.</p>
+</section>
+<section><h2>Tugas anda</h2>
+<div class="table-wrap"><table><tr><th>Peranan AI</th><th>Apa yang AI lakukan</th></tr><tr><td>Guru</td><td>Memahami dengan tepat apa yang setiap orang minta</td></tr><tr><td>Penguji senario</td><td>Menguji setiap perubahan terhadap jadual dan peraturan tapak</td></tr><tr><td>Penyelaras</td><td>Menghasilkan keputusan, jadual dikemas kini dan mesej</td></tr><tr><td>Pengkritik</td><td>Menilai keputusan anda seperti pihak yang meluluskan</td></tr></table></div><p>Anda kekal sebagai pembuat keputusan. Baca semua jawapan AI sebelum bergerak.</p>
+</section>
+<section><h2>Dua jenis prompt</h2>
+<div class="table-wrap"><table><tr><th>Jenis</th><th>Apa yang anda buat</th><th>Yang mana</th></tr><tr><td><span class="tag quick">Prompt pantas</span></td><td>Salin dan tampal seperti yang diberi</td><td>Prompt 1, 2, 4 dan 5</td></tr><tr><td><span class="tag crit">Prompt kritikal</span></td><td><strong>Anda bina sendiri</strong>, menggunakan RCTF+C daripada Modul 2</td><td>Prompt 3</td></tr></table></div><p>Luangkan masa anda pada prompt kritikal. <strong>Semua yang berada dalam kotak kelabu boleh disalin.</strong> Tekan butang <strong>Salin</strong>, kemudian tampal ke dalam Copilot Chat. Prompt dan data kekal dalam bahasa Inggeris; arahan dalam panduan ini dalam Bahasa Malaysia.</p>
+</section>
+<section><h2>Sebelum anda mula</h2>
+<div class="table-wrap"><table><tr><th>Minit</th><th>Langkah</th></tr><tr><td>0 hingga 2</td><td>Langkah 1: Fahami permintaan (Prompt 1)</td></tr><tr><td>2 hingga 4.5</td><td>Langkah 2: Semak jadual dan peraturan tapak</td></tr><tr><td>4.5 hingga 11</td><td>Langkah 3: Uji dan putuskan dengan AI (Prompt 2 hingga 4, Prompt 5 jika ada masa)</td></tr><tr><td>11 hingga 12</td><td>Langkah 4: Semak hasil kerja anda</td></tr></table></div><ul><li>Buka sembang Copilot Chat yang baharu.</li><li>Gunakan satu sembang untuk semua prompt.</li><li>Baca setiap jawapan sebelum bergerak.</li><li><strong>Jangan hantar mesej kepada orang sebenar.</strong> Semuanya kekal dalam sembang anda sendiri.</li></ul>
+</section>
+<section><h2><span class="num">1</span>Fahami permintaan <span style="font-weight:400;color:var(--muted)">(2 minit)</span></h2>
+<p><strong>Apa yang anda lakukan:</strong> minta AI menjelaskan dengan tepat apa yang setiap orang minta, apa yang tiada, dan apa itu respons yang baik.</p><ol><li>Baca kedua-dua mesej sekali sendiri.</li></ol><div class="copy"><div class="copy-head"><span>Data A: permintaan tukar</span><button type="button">Salin</button></div>
+<pre>Message 1 (email from Kumar):
+"Family matter came up. Can I swap my next rotation with Rashid? I'd come back on site 4 days later than planned, and Rashid would stay on 4 extra days to cover me."
+
+Message 2 (WhatsApp from Nurul):
+"hi can i swap my shift with devi, need to change my week"</pre></div><ol start="2"><li>Salin Prompt 1 ke dalam Copilot Chat, tampal Data A di bawahnya dalam mesej yang sama, dan hantar.</li></ol><h3><span class="tag quick">Prompt pantas</span>Prompt 1: AI sebagai guru</h3><div class="copy"><div class="copy-head"><span>Prompt 1</span><button type="button">Salin</button></div>
+<pre>Here are two shift swap requests from our crew. For each one, list exactly what is being asked, who would be affected, and what information is missing. Then suggest what a good response to each person should include.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Adakah segala yang AI katakan tentang setiap permintaan benar-benar ada dalam mesej?</li><li>Siapa yang telah memohon pertukaran, dan siapa yang belum berkata apa-apa lagi?</li><li>Adakah anda bersetuju dengan cadangannya untuk respons yang baik? Ini menjadi senarai semak kualiti anda untuk Langkah 3.</li></ul></div><label class="field" for="s1">Apa yang setiap orang minta, apa yang tiada, dan apa yang respons yang baik perlukan</label><textarea id="s1" data-save></textarea>
+</section>
+<section><h2><span class="num">2</span>Semak jadual dan peraturan tapak <span style="font-weight:400;color:var(--muted)">(2.5 minit)</span></h2>
+<p>Ini jadual bertugas semasa dan peraturan yang mesti dipatuhi setiap pertukaran. Hari ini ialah <strong>Isnin 2 November 2026</strong>. Setiap peranan ada pasangan <em>back-to-back</em> yang menggantikannya semasa seorang lagi di luar tapak.</p><div class="copy"><div class="copy-head"><span>Data B: jadual bertugas semasa</span><button type="button">Salin</button></div>
+<pre>Name	Role	Rotation	Status today	Days until their next crew change	Back-to-back partner
+Azman	Crane Operator	14/14	Onsite	6	Hafiz
+Hafiz	Crane Operator	14/14	Offsite	6	Azman
+Rashid	Rigger	14/14	Onsite	6	Kumar
+Kumar	Rigger	14/14	Offsite	6	Rashid
+Siva	Rigger	14/14	Onsite	13	Jason
+Jason	Rigger	14/14	Offsite	13	Siva
+Devi	Catering Supervisor	14/14	Onsite	6	Aminah
+Aminah	Catering Supervisor	14/14	Offsite	6	Devi
+Priya	Catering Crew	14/14	Onsite	6	Nurul
+Nurul	Catering Crew	14/14	Offsite	6	Priya
+Farhan	HSE Officer	28/28	Onsite	20	Zul
+Zul	HSE Officer	28/28	Offsite	20	Farhan
+Lim	Camp Manager	28/28	Onsite	20	Ravi
+Ravi	Camp Manager	28/28	Offsite	20	Lim
+Wei Ling	Admin	14/14	Onsite	6	Sarah
+Sarah	Admin	14/14	Offsite	6	Wei Ling</pre></div><p>Kotak ini boleh ditampal terus ke Excel sebagai jadual. Jika fasilitator anda telah berkongsi senarai kru sebagai fail (Crew.csv), anda boleh memuat naiknya ke Copilot Chat dan bukannya menampal.</p><div class="copy"><div class="copy-head"><span>Data C: peraturan tapak</span><button type="button">Salin</button></div>
+<pre>Site rules for shift swaps (from the Camp Manager):
+1. Swaps are only allowed between people in the same role.
+2. Minimum on site at all times: 1 Crane Operator, 2 Riggers, 1 Catering Supervisor, 1 HSE Officer.
+3. No one may stay on site more than 7 days beyond their normal rotation.
+4. Every swap needs the Camp Manager's approval at least 48 hours before the crew change.</pre></div><p><strong>Tugas anda:</strong> sebelum bertanya kepada AI, uji setiap permintaan sendiri. Tanpa AI untuk langkah ini. Untuk setiap permintaan, tanya diri anda:</p><ul><li>Jika kita luluskan seperti yang diminta, apa yang akan berubah dalam jadual?</li><li>Adakah perubahan itu melanggar mana-mana peraturan tapak? Yang mana?</li><li>Apa lagi yang kita perlu tahu, atau siapa yang kita perlu dengar daripadanya, sebelum kita boleh kata ya?</li></ul><div class="table-wrap"><table><tr><th>Permintaan</th><th>Apa yang akan berubah?</th><th>Peraturan mana dilanggar?</th><th>Apa lagi yang kita perlukan?</th></tr><tr><td>Kumar</td><td><textarea id="r1a" data-save aria-label="r1a"></textarea></td><td><textarea id="r1b" data-save aria-label="r1b"></textarea></td><td><textarea id="r1c" data-save aria-label="r1c"></textarea></td></tr><tr><td>Nurul</td><td><textarea id="r2a" data-save aria-label="r2a"></textarea></td><td><textarea id="r2b" data-save aria-label="r2b"></textarea></td><td><textarea id="r2c" data-save aria-label="r2c"></textarea></td></tr></table></div><details><summary>Tersekat? Petunjuk</summary><ul><li><strong>Kira mengikut peranan.</strong> Untuk setiap permintaan, kira berapa orang dalam setiap peranan akan berada di tapak selepas perubahan. Bandingkan dengan peraturan 2.</li><li><strong>Semak peranan.</strong> Cari peranan setiap orang dalam jadual, bukan nama sahaja.</li><li><strong>Kira hari.</strong> Jika seseorang kekal lebih lama, berapa hari melebihi giliran biasa mereka?</li><li><strong>Ikut pasangan.</strong> Apabila seseorang pulang pada hari pertukaran kru, siapa yang biasanya mengambil alih? Apa jadi jika itu berubah?</li><li><strong>Semak siapa yang sudah bersuara.</strong> Pertukaran melibatkan dua orang. Adakah kedua-duanya telah memintanya?</li><li><strong>Semak jam.</strong> Bila pertukaran kru, dan bila kelulusan diperlukan?</li></ul></details>
+</section>
+<section><h2><span class="num">3</span>Uji dan putuskan dengan AI <span style="font-weight:400;color:var(--muted)">(6.5 minit)</span></h2>
+<h3><span class="tag quick">Prompt pantas</span>Prompt 2: AI sebagai penguji senario (1.5 minit)</h3><p>Salin prompt, kemudian tampal Data B dan Data C di bawahnya dalam mesej yang sama, dan hantar.</p><div class="copy"><div class="copy-head"><span>Prompt 2</span><button type="button">Salin</button></div>
+<pre>Here is our current roster and our site rules. For each swap request, play out what would happen if we approved it exactly as asked. Check the result against every site rule and tell me which rules pass and which fail. Before you conclude, ask me about anything you need to know.</pre></div><p>Jawab soalan AI dengan jujur. Gunakan hanya apa yang ada dalam data. Jika anda tidak tahu, salin ini:</p><div class="copy"><div class="copy-head"><span>Jawapan untuk perkara yang tidak diketahui</span><button type="button">Salin</button></div>
+<pre>I don't know that yet. Don't assume an answer. Treat it as something I need to find out, and tell me who I should ask.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Bandingkan hasil AI dengan jadual Langkah 2 anda. Adakah ia menemui masalah peraturan yang sama? Adakah ia menemui yang anda terlepas?</li><li>Adakah ia menganggap sesiapa telah bersetuju dengan sesuatu yang mereka belum nyatakan?</li><li>Adakah ia menyemak setiap peraturan, termasuk yang lulus?</li></ul></div>
+</section>
+<section class="critical"><h2><span class="tag crit">Prompt kritikal</span>Prompt 3: Prompt kritikal <span style="font-weight:400;color:var(--muted)">(3 minit)</span></h2>
+<div class="banner"><p><strong>Ini yang anda bina sendiri.</strong> Gunakan RCTF+C daripada Modul 2.</p><p>Prompt ini menghasilkan keputusan anda, jadual dikemas kini dan mesej yang akan dibaca orang. Isi setiap baris.</p></div><p><strong>1. Salin rangka ini</strong> ke dalam Copilot Chat. Jangan hantar lagi.</p><div class="copy"><div class="copy-head"><span>Rangka RCTF+C</span><button type="button">Salin</button></div>
+<pre>Role: You are a ...
+Context: ...
+Task: ...
+Format: ...
+Constraints: ...</pre></div><p><strong>2. Gantikan setiap "..." dengan kata-kata anda sendiri</strong> (dalam bahasa Inggeris). Gunakan panduan ini.</p><div class="table-wrap"><table><tr><th>Baris</th><th>Tanya diri anda</th></tr><tr><td><strong>Role</strong></td><td>Siapa yang biasanya mengendalikan permintaan tukar syif? Minta AI bertindak sebagai orang itu.</td></tr><tr><td><strong>Context</strong></td><td>AI sudah ada permintaan, jadual, peraturan dan jawapan anda dalam sembang ini. Rujuk kepadanya.</td></tr><tr><td><strong>Task</strong></td><td>Apa yang anda perlukan untuk setiap permintaan? Fikirkan: keputusan, apa yang berlaku kepada jadual, dan siapa yang perlu diberitahu.</td></tr><tr><td><strong>Format</strong></td><td>Bagaimana keputusan patut ditunjukkan supaya pihak yang meluluskan boleh menyemaknya dengan cepat? Bagaimana rupa jadual yang dikemas kini? Setiap orang mendapat mesej sendiri: patutkah balasan e-mel sama dengan balasan WhatsApp?</td></tr><tr><td><strong>Constraints</strong></td><td>Apa yang AI patut buat jika soalan masih belum terjawab? Bagaimana anda akan halang ia menganggap seseorang telah bersetuju? Bagaimana anda akan buat ia menunjukkan peraturan mana menyokong setiap keputusan? Apa yang tidak boleh dijanjikan mana-mana mesej lagi? Ejaan?</td></tr></table></div><p><strong>3. Sebelum tekan Enter, semak:</strong></p><ul class="ticks"><li><input type="checkbox" id="c1" data-save><label for="c1">Kelima-lima baris telah diisi.</label></li><li><input type="checkbox" id="c2" data-save><label for="c2">Task meminta keputusan, perubahan jadual dan mesej.</label></li><li><input type="checkbox" id="c3" data-save><label for="c3">Format memberi setiap orang mesej sendiri, sesuai dengan cara mereka menghubungi kita.</label></li><li><input type="checkbox" id="c4" data-save><label for="c4">Constraints menghalang AI meluluskan apa-apa yang masih ada soalan terbuka.</label></li><li><input type="checkbox" id="c5" data-save><label for="c5">Constraints membuat AI menamakan peraturan di sebalik setiap keputusan.</label></li></ul><details><summary>Tersekat atau kehabisan masa? Tunjuk contoh prompt kritikal</summary><p>Buka ini hanya <strong>selepas</strong> anda menulis prompt anda sendiri, kemudian bandingkan.</p><div class="copy"><div class="copy-head"><span>Contoh prompt kritikal</span><button type="button">Salin</button></div>
+<pre>Role: You are a site coordinator handling shift swap requests.
+Context: Use the requests, roster, site rules and my answers above.
+Task: For each request, decide whether to approve, decline or put it on hold. Show the updated roster for anything approved. Draft a message to each person affected.
+Format: A short decision table with the request, the decision, the reason and the site rule it relies on. Then the updated roster as a table. Then one message per person: a short email reply for anyone who emailed, and a brief, friendly chat message for anyone who used WhatsApp.
+Constraints: British spelling. Only use facts from the datasets and my answers. Do not assume anyone has agreed unless they said so. Put a request on hold if any question is still open, and say what is needed. Name the site rule behind every decision. No message may promise a swap that hasn't been approved.</pre></div><p>Jika prompt anda lebih kukuh di beberapa bahagian, bagus. Tiada satu prompt yang betul.</p></details><p><strong>4. Semak hasil sebelum bergerak:</strong></p><ul><li>Adakah hasil memenuhi senarai semak kualiti yang anda tulis dalam Langkah 1?</li><li>Selepas perubahan, kira setiap peranan di tapak. Adakah setiap peranan masih memenuhi peraturan 2?</li><li>Untuk setiap perubahan yang diluluskan, adakah semua yang terlibat benar-benar bersetuju?</li><li>Adakah setiap keputusan menamakan peraturan yang disandarkannya? Adakah peraturan itu benar-benar ada dalam Data C?</li><li>Adakah mana-mana mesej menjanjikan sesuatu yang belum diluluskan?</li><li>Baca satu mesej sebagai penerimanya. Adakah mereka tahu dengan tepat apa yang berlaku seterusnya?</li></ul><p>Jika ada yang tidak kena, jangan mula semula. Beritahu AI dengan tepat apa yang perlu dibetulkan (Draft, Diagnose, Direct):</p><div class="copy"><div class="copy-head"><span>Templat pembetulan</span><button type="button">Salin</button></div>
+<pre>In your answer, [what is wrong]. Change it to [what it should be], and keep everything else the same.</pre></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 4: AI sebagai pengkritik <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<div class="copy"><div class="copy-head"><span>Prompt 4</span><button type="button">Salin</button></div>
+<pre>Now act as the Camp Manager who must approve these decisions. What would you question, refuse or send back? Be direct.</pre></div><div class="check"><strong>Semak sebelum teruskan</strong><ul><li>Yang mana antara perkara Pengurus Kem patut anda baiki sebelum ini sampai kepada mereka sebenarnya?</li></ul></div>
+</section>
+<section><h2><span class="tag quick">Prompt pantas</span>Prompt 5 (jika ada masa): anda cabar AI <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<div class="copy"><div class="copy-head"><span>Prompt 5</span><button type="button">Salin</button></div>
+<pre>Which of your points are based on the roster and site rules, and which are your own assumptions? Rank the three most important to fix.</pre></div><label class="field" for="top3">Apa yang saya akan baiki atau ketahui sebelum meluluskan apa-apa</label><textarea id="top3" data-save></textarea><details><summary>Pilihan: tamatkan dalam Teams (jika anda ada Copilot di Teams)</summary><p>Salin salah satu mesej ke dalam sembang Teams dengan diri anda sendiri. <strong>Jangan hantar kepada orang lain.</strong> Gunakan Copilot dalam kotak mesej untuk melaras nada atau memendekkannya, kemudian bandingkan dengan versi daripada Copilot Chat.</p></details><details><summary>Tersekat? Cuba ini mengikut turutan</summary><ol><li>Bayangkan ia hari pertukaran kru dan pertukaran telah berlaku. Lalui tapak peranan demi peranan. Adakah sesiapa tiada?</li><li>Kembali ke jadual Langkah 2. Adakah semua dalam lajur "Apa lagi yang kita perlukan?" ditangani?</li><li>Teknik Modul 1 yang mana menukar tekaan AI kepada soalan? Di mana ia membantu di sini?</li></ol></details>
+</section>
+<section><h2><span class="num">4</span>Semak hasil kerja anda <span style="font-weight:400;color:var(--muted)">(1 minit)</span></h2>
+<p>Tandakan setiap satu yang anda boleh jawab ya dengan jujur.</p><ul class="ticks"><li><input type="checkbox" id="k1" data-save><label for="k1">Saya menguji setiap permintaan terhadap setiap peraturan tapak sebelum memutuskan.</label></li><li><input type="checkbox" id="k2" data-save><label for="k2">Selepas sebarang perubahan yang diluluskan, setiap peranan masih memenuhi minimum di tapak.</label></li><li><input type="checkbox" id="k3" data-save><label for="k3">Tiada apa yang diluluskan bagi pihak seseorang yang belum bersetuju.</label></li><li><input type="checkbox" id="k4" data-save><label for="k4">Apa-apa yang ada soalan terbuka ditahan, dengan soalan dinyatakan.</label></li><li><input type="checkbox" id="k5" data-save><label for="k5">Setiap keputusan menamakan peraturan yang disandarkannya.</label></li><li><input type="checkbox" id="k6" data-save><label for="k6">Setiap orang mendapat mesej yang sesuai untuk mereka, dan tiada yang menjanjikan lebih daripada yang telah diputuskan.</label></li><li><input type="checkbox" id="k7" data-save><label for="k7">Hasil memenuhi senarai semak kualiti yang saya tetapkan dalam Langkah 1.</label></li><li><input type="checkbox" id="k8" data-save><label for="k8">Saya mencabar sekurang-kurangnya satu perkara yang AI katakan.</label></li></ul><p>Menanda kurang daripada enam? Kembali ke semakan di bawah Prompt 3.</p><details><summary>Pilihan: uji keputusan anda pada papan pemuka jadual bertugas</summary><p>Jika fasilitator anda telah berkongsi papan pemuka jadual bertugas dalam SharePoint, buka sekarang. Lakukan ini hanya <strong>selepas</strong> anda membuat keputusan.</p><ul><li>Pilih senario yang sepadan dengan keputusan anda: Baseline, pertukaran Kumar, pertukaran Nurul, atau kedua-duanya.</li><li>Cari sel merah. Merah bermakna satu peranan jatuh di bawah minimum tapak pada hari itu.</li><li>Semak jadual lanjutan. Adakah sesiapa kekal lebih lama daripada yang dibenarkan peraturan?</li></ul><p>Adakah papan pemuka bersetuju dengan keputusan anda? Jika tidak, apa yang anda terlepas, dan adakah AI turut terlepas?</p></details>
+</section>
+<section><h2>Apa yang perlu dibawa pulang</h2>
+<ul><li><strong>Uji sebelum bertindak.</strong> Tanya AI "jika kita buat ini, apa yang akan rosak?" sebelum anda meluluskan apa-apa.</li><li><strong>Beri AI peraturan.</strong> Ia hanya boleh menyemak terhadap peraturan yang anda beri. Peraturan yang ia reka bukan peraturan anda.</li><li><strong>Tiada siapa telah bersetuju sehingga mereka sendiri berkata begitu.</strong> AI mudah menganggap orang lain telah setuju.</li><li><strong>Jadikan akibat kelihatan.</strong> Papan pemuka liputan menunjukkan dalam beberapa saat apa yang mengambil beberapa minit untuk difikirkan.</li><li><strong>"Ditahan" ialah satu keputusan.</strong> Ia lebih baik daripada ya yang perlu anda tarik balik.</li><li><strong>Satu keputusan, beberapa khalayak.</strong> Setiap orang perlukan mesej sendiri, dalam saluran yang mereka gunakan.</li></ul>
+</section>
+
+<p class="saved">Nota dan tanda anda disimpan dalam pelayar ini sahaja.</p>
+</main>
+<script>
+
+(function(){
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0,text.length);
+    var ok=false; try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function selectPre(pre){
+    try{var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  function flash(btn,label,cls){
+    btn.textContent=label; if(cls) btn.classList.add(cls);
+    setTimeout(function(){btn.textContent='Salin';btn.classList.remove('done');},1800);
+  }
+  document.querySelectorAll('.copy').forEach(function(box){
+    var btn=box.querySelector('button'), pre=box.querySelector('pre');
+    btn.addEventListener('click',function(){
+      var text=pre.textContent;
+      var done=function(){flash(btn,'Disalin','done');};
+      var fail=function(){
+        if(fallbackCopy(text)){done();}
+        else{selectPre(pre);flash(btn,'Tekan Ctrl+C');}
+      };
+      if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(text).then(done,fail);
+      } else { fail(); }
+    });
+  });
+  var KEY='alfameli-bm3-';
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    try{
+      var v=localStorage.getItem(KEY+el.id);
+      if(v!==null){ if(el.type==='checkbox'){el.checked=(v==='1');} else {el.value=v;} }
+    }catch(e){}
+    var ev=el.type==='checkbox'?'change':'input';
+    el.addEventListener(ev,function(){
+      try{localStorage.setItem(KEY+el.id, el.type==='checkbox'?(el.checked?'1':'0'):el.value);}catch(e){}
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
