@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Priority Identification Framework - Interactive Workshop Tool</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Range slider custom styling */
+    input[type=range] {
+      accent-color: #3b82f6;
+    }
+    
+    /* Print Styles for Exporting Report */
+    @media print {
+      body { background: white !important; color: black !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .glass-card { background: none !important; border: 1px solid #ccc !important; color: black !important; }
+      .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400 { color: #1e293b !important; }
+      .bg-slate-800, .bg-slate-900, .bg-slate-950 { background: white !important; }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans bg-slate-900 text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
+
+  <header class="no-print bg-slate-950/80 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-heading font-bold text-lg text-white tracking-tight">AI Priority Framework</h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Workforce → Workload → Pain Point → Opportunity → Priority</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="loadSampleScenario()" class="px-3 py-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg border border-brand-500/30 transition flex items-center gap-1.5" title="Pre-fill with example organizational data">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>Load Sample Scenario</span>
+        </button>
+        <button onclick="resetData()" class="px-3 py-1.5 text-xs font-medium bg-slate-800 hover:bg-red-950/50 text-slate-400 hover:text-red-400 rounded-lg border border-slate-700 hover:border-red-800/50 transition" title="Clear all inputs">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="no-print bg-slate-900/90 border-b border-slate-800 py-3 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between overflow-x-auto no-scrollbar space-x-2 py-1">
+        
+        <!-- Step 1 Button -->
+        <button onclick="goToStep(1)" id="step-btn-1" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-brand-600/20 border-brand-500 text-white">
+          <div class="step-num w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold shrink-0">1</div>
+          <div class="truncate">
+            <div class="text-xs font-medium text-slate-400">Step 1</div>
+            <div class="text-xs font-bold truncate">Workforce Map</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <!-- Step 2 Button -->
+        <button onclick="goToStep(2)" id="step-btn-2" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">2</div>
+          <div class="truncate">
+            <div class="text-xs font-medium text-slate-400">Step 2</div>
+            <div class="text-xs font-bold truncate">Critical Workloads</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <!-- Step 3 Button -->
+        <button onclick="goToStep(3)" id="step-btn-3" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">3</div>
+          <div class="truncate">
+            <div class="text-xs font-medium text-slate-400">Step 3</div>
+            <div class="text-xs font-bold truncate">AI Capabilities</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <!-- Step 4 Button -->
+        <button onclick="goToStep(4)" id="step-btn-4" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">4</div>
+          <div class="truncate">
+            <div class="text-xs font-medium text-slate-400">Step 4</div>
+            <div class="text-xs font-bold truncate">Priority Matrix</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <!-- Step 5 Button -->
+        <button onclick="goToStep(5)" id="step-btn-5" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">5</div>
+          <div class="truncate">
+            <div class="text-xs font-medium text-slate-400">Step 5</div>
+            <div class="text-xs font-bold truncate">Action Plan</div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <section id="step-1" class="step-panel space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Phase 1 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">Map Your Knowledge Workforce</h2>
+          <p class="text-slate-400 text-sm mt-1">Identify key knowledge worker roles, headcounts, and operational time distribution across organizational tiers.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="addRolePrompt()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-sm transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+            <i class="fa-solid fa-plus"></i> Add Customized Role
+          </button>
+        </div>
+      </div>
+
+      <!-- Tiers Visual Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Strategy Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-blue-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">STRATEGY</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="strategy-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-lg font-heading font-bold text-white mb-1">Leadership</h3>
+            <p class="text-xs text-slate-400 mb-4">Focus: Decide, plan, align strategy &amp; communicate executive vision.</p>
+            
+            <div id="strategy-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+          <button onclick="addRoleToTier('Strategy')" class="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 rounded-lg border border-slate-700 transition">
+            + Add Role to Strategy
+          </button>
+        </div>
+
+        <!-- Management Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-indigo-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">MANAGEMENT</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="mgmt-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-lg font-heading font-bold text-white mb-1">Managers &amp; Leads</h3>
+            <p class="text-xs text-slate-400 mb-4">Focus: Supervise teams, coordinate cross-functional projects &amp; review quality.</p>
+            
+            <div id="mgmt-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+          <button onclick="addRoleToTier('Management')" class="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 rounded-lg border border-slate-700 transition">
+            + Add Role to Management
+          </button>
+        </div>
+
+        <!-- Execution Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-teal-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">EXECUTION</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="execution-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-lg font-heading font-bold text-white mb-1">Staff &amp; Specialists</h3>
+            <p class="text-xs text-slate-400 mb-4">Focus: Create core deliverables, process data, write code &amp; execute workflows.</p>
+            
+            <div id="execution-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+          <button onclick="addRoleToTier('Execution')" class="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 rounded-lg border border-slate-700 transition">
+            + Add Role to Execution
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="step-2" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Phase 2 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">Identify Critical Workloads &amp; Friction</h2>
+          <p class="text-slate-400 text-sm mt-1">Pinpoint bottleneck activities, high-volume content demands, delays, and poor information areas.</p>
+        </div>
+        <button onclick="addWorkloadPrompt()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-sm transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+          <i class="fa-solid fa-plus"></i> Add Workload Candidate
+        </button>
+      </div>
+
+      <!-- Diagnostic Prompts Cheat Sheet -->
+      <div class="glass-card rounded-2xl p-5 border border-slate-800 bg-slate-900/60">
+        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-question text-brand-400"></i> Diagnostic Checklist (Ask for each organizational level):
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300">
+          <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
+            <span class="text-brand-400 font-bold block mb-1"><i class="fa-solid fa-clock mr-1"></i> Time Sinks</span>
+            What critical tasks take up the most staff hours each week?
+          </div>
+          <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
+            <span class="text-purple-400 font-bold block mb-1"><i class="fa-solid fa-file-signature mr-1"></i> Content Creation</span>
+            Which workflows demand heavy report writing, presentation deck prep, or copywriting?
+          </div>
+          <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-700/50">
+            <span class="text-red-400 font-bold block mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Friction &amp; Delays</span>
+            Where do rework, duplication, or poor information stall delivery or decisions?
+          </div>
+        </div>
+      </div>
+
+      <!-- Workloads Input Table / Cards -->
+      <div id="workloads-container" class="space-y-4">
+        <!-- Dynamically rendered workload cards -->
+      </div>
+    </section>
+
+    <section id="step-3" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Phase 3 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">Match AI Opportunities</h2>
+          <p class="text-slate-400 text-sm mt-1">Select and attach AI capability levers to each identified workload pain point.</p>
+        </div>
+      </div>
+
+      <!-- Capability Palette Selector -->
+      <div class="glass-card rounded-2xl p-5">
+        <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-boxes-stacked text-brand-400"></i> Core AI Capability Levers
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Click a capability to learn how AI delivers leverage in enterprise environments:</p>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3" id="ai-capabilities-grid">
+          <!-- Dynamically populated AI Capability Badges -->
+        </div>
+      </div>
+
+      <!-- Workload to Capability Matching Cards -->
+      <div id="opportunity-matching-container" class="space-y-4">
+        <!-- Dynamically populated matching list -->
+      </div>
+    </section>
+
+    <section id="step-4" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Phase 4 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">Priority Calculator &amp; 2x2 Matrix</h2>
+          <p class="text-slate-400 text-sm mt-1">Score opportunities: <strong>Priority Score = Business Impact × Frequency × Time Saved × Feasibility</strong></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Scoring Table/List (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
+              <span>Scoring Candidate Opportunities</span>
+              <span class="text-xs font-normal text-slate-400">Scale 1 (Low) to 5 (High)</span>
+            </h3>
+
+            <div id="scoring-list" class="space-y-6">
+              <!-- Dynamically populated scoring controls -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2x2 Matrix Visualizer (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-card rounded-2xl p-5 sticky top-36">
+            <h3 class="text-base font-bold text-white mb-2">Priority Matrix (Impact vs Feasibility)</h3>
+            <p class="text-xs text-slate-400 mb-4">High Impact + High Feasibility = Quick Wins &amp; Strategic Priorities.</p>
+
+            <!-- 2x2 Canvas Container -->
+            <div class="relative w-full aspect-square bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col justify-between">
+              
+              <!-- Matrix Quadrant Background Grid -->
+              <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 p-4 gap-1 pointer-events-none opacity-20">
+                <div class="bg-blue-500/30 rounded-tl-lg flex items-start p-2 text-[10px] font-bold text-blue-300 uppercase">Strategic Bets</div>
+                <div class="bg-emerald-500/40 rounded-tr-lg flex items-start justify-end p-2 text-[10px] font-bold text-emerald-300 uppercase">Top Quick Wins</div>
+                <div class="bg-slate-700/30 rounded-bl-lg flex items-end p-2 text-[10px] font-bold text-slate-400 uppercase">Deprioritise</div>
+                <div class="bg-indigo-500/30 rounded-br-lg flex items-end justify-end p-2 text-[10px] font-bold text-indigo-300 uppercase">Operational Wins</div>
+              </div>
+
+              <!-- Matrix Plot Area -->
+              <div id="matrix-plot-area" class="relative w-full h-full">
+                <!-- Dynamically plotted dots -->
+              </div>
+
+              <!-- Matrix Axis Labels -->
+              <div class="absolute -left-3 top-1/2 -rotate-90 text-[10px] font-bold text-slate-400 tracking-wider">BUSINESS IMPACT →</div>
+              <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-400 tracking-wider">FEASIBILITY →</div>
+            </div>
+
+            <!-- Legend -->
+            <div class="mt-4 flex items-center justify-around text-[11px] text-slate-400 border-t border-slate-800/80 pt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Top Priorities</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span> Candidates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="step-5" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">Phase 5 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">Top 3 AI Priorities &amp; Roadmap</h2>
+          <p class="text-slate-400 text-sm mt-1">Final executive summary, ranked high-value opportunities, and action readiness checklist.</p>
+        </div>
+
+        <div class="no-print flex items-center gap-2">
+          <button onclick="copySummaryText()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl font-medium text-xs transition flex items-center gap-2">
+            <i class="fa-solid fa-copy text-brand-400"></i> Copy Report
+          </button>
+          <button onclick="exportJSON()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl font-medium text-xs transition flex items-center gap-2">
+            <i class="fa-solid fa-download text-teal-400"></i> Download JSON
+          </button>
+          <button onclick="window.print()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+            <i class="fa-solid fa-print"></i> Print / Save PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- TOP 3 CHAMPIONS CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="top3-container">
+        <!-- Dynamically populated top 3 priority cards -->
+      </div>
+
+      <!-- Action Plan Notes & Deployment Readiness -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Editable Executive Summary / Immediate Steps -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-brand-400"></i> Immediate Implementation Notes
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Record key sponsors, required data sources, and timeline considerations for the top initiatives:</p>
+          
+          <textarea id="action-notes" oninput="saveNotes(this.value)" rows="6" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-brand-500 transition" placeholder="e.g. Phase 1 kickoff scheduled for Q1. Lead sponsor: Head of Operations. Need to secure API access and run prompt engineering workshops..."></textarea>
+        </div>
+
+        <!-- Organizational Readiness Checklist -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-400"></i> Implementation Readiness Checklist
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Ensure critical governance and enablement foundations are in place:</p>
+
+          <div class="space-y-3 text-sm">
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700 focus:ring-0">
+              <span class="text-slate-300 text-xs">Identified clear business metrics and baseline time logs for priority workloads.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700 focus:ring-0">
+              <span class="text-slate-300 text-xs">Data security and privacy policy approved for AI model interactions.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700 focus:ring-0">
+              <span class="text-slate-300 text-xs">Key operational champions assigned to oversee human-in-the-loop validation.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700 focus:ring-0">
+              <span class="text-slate-300 text-xs">Prompt engineering &amp; AI tool literacy workshop scheduled for execution team.</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NAVIGATION FOOTER -->
+  <footer class="no-print bg-slate-950 border-t border-slate-800 py-4 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <button id="back-btn" onclick="prevStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
+        <i class="fa-solid fa-arrow-left"></i> Previous Step
+      </button>
+
+      <div class="text-xs text-slate-500 font-medium">
+        Phase <span id="current-step-num">1</span> of 5
+      </div>
+
+      <button id="next-btn" onclick="nextStep()" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+        Next Step <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-20 right-6 px-4 py-3 bg-slate-800 border border-brand-500/50 text-white text-xs font-semibold rounded-xl shadow-2xl transition transform translate-y-10 opacity-0 pointer-events-none flex items-center gap-2 z-50">
+    <i class="fa-solid fa-circle-check text-brand-400"></i>
+    <span id="toast-message">Data saved successfully</span>
+  </div>
+
+  <script>
+    // State initialization
+    let currentStep = 1;
+
+    const AI_CAPABILITIES = [
+      { id: 'content', title: 'Create & Improve Content', icon: 'fa-pen-nib', color: 'blue', desc: 'Drafting reports, marketing copy, code generation, tone polishing.' },
+      { id: 'summarise', title: 'Search & Summarise', icon: 'fa-file-contract', color: 'sky', desc: 'Extracting key takeaways from dense docs, policy search, synthesis.' },
+      { id: 'data', title: 'Analyse Data', icon: 'fa-chart-pie', color: 'teal', desc: 'Processing datasets, detecting anomalies, trend forecasting.' },
+      { id: 'reports', title: 'Reports & Presentations', icon: 'fa-file-powerpoint', color: 'purple', desc: 'Automating deck generation, board updates, executive briefs.' },
+      { id: 'collab', title: 'Communicate & Collaborate', icon: 'fa-comments', color: 'pink', desc: 'Meeting transcripts, email drafting, stakeholder updates.' },
+      { id: 'automate', title: 'Automate Repetitive Work', icon: 'fa-rotate', color: 'orange', desc: 'Data re-entry, form routing, routine email triage.' },
+      { id: 'decisions', title: 'Support Decisions', icon: 'fa-brain', color: 'emerald', desc: 'Scenario modeling, risk evaluations, strategic recommendations.' }
+    ];
+
+    let appData = {
+      roles: [
+        { id: 'r1', tier: 'Strategy', title: 'Executive Leadership', headcount: 4, tasks: 'Decide budget, plan vision, communicate strategy' },
+        { id: 'r2', tier: 'Management', title: 'Operations Managers', headcount: 12, tasks: 'Supervise teams, review outputs, project reporting' },
+        { id: 'r3', tier: 'Execution', title: 'Content & Tech Specialists', headcount: 45, tasks: 'Create content, process data, build products' }
+      ],
+      workloads: [
+        { 
+          id: 'w1', 
+          tier: 'Execution', 
+          title: 'Customer Knowledge Base & Support Docs', 
+          timeSpent: 'High (15 hrs/wk)', 
+          painPoint: 'Repetitive document creation, outdated search results, rework on FAQs.',
+          capabilityId: 'content',
+          impact: 4,
+          frequency: 5,
+          timeSaved: 4,
+          feasibility: 5
+        },
+        { 
+          id: 'w2', 
+          tier: 'Management', 
+          title: 'Weekly Cross-Department Status Reports', 
+          timeSpent: 'Moderate (8 hrs/wk)', 
+          painPoint: 'Chasing manual updates, compiling status decks, formatting delays.',
+          capabilityId: 'reports',
+          impact: 4,
+          frequency: 4,
+          timeSaved: 4,
+          feasibility: 4
+        },
+        { 
+          id: 'w3', 
+          tier: 'Strategy', 
+          title: 'Market Intelligence & Competitor Synthesis', 
+          timeSpent: 'Moderate (6 hrs/wk)', 
+          painPoint: 'Slow research turnaround, poor information visibility for strategic planning.',
+          capabilityId: 'summarise',
+          impact: 5,
+          frequency: 3,
+          timeSaved: 4,
+          feasibility: 3
+        }
+      ],
+      actionNotes: ''
+    };
+
+    // Load persisted state if exists
+    function loadState() {
+      const saved = localStorage.getItem('ai_priority_framework_data');
+      if (saved) {
+        try {
+          appData = JSON.parse(saved);
+        } catch (e) {
+          console.error('Failed to parse saved state:', e);
+        }
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('ai_priority_framework_data', JSON.stringify(appData));
+    }
+
+    // UI Step Navigation logic
+    function goToStep(step) {
+      currentStep = step;
+      document.querySelectorAll('.step-panel').forEach((panel, idx) => {
+        if (idx + 1 === step) {
+          panel.classList.remove('hidden');
+        } else {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Update Header Stepper Buttons
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`step-btn-${i}`);
+        const num = btn.querySelector('.step-num');
+        if (i === step) {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-brand-600/20 border-brand-500 text-white shadow-lg shadow-brand-500/10';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold shrink-0';
+        } else if (i < step) {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/80 border-slate-700/80 text-slate-200';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0';
+          num.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0';
+          num.innerText = i;
+        }
+      }
+
+      // Update Footer Controls
+      document.getElementById('current-step-num').innerText = step;
+      const backBtn = document.getElementById('back-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      if (step === 1) {
+        backBtn.disabled = true;
+        backBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        backBtn.disabled = false;
+        backBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      if (step === 5) {
+        nextBtn.innerHTML = 'Finish Workflow <i class="fa-solid fa-circle-check"></i>';
+      } else {
+        nextBtn.innerHTML = 'Next Step <i class="fa-solid fa-arrow-right"></i>';
+      }
+
+      // Re-render specific step views upon navigation
+      if (step === 1) renderStep1();
+      if (step === 2) renderStep2();
+      if (step === 3) renderStep3();
+      if (step === 4) renderStep4();
+      if (step === 5) renderStep5();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+      if (currentStep < 5) goToStep(currentStep + 1);
+      else showToast('Framework review completed!');
+    }
+
+    function prevStep() {
+      if (currentStep > 1) goToStep(currentStep - 1);
+    }
+
+    function renderStep1() {
+      const strategyList = document.getElementById('strategy-roles-list');
+      const mgmtList = document.getElementById('mgmt-roles-list');
+      const execList = document.getElementById('execution-roles-list');
+
+      strategyList.innerHTML = '';
+      mgmtList.innerHTML = '';
+      execList.innerHTML = '';
+
+      let sCount = 0, mCount = 0, eCount = 0;
+
+      appData.roles.forEach(role => {
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-800/80 rounded-xl border border-slate-700/60 relative group';
+        card.innerHTML = `
+          <button onclick="deleteRole('${role.id}')" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <div class="flex items-center justify-between mb-1">
+            <input type="text" value="${escapeHtml(role.title)}" onchange="updateRole('${role.id}', 'title', this.value)" class="font-semibold text-xs text-white bg-transparent focus:outline-none focus:border-b border-brand-500 w-3/4">
+            <span class="text-[10px] font-bold bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded">${role.headcount} Staff</span>
+          </div>
+          <input type="text" value="${escapeHtml(role.tasks)}" onchange="updateRole('${role.id}', 'tasks', this.value)" class="text-[11px] text-slate-400 bg-transparent w-full focus:outline-none focus:border-b border-brand-500">
+        `;
+
+        if (role.tier === 'Strategy') {
+          strategyList.appendChild(card);
+          sCount += parseInt(role.headcount || 1);
+        } else if (role.tier === 'Management') {
+          mgmtList.appendChild(card);
+          mCount += parseInt(role.headcount || 1);
+        } else {
+          execList.appendChild(card);
+          eCount += parseInt(role.headcount || 1);
+        }
+      });
+
+      document.getElementById('strategy-count').innerText = sCount;
+      document.getElementById('mgmt-count').innerText = mCount;
+      document.getElementById('execution-count').innerText = eCount;
+    }
+
+    function addRoleToTier(tier) {
+      const newRole = {
+        id: 'r_' + Date.now(),
+        tier: tier,
+        title: tier + ' Specialist',
+        headcount: 5,
+        tasks: 'Core routine responsibilities and decision tasks'
+      };
+      appData.roles.push(newRole);
+      saveState();
+      renderStep1();
+      showToast('New role added');
+    }
+
+    function deleteRole(id) {
+      appData.roles = appData.roles.filter(r => r.id !== id);
+      saveState();
+      renderStep1();
+    }
+
+    function updateRole(id, field, value) {
+      const role = appData.roles.find(r => r.id === id);
+      if (role) {
+        role[field] = value;
+        saveState();
+      }
+    }
+
+    function renderStep2() {
+      const container = document.getElementById('workloads-container');
+      container.innerHTML = '';
+
+      if (appData.workloads.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 glass-card rounded-2xl">
+            <i class="fa-solid fa-list-check text-3xl text-slate-600 mb-3 block"></i>
+            <p class="text-sm text-slate-400">No critical workloads identified yet.</p>
+            <button onclick="addWorkloadPrompt()" class="mt-3 px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-xl">Add First Workload</button>
+          </div>
+        `;
+        return;
+      }
+
+      appData.workloads.forEach((w, idx) => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 border border-slate-800 space-y-4';
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-lg bg-brand-600/20 border border-brand-500/40 text-brand-400 font-bold text-xs flex items-center justify-center shrink-0">
+                #${idx + 1}
+              </span>
+              <div>
+                <input type="text" value="${escapeHtml(w.title)}" onchange="updateWorkload('${w.id}', 'title', this.value)" class="text-base font-bold text-white bg-transparent focus:outline-none focus:border-b border-brand-500 w-full md:w-96" placeholder="Workload Title...">
+                <div class="flex items-center gap-3 mt-1">
+                  <select onchange="updateWorkload('${w.id}', 'tier', this.value)" class="bg-slate-800 text-slate-300 text-xs rounded-md px-2 py-0.5 border border-slate-700">
+                    <option value="Strategy" ${w.tier === 'Strategy' ? 'selected' : ''}>Strategy Tier</option>
+                    <option value="Management" ${w.tier === 'Management' ? 'selected' : ''}>Management Tier</option>
+                    <option value="Execution" ${w.tier === 'Execution' ? 'selected' : ''}>Execution Tier</option>
+                  </select>
+                  <input type="text" value="${escapeHtml(w.timeSpent)}" onchange="updateWorkload('${w.id}', 'timeSpent', this.value)" class="text-xs text-slate-400 bg-slate-800/50 rounded-md px-2 py-0.5 border border-slate-700/60" placeholder="Time Spent e.g. 10 hrs/wk">
+                </div>
+              </div>
+            </div>
+            <button onclick="deleteWorkload('${w.id}')" class="text-slate-500 hover:text-red-400 text-xs transition">
+              <i class="fa-solid fa-trash"></i> Remove
+            </button>
+          </div>
+
+          <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800">
+            <label class="text-xs font-bold text-red-400 block mb-1">
+              <i class="fa-solid fa-triangle-exclamation mr-1"></i> Pain Point / Delay / Rework Bottleneck:
+            </label>
+            <textarea onchange="updateWorkload('${w.id}', 'painPoint', this.value)" class="w-full bg-transparent text-xs text-slate-200 focus:outline-none resize-none" rows="2" placeholder="Describe delays, content demand, poor info quality, or rework...">${escapeHtml(w.painPoint)}</textarea>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function addWorkloadPrompt() {
+      const newWorkload = {
+        id: 'w_' + Date.now(),
+        tier: 'Execution',
+        title: 'New Candidate Workload Process',
+        timeSpent: 'Moderate (5-10 hrs/wk)',
+        painPoint: 'High manual overhead, slow turnaround time, and frequent rework.',
+        capabilityId: 'content',
+        impact: 3,
+        frequency: 3,
+        timeSaved: 3,
+        feasibility: 4
+      };
+      appData.workloads.push(newWorkload);
+      saveState();
+      renderStep2();
+      showToast('Workload added');
+    }
+
+    function deleteWorkload(id) {
+      appData.workloads = appData.workloads.filter(w => w.id !== id);
+      saveState();
+      renderStep2();
+    }
+
+    function updateWorkload(id, field, value) {
+      const w = appData.workloads.find(item => item.id === id);
+      if (w) {
+        w[field] = value;
+        saveState();
+      }
+    }
+
+    function renderStep3() {
+      // Render capabilities selection palette
+      const palette = document.getElementById('ai-capabilities-grid');
+      palette.innerHTML = '';
+
+      AI_CAPABILITIES.forEach(cap => {
+        const item = document.createElement('div');
+        item.className = 'p-3 bg-slate-800/80 rounded-xl border border-slate-700/60 hover:border-brand-500/60 transition cursor-pointer flex flex-col justify-between';
+        item.onclick = () => showToast(`${cap.title}: ${cap.desc}`);
+        item.innerHTML = `
+          <div>
+            <i class="fa-solid ${cap.icon} text-brand-400 text-base mb-2"></i>
+            <div class="text-xs font-bold text-white leading-tight">${cap.title}</div>
+          </div>
+        `;
+        palette.appendChild(item);
+      });
+
+      // Render Workloads matching list
+      const container = document.getElementById('opportunity-matching-container');
+      container.innerHTML = '';
+
+      appData.workloads.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center';
+        
+        let capOptionsHtml = AI_CAPABILITIES.map(c => `
+          <option value="${c.id}" ${w.capabilityId === c.id ? 'selected' : ''}>${c.title}</option>
+        `).join('');
+
+        const matchedCap = AI_CAPABILITIES.find(c => c.id === w.capabilityId) || AI_CAPABILITIES[0];
+
+        card.innerHTML = `
+          <div class="lg:col-span-6 space-y-1">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${w.tier} Tier</span>
+            <h4 class="text-sm font-bold text-white">${escapeHtml(w.title)}</h4>
+            <p class="text-xs text-red-400/90">${escapeHtml(w.painPoint)}</p>
+          </div>
+
+          <div class="lg:col-span-1 text-center hidden lg:block">
+            <i class="fa-solid fa-arrow-right text-slate-600 text-lg"></i>
+          </div>
+
+          <div class="lg:col-span-5 bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
+            <label class="text-[11px] font-bold text-brand-400 block">Matched AI Capability Lever:</label>
+            <select onchange="updateWorkload('${w.id}', 'capabilityId', this.value); renderStep3();" class="w-full bg-slate-800 text-xs text-white rounded-lg p-2 border border-slate-700 focus:outline-none focus:border-brand-500">
+              ${capOptionsHtml}
+            </select>
+            <p class="text-[11px] text-slate-400 italic">
+              <i class="fa-solid fa-circle-info text-slate-500 mr-1"></i> ${matchedCap.desc}
+            </p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderStep4() {
+      const container = document.getElementById('scoring-list');
+      container.innerHTML = '';
+
+      appData.workloads.forEach(w => {
+        const score = computeScore(w);
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-slate-900/70 rounded-xl border border-slate-800 space-y-3';
+        
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-bold text-white">${escapeHtml(w.title)}</h4>
+              <span class="text-[10px] text-slate-400">Score Formula: ${w.impact || 3} × ${w.frequency || 3} × ${w.timeSaved || 3} × ${w.feasibility || 3}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xl font-heading font-extrabold text-brand-400">${score}</span>
+              <span class="text-[10px] text-slate-500 block uppercase font-bold">Priority Score</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2 border-t border-slate-800/60">
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Impact: <span class="text-white font-bold">${w.impact || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.impact || 3}" oninput="updateWorkload('${w.id}', 'impact', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Frequency: <span class="text-white font-bold">${w.frequency || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.frequency || 3}" oninput="updateWorkload('${w.id}', 'frequency', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Time Saved: <span class="text-white font-bold">${w.timeSaved || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.timeSaved || 3}" oninput="updateWorkload('${w.id}', 'timeSaved', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Feasibility: <span class="text-white font-bold">${w.feasibility || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.feasibility || 3}" oninput="updateWorkload('${w.id}', 'feasibility', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      renderMatrix();
+    }
+
+    function computeScore(w) {
+      const imp = w.impact || 3;
+      const freq = w.frequency || 3;
+      const ts = w.timeSaved || 3;
+      const feas = w.feasibility || 3;
+      return imp * freq * ts * feas;
+    }
+
+    function renderMatrix() {
+      const plotArea = document.getElementById('matrix-plot-area');
+      plotArea.innerHTML = '';
+
+      // Plot each workload on 2D Matrix (X: Feasibility, Y: Impact)
+      appData.workloads.forEach((w, idx) => {
+        const feas = w.feasibility || 3; // 1 to 5
+        const imp = w.impact || 3;       // 1 to 5
+
+        // Convert 1-5 scale to percentage offset (10% to 90%)
+        const xPct = ((feas - 1) / 4) * 80 + 10;
+        const yPct = 100 - (((imp - 1) / 4) * 80 + 10);
+
+        const score = computeScore(w);
+        const isTop = score >= 100;
+
+        const dot = document.createElement('div');
+        dot.style.left = `${xPct}%`;
+        dot.style.top = `${yPct}%`;
+        dot.className = `absolute transform -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full ${isTop ? 'bg-emerald-500 shadow-lg shadow-emerald-500/50 ring-2 ring-white' : 'bg-brand-500'} flex items-center justify-center text-white text-xs font-bold cursor-pointer transition hover:scale-125 z-10`;
+        dot.innerText = `#${idx + 1}`;
+        dot.title = `${w.title} (Score: ${score})`;
+
+        plotArea.appendChild(dot);
+      });
+    }
+
+    function renderStep5() {
+      const container = document.getElementById('top3-container');
+      container.innerHTML = '';
+
+      // Sort workloads by score descending
+      const sorted = [...appData.workloads].sort((a, b) => computeScore(b) - computeScore(a));
+      const top3 = sorted.slice(0, 3);
+
+      if (top3.length === 0) {
+        container.innerHTML = '<div class="col-span-3 text-center text-slate-400 py-8">No opportunities ranked yet.</div>';
+        return;
+      }
+
+      top3.forEach((w, idx) => {
+        const cap = AI_CAPABILITIES.find(c => c.id === w.capabilityId) || AI_CAPABILITIES[0];
+        const score = computeScore(w);
+        
+        const card = document.createElement('div');
+        card.className = `glass-card rounded-2xl p-6 border ${idx === 0 ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-slate-800'} relative flex flex-col justify-between`;
+        
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-bold ${idx === 0 ? 'bg-brand-600 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                PRIORITY #${idx + 1}
+              </span>
+              <span class="text-xs font-bold text-brand-400">Score: ${score}</span>
+            </div>
+
+            <h3 class="text-lg font-heading font-bold text-white mb-2">${escapeHtml(w.title)}</h3>
+            <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-800 px-2 py-0.5 rounded mb-3">${w.tier} Tier</span>
+
+            <p class="text-xs text-slate-300 mb-4 line-clamp-3">${escapeHtml(w.painPoint)}</p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800/80 bg-slate-900/40 -mx-6 -mb-6 p-6 rounded-b-2xl">
+            <span class="text-[10px] font-bold text-brand-400 block mb-1">AI CAPABILITY LEVER:</span>
+            <div class="flex items-center gap-2 text-xs font-semibold text-white">
+              <i class="fa-solid ${cap.icon} text-brand-400"></i>
+              <span>${cap.title}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Populate notes textarea
+      document.getElementById('action-notes').value = appData.actionNotes || '';
+    }
+
+    function saveNotes(val) {
+      appData.actionNotes = val;
+      saveState();
+    }
+
+    function loadSampleScenario() {
+      appData = {
+        roles: [
+          { id: 'r1', tier: 'Strategy', title: 'Executive Leadership & C-Suite', headcount: 5, tasks: 'Decide multi-year investments, align vision, investor relations' },
+          { id: 'r2', tier: 'Management', title: 'Department Heads & Project Leads', headcount: 15, tasks: 'Supervise delivery, cross-department coordination, quality audits' },
+          { id: 'r3', tier: 'Execution', title: 'Specialists & Technical Staff', headcount: 60, tasks: 'Create client decks, analyze data, draft specs & code' }
+        ],
+        workloads: [
+          {
+            id: 'w1',
+            tier: 'Execution',
+            title: 'Technical Documentation & Proposal Creation',
+            timeSpent: 'High (16 hrs/wk per staff)',
+            painPoint: 'Repetitive drafting, manual formatting, duplication across proposals, delays in client response.',
+            capabilityId: 'content',
+            impact: 5,
+            frequency: 5,
+            timeSaved: 5,
+            feasibility: 4
+          },
+          {
+            id: 'w2',
+            tier: 'Management',
+            title: 'Weekly Cross-Department Status Briefs',
+            timeSpent: 'Moderate (8 hrs/wk)',
+            painPoint: 'Chasing manual status updates from 10+ leads, re-formatting presentation slides.',
+            capabilityId: 'reports',
+            impact: 4,
+            frequency: 4,
+            timeSaved: 4,
+            feasibility: 5
+          },
+          {
+            id: 'w3',
+            tier: 'Strategy',
+            title: 'Competitive Market & Regulatory Intelligence',
+            timeSpent: 'Moderate (6 hrs/wk)',
+            painPoint: 'Information overload, delayed analysis of regulatory shifts, decision bottleneck.',
+            capabilityId: 'summarise',
+            impact: 5,
+            frequency: 3,
+            timeSaved: 4,
+            feasibility: 4
+          }
+        ],
+        actionNotes: 'Q1 AI Roadmap Kickoff:\n- Focus on Proposal Creation Generator pilot for execution staff.\n- Sponsor: VP of Operations.\n- Next step: Run prompt engineering trial with 5 key specialists.'
+      };
+      saveState();
+      goToStep(currentStep);
+      showToast('Sample Scenario loaded!');
+    }
+
+    function resetData() {
+      if (confirm('Reset all workshop inputs back to clean template?')) {
+        localStorage.removeItem('ai_priority_framework_data');
+        appData = { roles: [], workloads: [], actionNotes: '' };
+        saveState();
+        goToStep(1);
+        showToast('All inputs cleared.');
+      }
+    }
+
+    // Export Utilities
+    function copySummaryText() {
+      const sorted = [...appData.workloads].sort((a, b) => computeScore(b) - computeScore(a));
+      let text = `AI PRIORITY IDENTIFICATION FRAMEWORK REPORT\n=========================================\n\n`;
+      text += `TOP AI PRIORITIES:\n`;
+      sorted.slice(0, 3).forEach((w, idx) => {
+        text += `${idx + 1}. ${w.title} (${w.tier} Tier)\n   Score: ${computeScore(w)} | Pain Point: ${w.painPoint}\n\n`;
+      });
+      text += `IMPLEMENTATION NOTES:\n${appData.actionNotes || 'None'}\n`;
+
+      // Fallback text copy execution for iFrame safety
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Summary copied to clipboard!');
+      } catch (err) {
+        showToast('Failed to copy');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "AI_Priorities_Framework_Summary.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('JSON Export downloaded!');
+    }
+
+    // Helper functions
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    // Window initialization
+    window.onload = function() {
+      loadState();
+      goToStep(1);
+    };
+  </script>
+</body>
+</html>
