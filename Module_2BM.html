@@ -1,0 +1,600 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Latihan Makmal 2: Prompting Kerja</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+  /* Layout: satu lajur sempit, empat latihan bertingkat, panel salin untuk teks yang perlu ditampal */
+  :root {
+    --bg: #F6F8F9;
+    --surface: #FFFFFF;
+    --fg: #16212B;
+    --muted: #56646F;
+    --line: #D9E0E5;
+    --accent: #0F6B7A;
+    --accent-soft: #E3F1F3;
+    --accent-fg: #FFFFFF;
+    --code-bg: #12202B;
+    --code-fg: #E4EEF3;
+    --note-bg: #FFF4D6;
+    --note-line: #E2C26B;
+    --note-fg: #6B4A00;
+    --ok: #1E6B3A;
+    --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E161C;
+      --surface: #15202A;
+      --fg: #E6EDF2;
+      --muted: #9AA9B4;
+      --line: #26343F;
+      --accent: #5CC0CF;
+      --accent-soft: #14323A;
+      --accent-fg: #06222A;
+      --code-bg: #091218;
+      --code-fg: #DCE9F0;
+      --note-bg: #33290E;
+      --note-line: #6E5820;
+      --note-fg: #EBCB7A;
+      --ok: #7FD39B;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E161C;
+    --surface: #15202A;
+    --fg: #E6EDF2;
+    --muted: #9AA9B4;
+    --line: #26343F;
+    --accent: #5CC0CF;
+    --accent-soft: #14323A;
+    --accent-fg: #06222A;
+    --code-bg: #091218;
+    --code-fg: #DCE9F0;
+    --note-bg: #33290E;
+    --note-line: #6E5820;
+    --note-fg: #EBCB7A;
+    --ok: #7FD39B;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 760px;
+    margin-inline: auto;
+    padding-inline: 16px;
+    padding-block: 32px 72px;
+  }
+  h1 {
+    font-size: 1.7rem;
+    line-height: 1.2;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  h2 {
+    font-size: 1.3rem;
+    line-height: 1.25;
+    margin: 6px 0 4px;
+    text-wrap: balance;
+  }
+  h3 {
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 22px 0 8px;
+  }
+  p { margin: 0 0 10px; }
+  .lead { color: var(--muted); margin-bottom: 20px; }
+
+  .howto {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .howto h2 { margin-top: 0; font-size: 1.05rem; }
+  .howto ol { margin: 8px 0 0; padding-left: 20px; }
+  .howto li { margin-bottom: 4px; }
+
+  .exercise {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 2px solid var(--accent);
+  }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .step {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .tag {
+    font-size: 0.78rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-weight: 600;
+  }
+
+  ul.expect { margin: 0 0 8px; padding-left: 20px; }
+  ul.expect li { margin-bottom: 3px; }
+
+  .codebox { position: relative; margin: 0 0 10px; }
+  .codebox pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border-radius: 8px;
+    padding: 14px 84px 14px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font: inherit;
+    font-size: 0.78rem;
+    color: var(--code-fg);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--code-fg) 40%, transparent);
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .copy:hover { background: color-mix(in srgb, var(--code-fg) 14%, transparent); }
+  .copy.done { color: var(--ok); border-color: var(--ok); background: var(--surface); }
+  .copy:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  details {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  summary {
+    cursor: pointer;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  details > .inner { padding: 4px 14px 14px; min-width: 0; }
+  details.stuck { border-style: dashed; }
+
+  dl.rctf {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 12px;
+    margin: 0 0 14px;
+    font-size: 0.9rem;
+  }
+  dl.rctf dt { font-weight: 600; color: var(--accent); }
+  dl.rctf dd { margin: 0; }
+  .plabel { font-weight: 600; margin: 12px 0 6px; font-size: 0.9rem; }
+
+  .answer {
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+  }
+  .answer .lbl { font-weight: 600; color: var(--accent); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+  .answer pre { margin: 0; white-space: pre-wrap; font-family: inherit; overflow-wrap: anywhere; }
+
+  .scroll { overflow-x: auto; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--accent-soft); color: var(--fg); }
+
+  .why { background: var(--note-bg); border: 1px solid var(--note-line); color: var(--note-fg); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
+  .why strong { color: inherit; }
+
+  .summary { margin-top: 44px; padding-top: 22px; border-top: 2px solid var(--accent); }
+  .foot { margin-top: 28px; color: var(--muted); font-size: 0.85rem; }
+</style>
+
+<div class="page">
+
+  <h1>Latihan Makmal 2: Prompting Kerja</h1>
+  <p class="lead">Empat tugasan kerja harian Alfameli. Untuk setiap tugasan: fahami kerja itu, semak data, cuba prompt anda, kemudian bincang.</p>
+
+  <div class="howto">
+    <h2>Cara guna</h2>
+    <ol>
+      <li>Baca <strong>Tugasan</strong> untuk tahu peranan anda dan hasil yang diperlukan.</li>
+      <li>Salin <strong>Data</strong> ke alat AI anda.</li>
+      <li>Tulis prompt sendiri guna RCTF+C (Peranan, Konteks, Tugasan, Format, Kekangan) supaya hasilnya ada semua yang disenaraikan di bawah <strong>Hasil yang dijangka</strong>.</li>
+      <li>Selepas hasil pertama, cuba <strong>Prompt 2</strong> dalam perbualan yang sama.</li>
+      <li>Tersangkut atau kesuntukan masa? Buka <strong>Prompt contoh</strong>. Selepas itu bandingkan dengan <strong>Contoh jawapan</strong> dan bincang.</li>
+    </ol>
+  </div>
+
+  <!-- LATIHAN 1 -->
+  <section class="exercise">
+    <div class="meta"><span class="step">Latihan 1</span><span class="tag">Teknik: Draft, Diagnose, Direct</span></div>
+    <h2>Laporan Pelanggan</h2>
+
+    <h3>Tugasan</h3>
+    <p>Anda pengurus akaun pelanggan di Alfameli. Pelanggan kontrak Hess Malaysia mahu kemas kini mingguan tentang tapak mereka. Tukarkan log tapak yang kasar kepada laporan pendek yang sedia dihantar, tanpa menokok tambah apa-apa yang tiada dalam log.</p>
+
+    <h3>Data</h3>
+    <p>Log kasar daripada penyelia. Perhatikan satu perkara tertunggak yang mudah tertinggal: jadual manning.</p>
+    <div class="codebox">
+<pre id="d1">Site log, Hess Malaysia contract, week of 8-14 Sept.
+Crew: 22 catering staff, full strength all week.
+Tue 10 Sept: minor generator fault in dry store, backup power engaged within 15 min, no food spoilage.
+Fri 13 Sept: new supervisor Ahmad started orientation.
+Client asked twice this week about next month's manning schedule, not yet sent.</pre>
+      <button class="copy" type="button" data-target="d1">Salin</button>
+    </div>
+
+    <h3>Hasil yang dijangka</h3>
+    <ul class="expect">
+      <li>Status krew dan insiden 10 Sept bersama tindakan yang diambil</li>
+      <li>Penyelia baharu disebut</li>
+      <li>Jadual manning diakui sebagai perkara tertunggak</li>
+      <li>Nada formal, tidak lebih 200 patah perkataan, tiada maklumat di luar log</li>
+    </ul>
+
+    <h3>Prompt 2</h3>
+    <p>Laporan pertama biasanya hanya kata jadual itu akan dihantar "tidak lama lagi". Kenal pasti kelemahan itu, kemudian beri satu arahan tepat. Jangan minta laporan dijana semula. Hasil yang dijangka: satu ayat yang menetapkan tempoh 3 hari bekerja, tanpa alasan rekaan.</p>
+
+    <details class="stuck">
+      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
+      <div class="inner">
+        <dl class="rctf">
+          <dt>Peranan</dt><dd>Pengurus akaun pelanggan</dd>
+          <dt>Konteks</dt><dd>Kemas kini mingguan untuk pelanggan Hess Malaysia</dd>
+          <dt>Tugasan</dt><dd>Tulis kemas kini daripada log tapak</dd>
+          <dt>Format</dt><dd>Laporan satu halaman</dd>
+          <dt>Kekangan</dt><dd>Formal, ejaan British, maksimum 200 patah perkataan</dd>
+        </dl>
+        <div class="plabel">Prompt 1</div>
+        <div class="codebox">
+<pre id="p1">You are a client account manager at Alfameli. This is the weekly update the Hess Malaysia client relies on for visibility into site operations. Using this site log, write the weekly update, covering crew status, any incidents, and any open items they're waiting on. Present as a one-page report with clear structure. Formal tone, British spelling, no more than 200 words.</pre>
+          <button class="copy" type="button" data-target="p1">Salin</button>
+        </div>
+        <div class="plabel">Prompt 2</div>
+        <div class="codebox">
+<pre id="p1b">The manning schedule has now been outstanding for two weeks and the client has asked twice. Revise the outstanding items line to commit to sending it within 3 working days, without inventing a reason for the delay.</pre>
+          <button class="copy" type="button" data-target="p1b">Salin</button>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Contoh jawapan</summary>
+      <div class="inner">
+        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+<pre>Weekly Site Update, Hess Malaysia Contract
+Week of 8-14 September
+
+Crew remained at full strength throughout the week, with 22 catering staff deployed.
+
+On 10 September, a minor generator fault occurred in the dry store. Backup power was engaged within 15 minutes and no food spoilage resulted.
+
+Ahmad, our new site supervisor, began orientation on 13 September.
+
+We understand next month's manning schedule is outstanding on our end and will be sent shortly.</pre></div>
+        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+<pre>We recognise next month's manning schedule remains outstanding despite your recent enquiries. We will provide this within three working days.</pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Perbincangan</summary>
+      <div class="inner">
+        <div class="why"><strong>Apa yang AI lakukan:</strong> meringkaskan nota kasar dan memilih apa yang penting kepada pelanggan. Pada Prompt 2, AI hanya membetulkan satu ayat dan tidak menulis semula keseluruhan laporan.</div>
+        <p><strong>Soalan:</strong> Semak setiap ayat dalam kedua-dua hasil dengan data. Ada apa-apa yang tiada dalam log atau arahan anda?</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- LATIHAN 2 -->
+  <section class="exercise">
+    <div class="meta"><span class="step">Latihan 2</span><span class="tag">Teknik: Failure Anticipator</span></div>
+    <h2>Penyelarasan Syif dan Tapak</h2>
+
+    <h3>Tugasan</h3>
+    <p>Anda penyelaras tapak bagi krew katering kecil di luar pesisir. Setiap minggu anda menyediakan roster yang mesti menghormati permohonan cuti dan liputan minimum harian yang diwajibkan kontrak pelanggan. Gagal mencapai minimum pada satu hari sahaja sudah menjadi isu pematuhan kontrak.</p>
+
+    <h3>Data</h3>
+    <p>Lapan kakitangan, dua permohonan cuti dan satu peraturan tegas. Perhatikan peraturan minimum itu, kerana roster yang nampak betul boleh melanggarnya secara senyap.</p>
+    <div class="codebox">
+<pre id="d2">8 catering staff: Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra.
+Leave requests: Bala off Mon-Tue, Farah off Thu only.
+Minimum 5 staff required per day.</pre>
+      <button class="copy" type="button" data-target="d2">Salin</button>
+    </div>
+
+    <h3>Hasil yang dijangka</h3>
+    <ul class="expect">
+      <li>Jadual roster Isnin hingga Jumaat</li>
+      <li>Cuti Bala dan Farah dihormati</li>
+      <li>Bilangan kakitangan setiap hari ditunjukkan, tidak pernah kurang daripada 5</li>
+    </ul>
+
+    <h3>Prompt 2</h3>
+    <p>Roster yang selamat hari ini boleh gagal dengan satu perubahan lagi. Uji dengan situasi baharu: Chen turut memohon cuti pada hari Rabu. Hasil yang dijangka: roster dikemas kini, pengesahan jelas sama ada minimum masih dipenuhi, dan hari yang paling ketat dikenal pasti.</p>
+
+    <details class="stuck">
+      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
+      <div class="inner">
+        <dl class="rctf">
+          <dt>Peranan</dt><dd>Penyelaras tapak Alfameli</dd>
+          <dt>Konteks</dt><dd>Kontrak pelanggan mewajibkan liputan minimum harian</dd>
+          <dt>Tugasan</dt><dd>Bina roster Isnin hingga Jumaat</dd>
+          <dt>Format</dt><dd>Jadual dengan bilangan harian</dd>
+          <dt>Kekangan</dt><dd>Sekurang-kurangnya 5 kakitangan setiap hari</dd>
+        </dl>
+        <div class="plabel">Prompt 1</div>
+        <div class="codebox">
+<pre id="p2">You are a site coordinator at Alfameli. The client contract requires minimum daily coverage, this is a compliance obligation, not a preference. Using this crew list and leave requests, build a 5-day roster (Mon-Fri). Present as a table showing the daily headcount. At least 5 staff must be rostered every day, without exception.</pre>
+          <button class="copy" type="button" data-target="p2">Salin</button>
+        </div>
+        <div class="plabel">Prompt 2</div>
+        <div class="codebox">
+<pre id="p2b">Chen has just requested Wednesday off as well. Rebuild the roster and confirm explicitly whether minimum coverage still holds on every day.</pre>
+          <button class="copy" type="button" data-target="p2b">Salin</button>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Contoh jawapan</summary>
+      <div class="inner">
+        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+          <div class="scroll"><table>
+            <tr><th>Day</th><th>Staff rostered</th><th>Count</th></tr>
+            <tr><td>Mon</td><td>Ali, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>7</td></tr>
+            <tr><td>Tue</td><td>Ali, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>7</td></tr>
+            <tr><td>Wed</td><td>Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>8</td></tr>
+            <tr><td>Thu</td><td>Ali, Bala, Chen, Devi, Goh, Hafiz, Indra</td><td>7</td></tr>
+            <tr><td>Fri</td><td>Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>8</td></tr>
+          </table></div>
+        </div>
+        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+<pre>Wed: Ali, Bala, Devi, Farah, Goh, Hafiz, Indra (7)
+
+Minimum coverage still holds on every day. Wednesday drops from 8 to 7 with Chen's leave added, still above the minimum of 5. Wednesday, Thursday and Monday-Tuesday are now the tightest days at 7 staff each.</pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Perbincangan</summary>
+      <div class="inner">
+        <div class="why"><strong>Apa yang AI lakukan:</strong> menukar senarai biasa kepada jadual dan menyemak hasilnya terhadap peraturan minimum. Pada Prompt 2, ia menguji kekuatan pelan dan menunjukkan hari yang paling ketat, perkara yang tidak dilaporkan pada roster pertama kerana tidak diminta.</div>
+        <p><strong>Soalan:</strong> Buang ayat "sekurang-kurangnya 5" daripada Prompt 1 dan jalankan semula. Adakah roster berubah? Ini menunjukkan sama ada AI benar-benar menggunakan kekangan itu atau hanya kebetulan menghasilkan jawapan yang sesuai.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- LATIHAN 3 -->
+  <section class="exercise">
+    <div class="meta"><span class="step">Latihan 3</span><span class="tag">Teknik: Trade-off Navigator</span></div>
+    <h2>Perolehan dan Logistik</h2>
+
+    <h3>Tugasan</h3>
+    <p>Anda pegawai perolehan yang mencari dawai kren untuk sebuah projek. Tiga pembekal telah memberi sebut harga dan anda perlu mengesyorkan satu kepada pengurus. Harga yang paling murah belum tentu pilihan terbaik. Pengurus akan mahukan sebab, bukan sekadar nombor.</p>
+
+    <h3>Data</h3>
+    <p>Tiga sebut harga untuk barang yang sama. Setiap pembekal kuat pada faktor yang berbeza, jadi tiada jawapan yang jelas dengan sendirinya.</p>
+    <div class="codebox">
+<pre id="d3">Three quotes for crane wire rope, 20mm, 500m.
+Supplier A: RM 18,500, 3-week lead time, 12-month warranty.
+Supplier B: RM 16,200, 6-week lead time, 6-month warranty.
+Supplier C: RM 19,800, 2-week lead time, 24-month warranty.</pre>
+      <button class="copy" type="button" data-target="d3">Salin</button>
+    </div>
+
+    <h3>Hasil yang dijangka</h3>
+    <ul class="expect">
+      <li>Jadual perbandingan harga, tempoh penghantaran dan waranti</li>
+      <li>Satu cadangan pembekal dengan sebab dalam satu ayat</li>
+      <li>Sebab itu menimbang ketiga-tiga faktor, bukan harga sahaja</li>
+    </ul>
+
+    <h3>Prompt 2</h3>
+    <p>Cadangan tanpa tarikh akhir boleh gugur apabila satu tarikh akhir muncul. Tambah fakta baharu: operasi kren tidak boleh bermula lewat daripada 3 minggu dari hari ini, dan kelewatan menghentikan projek dengan kos kira-kira RM 8,000 sehari. Hasil yang dijangka: cadangan yang benar-benar berubah, bukan sekadar ayat yang berbeza.</p>
+
+    <details class="stuck">
+      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
+      <div class="inner">
+        <dl class="rctf">
+          <dt>Peranan</dt><dd>Pegawai perolehan Alfameli</dd>
+          <dt>Konteks</dt><dd>Dawai kren untuk operasi aktif, kos dan jadual terjejas</dd>
+          <dt>Tugasan</dt><dd>Bandingkan tiga sebut harga dan cadangkan satu</dd>
+          <dt>Format</dt><dd>Jadual perbandingan, kemudian cadangan</dd>
+          <dt>Kekangan</dt><dd>Timbang ketiga-tiga faktor, satu ayat sebab</dd>
+        </dl>
+        <div class="plabel">Prompt 1</div>
+        <div class="codebox">
+<pre id="p3">You are a procurement officer at Alfameli. This wire rope is for an active crane operation, the choice affects both cost and schedule. Compare these three quotes on price, lead time and warranty. Present as a table, then recommend one, weighing all three factors rather than price alone, with a one-sentence reason.</pre>
+          <button class="copy" type="button" data-target="p3">Salin</button>
+        </div>
+        <div class="plabel">Prompt 2</div>
+        <div class="codebox">
+<pre id="p3b">The engineering team has now confirmed the crane operation cannot proceed past 3 weeks from today. A delayed delivery halts the project at approximately RM 8,000 per day. Does your recommendation change?</pre>
+          <button class="copy" type="button" data-target="p3b">Salin</button>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Contoh jawapan</summary>
+      <div class="inner">
+        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+          <div class="scroll"><table>
+            <tr><th>Supplier</th><th>Price (RM)</th><th>Lead time</th><th>Warranty</th></tr>
+            <tr><td>A</td><td>18,500</td><td>3 weeks</td><td>12 months</td></tr>
+            <tr><td>B</td><td>16,200</td><td>6 weeks</td><td>6 months</td></tr>
+            <tr><td>C</td><td>19,800</td><td>2 weeks</td><td>24 months</td></tr>
+          </table></div>
+<pre>Recommendation: Supplier A offers the best balance, mid-range price with a reasonable lead time and solid warranty coverage, whereas Supplier B's savings come with the weakest warranty and longest wait, and Supplier C's speed and warranty come at the highest cost.</pre></div>
+        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+<pre>Yes. With a 3-week hard deadline, Supplier B is no longer viable, its 6-week lead time would halt the project for roughly three weeks at approximately RM 8,000 per day, far exceeding any price saving. Between the remaining two, Supplier A leaves no buffer at exactly 3 weeks, while Supplier C's 2-week lead time gives a one-week buffer, worth the RM 1,300 premium given the cost of missing the deadline. Recommendation changes to Supplier C.</pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Perbincangan</summary>
+      <div class="inner">
+        <div class="why"><strong>Apa yang AI lakukan:</strong> menimbang harga, tempoh penghantaran dan waranti, kemudian membuat penilaian. Perbandingan yang sebenar patut berubah apabila fakta penting berubah. Itulah ujian sama ada ia penaakulan atau sekadar templat.</div>
+        <p><strong>Soalan:</strong> Adakah cadangan Prompt 1 senyap-senyap salah sebaik sahaja tarikh akhir muncul? Apa yang ini ajar tentang meletakkan kekangan di awal berbanding menyemaknya kemudian?</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- LATIHAN 4 -->
+  <section class="exercise">
+    <div class="meta"><span class="step">Latihan 4</span><span class="tag">Teknik: Fact-check, tunjuk pengiraan</span></div>
+    <h2>HR dan Latihan</h2>
+
+    <h3>Tugasan</h3>
+    <p>Anda penyelaras HR yang menjejak pensijilan HSE krew luar pesisir. Sijil yang tamat tempoh tanpa disedari bermakna seseorang bekerja tanpa pensijilan sah, iaitu kegagalan pematuhan, bukan kesilapan pentadbiran biasa. Latihan ini paling berisiko dalam makmal ini kerana jawapan yang salah ada akibat sebenar.</p>
+
+    <h3>Data</h3>
+    <p>Log tarikh tamat sijil dengan tarikh rujukan. Dua entri sudah lepas, selebihnya dekat antara satu sama lain supaya mudah tersilap kira.</p>
+    <div class="codebox">
+<pre id="d4">Today's date: 13 October.
+HSE certification expiry: Ali 25 Oct, Bala 2 Oct (expired), Chen 15 Dec, Devi 20 Nov, Farah 8 Oct (expired).</pre>
+      <button class="copy" type="button" data-target="d4">Salin</button>
+    </div>
+
+    <h3>Hasil yang dijangka</h3>
+    <ul class="expect">
+      <li>Senarai pertama: sijil yang sudah tamat, ikut tarikh</li>
+      <li>Senarai kedua: sijil yang tamat dalam 60 hari, ikut tarikh</li>
+      <li>Orang yang di luar tetingkap 60 hari dinyatakan</li>
+    </ul>
+
+    <h3>Prompt 2</h3>
+    <p>Senarai yang kemas belum boleh disahkan. Minta AI menunjukkan pengiraan tarikh bagi setiap orang supaya anda boleh menyemaknya sendiri sebelum bertindak. Hasil yang dijangka: bilangan hari untuk setiap orang, sama ada sudah lepas atau akan datang.</p>
+
+    <details class="stuck">
+      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
+      <div class="inner">
+        <dl class="rctf">
+          <dt>Peranan</dt><dd>Penyelaras HR Alfameli untuk pematuhan HSE</dd>
+          <dt>Konteks</dt><dd>Sijil tamat tempoh bermakna krew bekerja tanpa pensijilan sah</dd>
+          <dt>Tugasan</dt><dd>Senaraikan yang sudah lewat dan yang tamat dalam 60 hari</dd>
+          <dt>Format</dt><dd>Dua senarai ikut tarikh</dd>
+          <dt>Kekangan</dt><dd>Tarikh hari ini 13 Oktober, pengiraan mesti tepat</dd>
+        </dl>
+        <div class="plabel">Prompt 1</div>
+        <div class="codebox">
+<pre id="p4">You are an HR coordinator at Alfameli responsible for HSE compliance tracking. Missing a renewal means a crew member works offshore without valid certification, a compliance breach. Today is 13 October. Using this training log, list who is already overdue for renewal, and who is due within the next 60 days. Present as two lists, sorted by date.</pre>
+          <button class="copy" type="button" data-target="p4">Salin</button>
+        </div>
+        <div class="plabel">Prompt 2</div>
+        <div class="codebox">
+<pre id="p4b">Show your date calculation for each person, today's date minus or plus their expiry date, so I can verify each one before I act on this.</pre>
+          <button class="copy" type="button" data-target="p4b">Salin</button>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Contoh jawapan</summary>
+      <div class="inner">
+        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+<pre>Already overdue:
+- Bala, expired 2 October
+- Farah, expired 8 October
+
+Due within 60 days (by 12 December):
+- Ali, 25 October
+- Devi, 20 November
+
+Not flagged: Chen, due 15 December, outside the 60-day window.</pre></div>
+        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+<pre>Bala: expired 2 October, 11 days ago (overdue)
+Farah: expired 8 October, 5 days ago (overdue)
+Ali: due 25 October, 12 days from today (within 60 days)
+Devi: due 20 November, 38 days from today (within 60 days)
+Chen: due 15 December, 63 days from today (outside the 60-day window)</pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Perbincangan</summary>
+      <div class="inner">
+        <div class="why"><strong>Apa yang AI lakukan:</strong> mengira tetingkap 60 hari daripada tarikh yang diberi dan menapis setiap rekod. Dengan pengiraan ditunjukkan, anda boleh menyemak setiap nombor sendiri dan tidak perlu percaya ringkasan semata-mata.</div>
+        <p><strong>Soalan:</strong> Kira sendiri dari 13 Oktober hingga 15 Disember (18 hari baki Oktober, 30 hari November, 15 hari Disember, jumlah 63). Adakah semua lima pengiraan betul? Jika satu salah, apa yang anda akan lakukan?</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- RINGKASAN -->
+  <section class="summary">
+    <h2>Rumusan</h2>
+    <div class="scroll"><table>
+      <tr><th>Latihan</th><th>Teknik Prompt 2</th><th>Risiko jika tidak disemak</th></tr>
+      <tr><td>Laporan Pelanggan</td><td>Draft, Diagnose, Direct</td><td>Butiran yang tertinggal atau direka sampai kepada pelanggan</td></tr>
+      <tr><td>Penyelarasan Syif dan Tapak</td><td>Failure Anticipator</td><td>Satu hari kekurangan kakitangan</td></tr>
+      <tr><td>Perolehan dan Logistik</td><td>Trade-off Navigator</td><td>Cadangan nampak munasabah tetapi menyembunyikan pertukaran yang buruk</td></tr>
+      <tr><td>HR dan Latihan</td><td>Fact-check, tunjuk pengiraan</td><td>Tarikh akhir pematuhan terlepas</td></tr>
+    </table></div>
+    <p>Prompt 1 memberi draf yang boleh digunakan. Kemahiran sebenar ada pada Prompt 2: menangkap apa yang terlepas, menguji sama ada jawapan bertahan apabila keadaan berubah, dan menjadikannya boleh disahkan sebelum anda bertindak.</p>
+  </section>
+
+  <p class="foot">Contoh jawapan ditulis sebagai rujukan, bukan hasil tangkapan langsung daripada alat AI. Hasil anda akan berbeza sedikit setiap kali. Yang penting ialah coraknya, bukan perkataan yang tepat. Data dan prompt kekal dalam bahasa Inggeris kerana itulah bahasa dokumen kerja sebenar.</p>
+</div>
+
+<script>
+  (function () {
+    function flash(btn) {
+      var original = btn.textContent;
+      btn.textContent = 'Disalin';
+      btn.classList.add('done');
+      setTimeout(function () {
+        btn.textContent = original;
+        btn.classList.remove('done');
+      }, 1500);
+    }
+    function selectText(el) {
+      try {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return document.execCommand('copy');
+      } catch (e) {
+        return false;
+      }
+    }
+    document.querySelectorAll('.copy').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var el = document.getElementById(btn.getAttribute('data-target'));
+        if (!el) return;
+        var text = el.textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            flash(btn);
+          }).catch(function () {
+            if (selectText(el)) flash(btn);
+          });
+        } else if (selectText(el)) {
+          flash(btn);
+        }
+      });
+    });
+  })();
+</script>
+
+</body></html>
