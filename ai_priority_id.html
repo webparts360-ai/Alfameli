@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identify Your AI Priorities - Interactive Framework</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom CSS animations and glassmorphism styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .light .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    input[type=range] {
+      accent-color: #3b82f6;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; }
+      .glass-card { background: white !important; border: 1px solid #ccc !important; color: black !important; }
+      .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
+    }
+  </style>
+</head>
+
+<body class="h-full flex flex-col font-sans bg-slate-900 text-slate-100 antialiased transition-colors duration-300">
+
+  <header class="no-print bg-slate-950/80 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-wand-magic-sparkles text-white text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-heading font-bold text-lg text-white tracking-tight">Identify Your AI Priorities</h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Workforce → Workload → Pain Point → AI Opportunity → Priority</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="loadSampleScenario()" class="px-3 py-1.5 text-xs font-semibold bg-brand-600/20 hover:bg-brand-600/30 text-brand-300 rounded-lg border border-brand-500/40 transition flex items-center gap-1.5" title="Pre-fill with complete example dataset">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>Load Sample Data</span>
+        </button>
+
+        <button onclick="resetData()" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-red-950/50 text-slate-400 hover:text-red-400 rounded-lg border border-slate-700 hover:border-red-800/50 transition" title="Clear all data">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+
+        <button onclick="toggleTheme()" class="px-2.5 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Toggle Light/Dark Theme">
+          <i id="theme-icon" class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="no-print bg-slate-900/90 border-b border-slate-800 py-3 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between overflow-x-auto no-scrollbar space-x-2 py-1">
+        
+        <button onclick="goToStep(1)" id="step-btn-1" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-brand-600/20 border-brand-500 text-white">
+          <div class="step-num w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold shrink-0">1</div>
+          <div class="truncate">
+            <div class="text-[10px] font-medium text-slate-400 uppercase">Step 1</div>
+            <div class="text-xs font-bold truncate">Map Workforce</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <button onclick="goToStep(2)" id="step-btn-2" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">2</div>
+          <div class="truncate">
+            <div class="text-[10px] font-medium text-slate-400 uppercase">Step 2</div>
+            <div class="text-xs font-bold truncate">Critical Workloads</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <button onclick="goToStep(3)" id="step-btn-3" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">3</div>
+          <div class="truncate">
+            <div class="text-[10px] font-medium text-slate-400 uppercase">Step 3</div>
+            <div class="text-xs font-bold truncate">AI Opportunities</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <button onclick="goToStep(4)" id="step-btn-4" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">4</div>
+          <div class="truncate">
+            <div class="text-[10px] font-medium text-slate-400 uppercase">Step 4</div>
+            <div class="text-xs font-bold truncate">Prioritise &amp; Score</div>
+          </div>
+        </button>
+
+        <i class="fa-solid fa-chevron-right text-slate-700 text-xs shrink-0 hidden md:block"></i>
+
+        <button onclick="goToStep(5)" id="step-btn-5" class="step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200">
+          <div class="step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">5</div>
+          <div class="truncate">
+            <div class="text-[10px] font-medium text-slate-400 uppercase">Step 5</div>
+            <div class="text-xs font-bold truncate">Top 3 Output</div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- STEP 1: MAP YOUR WORKFORCE -->
+    <section id="step-1" class="step-panel space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Step 1 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">1. Map Your Workforce</h2>
+          <p class="text-slate-400 text-sm mt-1">Key in specific stakeholder roles across Strategy, Management, and Execution levels.</p>
+        </div>
+      </div>
+
+      <!-- Strategy, Management, Execution Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Strategy Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-blue-500 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">STRATEGY</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="strategy-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-base font-heading font-bold text-white">Leadership &amp; Strategy</h3>
+            <p class="text-xs text-slate-400 mb-3">Decide, plan long-term roadmap, communicate vision.</p>
+            
+            <div id="strategy-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+
+          <button onclick="addRoleToTier('Strategy')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-blue-400 rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-user-plus"></i> Key In Strategy Role
+          </button>
+        </div>
+
+        <!-- Management Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-indigo-500 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">MANAGEMENT</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="mgmt-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-base font-heading font-bold text-white">Managers &amp; Team Leads</h3>
+            <p class="text-xs text-slate-400 mb-3">Supervise, coordinate cross-functional work, review deliverables.</p>
+            
+            <div id="mgmt-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+
+          <button onclick="addRoleToTier('Management')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-indigo-400 rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-user-plus"></i> Key In Management Role
+          </button>
+        </div>
+
+        <!-- Execution Tier -->
+        <div class="glass-card rounded-2xl p-5 border-t-4 border-t-teal-500 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">EXECUTION</span>
+              <span class="text-xs text-slate-400"><i class="fa-solid fa-users text-slate-500 mr-1"></i> <span id="execution-count">0</span> Roles</span>
+            </div>
+            <h3 class="text-base font-heading font-bold text-white">Staff &amp; Specialists</h3>
+            <p class="text-xs text-slate-400 mb-3">Create, process data/tasks, deliver key outputs.</p>
+            
+            <div id="execution-roles-list" class="space-y-3">
+              <!-- Dynamically populated roles -->
+            </div>
+          </div>
+
+          <button onclick="addRoleToTier('Execution')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-teal-400 rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-user-plus"></i> Key In Execution Role
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 2: IDENTIFY CRITICAL WORKLOADS -->
+    <section id="step-2" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Step 2 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">2. Identify Critical Workloads</h2>
+          <p class="text-slate-400 text-sm mt-1">For each role, pinpoint time sinks, content creation demands, delays, and poor info points.</p>
+        </div>
+
+        <button onclick="addWorkload()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-sm transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+          <i class="fa-solid fa-plus"></i> + Add Custom Workload
+        </button>
+      </div>
+
+      <!-- Diagnostic Guide Cards -->
+      <div class="glass-card rounded-2xl p-4 bg-slate-900/60 border border-slate-800">
+        <h4 class="text-xs font-bold text-brand-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-circle-question"></i> Workload Audit Diagnostic Questions:
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs text-slate-300">
+          <div class="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+            <strong class="text-white block mb-0.5">1. Time &amp; Importance</strong> What are the most important things they do that take the most time?
+          </div>
+          <div class="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+            <strong class="text-white block mb-0.5">2. Content Creation</strong> Where is heavy drafting, coding, or deck creation needed?
+          </div>
+          <div class="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+            <strong class="text-white block mb-0.5">3. Friction &amp; Delays</strong> Where do delays, duplication, or manual rework occur?
+          </div>
+          <div class="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+            <strong class="text-white block mb-0.5">4. Poor Information</strong> Where does missing info impair decision-making or delivery?
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Workloads List -->
+      <div id="workloads-container" class="space-y-4">
+        <!-- Dynamically rendered workload forms -->
+      </div>
+    </section>
+
+    <!-- STEP 3: FIND THE AI OPPORTUNITY -->
+    <section id="step-3" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Step 3 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">3. Find the AI Opportunity</h2>
+          <p class="text-slate-400 text-sm mt-1">Where could AI make this work faster, better, or more intelligent?</p>
+        </div>
+      </div>
+
+      <!-- AI Capability Palette -->
+      <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-cubes text-brand-400"></i> AI Capability Levers to Consider:
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5" id="ai-capabilities-grid">
+          <!-- Dynamically populated AI Capability Badges -->
+        </div>
+      </div>
+
+      <!-- Opportunity Mapping List -->
+      <div id="opportunity-matching-container" class="space-y-4">
+        <!-- Dynamically populated matching list -->
+      </div>
+    </section>
+
+    <!-- STEP 4: PRIORITISE (SCORING & 2x2 MATRIX) -->
+    <section id="step-4" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-400 tracking-wider uppercase">Step 4 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">4. Prioritise AI Opportunities</h2>
+          <p class="text-slate-400 text-sm mt-1">Formula: <strong>Impact × Frequency × Time Saved × Feasibility</strong></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Scoring Sliders -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-card rounded-2xl p-5 border border-slate-800">
+            <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
+              <span>Scoring Candidate Workloads</span>
+              <span class="text-xs font-normal text-slate-400">Rating scale 1 (Low) to 5 (High)</span>
+            </h3>
+
+            <div id="scoring-list" class="space-y-6">
+              <!-- Dynamically populated scoring sliders -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2x2 Matrix Plot -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-card rounded-2xl p-5 sticky top-36 border border-slate-800">
+            <h3 class="text-base font-bold text-white mb-1">2x2 Priority Matrix</h3>
+            <p class="text-xs text-slate-400 mb-4">Business Impact (Vertical) vs Feasibility (Horizontal)</p>
+
+            <div class="relative w-full aspect-square bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col justify-between">
+              <!-- Quadrant Background Labels -->
+              <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 p-4 gap-1 pointer-events-none opacity-25">
+                <div class="bg-blue-500/20 rounded-tl-lg p-2 text-[10px] font-bold text-blue-300 uppercase">Strategic Bets</div>
+                <div class="bg-emerald-500/30 rounded-tr-lg flex justify-end p-2 text-[10px] font-bold text-emerald-300 uppercase">Top Quick Wins</div>
+                <div class="bg-slate-700/20 rounded-bl-lg flex items-end p-2 text-[10px] font-bold text-slate-400 uppercase">Deprioritise</div>
+                <div class="bg-indigo-500/20 rounded-br-lg flex items-end justify-end p-2 text-[10px] font-bold text-indigo-300 uppercase">Operational Wins</div>
+              </div>
+
+              <!-- Plotting Container -->
+              <div id="matrix-plot-area" class="relative w-full h-full">
+                <!-- Dynamically plotted dots -->
+              </div>
+
+              <div class="absolute -left-3 top-1/2 -rotate-90 text-[9px] font-bold text-slate-500 tracking-wider">BUSINESS IMPACT →</div>
+              <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold text-slate-500 tracking-wider">FEASIBILITY →</div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-around text-[11px] text-slate-400 border-t border-slate-800/80 pt-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> High Score Priority</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span> Standard Candidate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: OUTPUT & TOP 3 PRIORITIES -->
+    <section id="step-5" class="step-panel hidden space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase">Step 5 of 5</span>
+          <h2 class="text-2xl font-heading font-extrabold text-white mt-1">5. Executive Dashboard — Top 3 AI Priorities</h2>
+          <p class="text-slate-400 text-sm mt-1">Three workloads where AI delivers the greatest value to your organisation.</p>
+        </div>
+
+        <div class="no-print flex flex-wrap items-center gap-2">
+          <button onclick="copyMarkdownReport()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl font-medium text-xs transition flex items-center gap-1.5">
+            <i class="fa-solid fa-copy text-brand-400"></i> Copy Markdown
+          </button>
+          <button onclick="exportJSON()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl font-medium text-xs transition flex items-center gap-1.5">
+            <i class="fa-solid fa-download text-teal-400"></i> Export JSON
+          </button>
+          <button onclick="window.print()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+            <i class="fa-solid fa-print"></i> Print / PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Top 3 Opportunity Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="top3-container">
+        <!-- Dynamically populated top 3 priority cards -->
+      </div>
+
+      <!-- Action Plan & Governance Notes -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-file-pen text-brand-400"></i> Implementation Roadmap Notes
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Record assigned executive sponsors, target pilot launch dates, and required AI tools:</p>
+
+          <textarea id="action-notes" oninput="saveNotes(this.value)" rows="6" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-brand-500 transition" placeholder="e.g., Q1 Pilot: Customer Support Lead ticket assistant. Executive Sponsor: Director of CS..."></textarea>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-400"></i> Executive Readiness Checklist
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Ensure governance and operational readiness before rollout:</p>
+
+          <div class="space-y-3 text-xs">
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700">
+              <span class="text-slate-300">Specific stakeholder owners identified for each top priority workload.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700">
+              <span class="text-slate-300">Data privacy and security standards verified for AI model interactions.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700">
+              <span class="text-slate-300">Baseline time tracking logs established to measure post-AI efficiency ROI.</span>
+            </label>
+            <label class="flex items-center gap-3 p-2.5 bg-slate-800/40 rounded-xl border border-slate-700/50 cursor-pointer hover:bg-slate-800/70 transition">
+              <input type="checkbox" class="w-4 h-4 rounded text-brand-600 bg-slate-900 border-slate-700">
+              <span class="text-slate-300">Prompt engineering and workflow literacy sessions scheduled for key users.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="no-print bg-slate-950 border-t border-slate-800 py-4 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <button id="back-btn" onclick="prevStep()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
+        <i class="fa-solid fa-arrow-left"></i> Previous Step
+      </button>
+
+      <div class="text-xs text-slate-500 font-medium">
+        Phase <span id="current-step-num">1</span> of 5
+      </div>
+
+      <button id="next-btn" onclick="nextStep()" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-brand-600/30">
+        Next Step <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-20 right-6 px-4 py-3 bg-slate-800 border border-brand-500/50 text-white text-xs font-semibold rounded-xl shadow-2xl transition transform translate-y-10 opacity-0 pointer-events-none flex items-center gap-2 z-50">
+    <i class="fa-solid fa-circle-check text-brand-400"></i>
+    <span id="toast-message">Data saved successfully</span>
+  </div>
+
+  <script>
+    /* Global Application State */
+    let currentStep = 1;
+
+    const AI_CAPABILITIES = [
+      { id: 'content', title: 'Create & Improve Content', icon: 'fa-pen-nib', color: 'blue', desc: 'Drafting reports, copy, emails, code generation, polishing.' },
+      { id: 'summarise', title: 'Search & Summarise', icon: 'fa-file-contract', color: 'sky', desc: 'Extracting key takeaways, policy search, document synthesis.' },
+      { id: 'data', title: 'Analyse Data', icon: 'fa-chart-pie', color: 'teal', desc: 'Processing datasets, anomaly detection, trend forecasting.' },
+      { id: 'reports', title: 'Reports & Presentations', icon: 'fa-file-powerpoint', color: 'purple', desc: 'Automating deck creation, executive briefs, board updates.' },
+      { id: 'collab', title: 'Communicate & Collaborate', icon: 'fa-comments', color: 'pink', desc: 'Meeting transcripts, stakeholder updates, draft replies.' },
+      { id: 'automate', title: 'Automate Repetitive Work', icon: 'fa-rotate', color: 'orange', desc: 'Form routing, data re-entry, routine triage.' },
+      { id: 'decisions', title: 'Support Decisions', icon: 'fa-brain', color: 'emerald', desc: 'Scenario modeling, risk evaluations, strategic options.' }
+    ];
+
+    let appData = {
+      roles: [],
+      workloads: [],
+      actionNotes: ''
+    };
+
+    /* LocalStorage state handlers */
+    function loadState() {
+      const saved = localStorage.getItem('ai_priorities_app_data');
+      if (saved) {
+        try { appData = JSON.parse(saved); } catch (e) {}
+      }
+      if (!appData.roles || appData.roles.length === 0) {
+        loadSampleScenario(false);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('ai_priorities_app_data', JSON.stringify(appData));
+    }
+
+    /* Navigation & Step Rendering */
+    function goToStep(step) {
+      currentStep = step;
+      document.querySelectorAll('.step-panel').forEach((panel, idx) => {
+        if (idx + 1 === step) panel.classList.remove('hidden');
+        else panel.classList.add('hidden');
+      });
+
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`step-btn-${i}`);
+        const num = btn.querySelector('.step-num');
+        if (i === step) {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-brand-600/20 border-brand-500 text-white shadow-lg shadow-brand-500/10';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold shrink-0';
+        } else if (i < step) {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/80 border-slate-700/80 text-slate-200';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0';
+          num.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else {
+          btn.className = 'step-btn flex-1 min-w-[140px] flex items-center gap-2 p-2 rounded-xl transition border text-left bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200';
+          num.className = 'step-num w-7 h-7 rounded-lg bg-slate-700 text-slate-400 flex items-center justify-center text-xs font-bold shrink-0';
+          num.innerText = i;
+        }
+      }
+
+      document.getElementById('current-step-num').innerText = step;
+      const backBtn = document.getElementById('back-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      backBtn.disabled = (step === 1);
+      if (step === 1) backBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      else backBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      if (step === 5) {
+        nextBtn.innerHTML = 'Finish <i class="fa-solid fa-check-circle"></i>';
+      } else {
+        nextBtn.innerHTML = 'Next Step <i class="fa-solid fa-arrow-right"></i>';
+      }
+
+      if (step === 1) renderStep1();
+      if (step === 2) renderStep2();
+      if (step === 3) renderStep3();
+      if (step === 4) renderStep4();
+      if (step === 5) renderStep5();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+      if (currentStep < 5) goToStep(currentStep + 1);
+      else showToast('Framework summary complete!');
+    }
+
+    function prevStep() {
+      if (currentStep > 1) goToStep(currentStep - 1);
+    }
+
+    /* STEP 1 LOGIC: CUSTOM STAKEHOLDER ROLES */
+    function renderStep1() {
+      const sList = document.getElementById('strategy-roles-list');
+      const mList = document.getElementById('mgmt-roles-list');
+      const eList = document.getElementById('execution-roles-list');
+
+      sList.innerHTML = ''; mList.innerHTML = ''; eList.innerHTML = '';
+      let sCount = 0, mCount = 0, eCount = 0;
+
+      appData.roles.forEach(role => {
+        const card = document.createElement('div');
+        card.className = 'p-3 bg-slate-800/90 rounded-xl border border-slate-700/80 relative space-y-2';
+        card.innerHTML = `
+          <button onclick="deleteRole('${role.id}')" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 transition text-xs" title="Delete Role">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          
+          <div>
+            <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Stakeholder Role Title:</label>
+            <input type="text" value="${escapeHtml(role.title)}" onchange="updateRole('${role.id}', 'title', this.value)" class="font-bold text-xs text-white bg-slate-900/80 px-2 py-1 rounded border border-slate-700 focus:outline-none focus:border-brand-500 w-full" placeholder="e.g. Chief Executive Officer">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Department / Team:</label>
+              <input type="text" value="${escapeHtml(role.department || '')}" onchange="updateRole('${role.id}', 'department', this.value)" class="text-[11px] text-slate-300 bg-slate-900/80 px-2 py-1 rounded border border-slate-700/70 w-full focus:outline-none focus:border-brand-500" placeholder="e.g. Executive">
+            </div>
+            <div>
+              <label class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Main Responsibilities:</label>
+              <input type="text" value="${escapeHtml(role.tasks || '')}" onchange="updateRole('${role.id}', 'tasks', this.value)" class="text-[11px] text-slate-300 bg-slate-900/80 px-2 py-1 rounded border border-slate-700/70 w-full focus:outline-none focus:border-brand-500" placeholder="e.g. Planning, Decisions">
+            </div>
+          </div>
+
+          <div class="pt-1">
+            <button onclick="addWorkloadForRole('${role.id}')" class="text-[10px] font-semibold text-brand-400 hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-plus-circle"></i> Add Workload for this Role
+            </button>
+          </div>
+        `;
+
+        if (role.tier === 'Strategy') { sList.appendChild(card); sCount++; }
+        else if (role.tier === 'Management') { mList.appendChild(card); mCount++; }
+        else { eList.appendChild(card); eCount++; }
+      });
+
+      document.getElementById('strategy-count').innerText = sCount;
+      document.getElementById('mgmt-count').innerText = mCount;
+      document.getElementById('execution-count').innerText = eCount;
+    }
+
+    function addRoleToTier(tier) {
+      const newRole = {
+        id: 'r_' + Date.now(),
+        tier: tier,
+        title: 'New ' + tier + ' Role',
+        department: 'Operations',
+        tasks: 'Core strategy and deliverables'
+      };
+      appData.roles.push(newRole);
+      saveState();
+      renderStep1();
+      showToast(`Added new ${tier} role`);
+    }
+
+    function updateRole(id, field, value) {
+      const role = appData.roles.find(r => r.id === id);
+      if (role) {
+        role[field] = value;
+        saveState();
+      }
+    }
+
+    function deleteRole(id) {
+      appData.roles = appData.roles.filter(r => r.id !== id);
+      appData.workloads.forEach(w => {
+        if (w.stakeholderId === id) w.stakeholderId = '';
+      });
+      saveState();
+      renderStep1();
+    }
+
+    /* STEP 2 LOGIC: DYNAMIC WORKLOAD INPUTS */
+    function renderStep2() {
+      const container = document.getElementById('workloads-container');
+      container.innerHTML = '';
+
+      if (appData.workloads.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 glass-card rounded-2xl border border-slate-800">
+            <i class="fa-solid fa-list-check text-3xl text-slate-600 mb-3 block"></i>
+            <p class="text-sm text-slate-400">No candidate workloads added yet.</p>
+            <button onclick="addWorkload()" class="mt-3 px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-xl">+ Add Custom Workload</button>
+          </div>
+        `;
+        return;
+      }
+
+      appData.workloads.forEach((w, idx) => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 border border-slate-800 space-y-4';
+
+        let options = `<option value="">-- Select Assigned Role --</option>`;
+        appData.roles.forEach(r => {
+          options += `<option value="${r.id}" ${w.stakeholderId === r.id ? 'selected' : ''}>[${r.tier}] ${r.title} (${r.department || 'General'})</option>`;
+        });
+
+        card.innerHTML = `
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-1">
+              <span class="w-7 h-7 rounded-lg bg-brand-600/20 border border-brand-500/40 text-brand-400 font-bold text-xs flex items-center justify-center shrink-0">
+                #${idx + 1}
+              </span>
+              <div class="w-full">
+                <label class="text-[10px] font-bold text-slate-400 uppercase block">Workload Title:</label>
+                <input type="text" value="${escapeHtml(w.title)}" onchange="updateWorkload('${w.id}', 'title', this.value)" class="text-sm font-bold text-white bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-700 focus:outline-none focus:border-brand-500 w-full" placeholder="e.g. Weekly Management Reporting & Deck Creation">
+              </div>
+            </div>
+
+            <button onclick="deleteWorkload('${w.id}')" class="text-slate-500 hover:text-red-400 text-xs transition shrink-0">
+              <i class="fa-solid fa-trash"></i> Delete Workload
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Assigned Stakeholder Role:</label>
+              <select onchange="updateWorkload('${w.id}', 'stakeholderId', this.value)" class="w-full bg-slate-900 text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-brand-500">
+                ${options}
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Time Spent / Volume:</label>
+              <input type="text" value="${escapeHtml(w.timeSpent)}" onchange="updateWorkload('${w.id}', 'timeSpent', this.value)" class="w-full bg-slate-900 text-slate-200 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-brand-500" placeholder="e.g. High (12 hours/week)">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800">
+              <label class="text-xs font-bold text-slate-300 block mb-1">
+                <i class="fa-solid fa-pen-nib text-brand-400 mr-1"></i> Content Creation Demands:
+              </label>
+              <textarea onchange="updateWorkload('${w.id}', 'contentDemand', this.value)" class="w-full bg-transparent text-xs text-slate-200 focus:outline-none resize-none" rows="2" placeholder="e.g. Heavy slide drafting, executive briefing notes, proposals...">${escapeHtml(w.contentDemand || '')}</textarea>
+            </div>
+
+            <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800">
+              <label class="text-xs font-bold text-red-400 block mb-1">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Friction, Delays &amp; Poor Info:
+              </label>
+              <textarea onchange="updateWorkload('${w.id}', 'painPoint', this.value)" class="w-full bg-transparent text-xs text-slate-200 focus:outline-none resize-none" rows="2" placeholder="e.g. Manual re-keying, rework, waiting for team inputs...">${escapeHtml(w.painPoint || '')}</textarea>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function addWorkload(assignedRoleId = '') {
+      const newWorkload = {
+        id: 'w_' + Date.now(),
+        stakeholderId: assignedRoleId || (appData.roles[0] ? appData.roles[0].id : ''),
+        title: 'New Custom Workload',
+        timeSpent: 'Moderate (6 hrs/wk)',
+        contentDemand: 'Drafting presentations and team updates.',
+        painPoint: 'Delays waiting for information from cross-functional teams.',
+        capabilityId: 'content',
+        impact: 3,
+        frequency: 3,
+        timeSaved: 3,
+        feasibility: 4
+      };
+      appData.workloads.push(newWorkload);
+      saveState();
+      renderStep2();
+      showToast('New workload added!');
+    }
+
+    function addWorkloadForRole(roleId) {
+      addWorkload(roleId);
+      goToStep(2);
+    }
+
+    function deleteWorkload(id) {
+      appData.workloads = appData.workloads.filter(w => w.id !== id);
+      saveState();
+      renderStep2();
+    }
+
+    function updateWorkload(id, field, value) {
+      const w = appData.workloads.find(item => item.id === id);
+      if (w) {
+        w[field] = value;
+        saveState();
+      }
+    }
+
+    /* STEP 3 LOGIC: AI OPPORTUNITY MATCHING */
+    function renderStep3() {
+      const grid = document.getElementById('ai-capabilities-grid');
+      grid.innerHTML = '';
+
+      AI_CAPABILITIES.forEach(cap => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 bg-slate-800/80 rounded-xl border border-slate-700/60 hover:border-brand-500/60 transition cursor-pointer flex flex-col justify-between';
+        item.onclick = () => showToast(`${cap.title}: ${cap.desc}`);
+        item.innerHTML = `
+          <div>
+            <i class="fa-solid ${cap.icon} text-brand-400 text-sm mb-1"></i>
+            <div class="text-[11px] font-bold text-white leading-tight">${cap.title}</div>
+          </div>
+        `;
+        grid.appendChild(item);
+      });
+
+      const container = document.getElementById('opportunity-matching-container');
+      container.innerHTML = '';
+
+      appData.workloads.forEach(w => {
+        const role = appData.roles.find(r => r.id === w.stakeholderId);
+        const roleLabel = role ? `${role.title} (${role.tier})` : 'Unassigned Role';
+
+        let capOptionsHtml = AI_CAPABILITIES.map(c => `
+          <option value="${c.id}" ${w.capabilityId === c.id ? 'selected' : ''}>${c.title}</option>
+        `).join('');
+
+        const matchedCap = AI_CAPABILITIES.find(c => c.id === w.capabilityId) || AI_CAPABILITIES[0];
+
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center';
+
+        card.innerHTML = `
+          <div class="lg:col-span-6 space-y-1">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">
+              <i class="fa-solid fa-user-tag mr-1"></i> ${roleLabel}
+            </span>
+            <h4 class="text-sm font-bold text-white">${escapeHtml(w.title)}</h4>
+            <p class="text-xs text-red-400/90"><i class="fa-solid fa-circle-exclamation mr-1"></i> ${escapeHtml(w.painPoint)}</p>
+          </div>
+
+          <div class="lg:col-span-1 text-center hidden lg:block">
+            <i class="fa-solid fa-arrow-right text-slate-600 text-lg"></i>
+          </div>
+
+          <div class="lg:col-span-5 bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
+            <label class="text-[10px] font-bold text-brand-400 uppercase block">Matched AI Opportunity Capability:</label>
+            <select onchange="updateWorkload('${w.id}', 'capabilityId', this.value); renderStep3();" class="w-full bg-slate-800 text-xs text-white rounded-lg p-2 border border-slate-700 focus:outline-none focus:border-brand-500">
+              ${capOptionsHtml}
+            </select>
+            <p class="text-[10px] text-slate-400 italic">
+              <i class="fa-solid fa-info-circle mr-1"></i> ${matchedCap.desc}
+            </p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* STEP 4 LOGIC: PRIORITISATION FORMULA & 2x2 MATRIX */
+    function computeScore(w) {
+      const imp = w.impact || 3;
+      const freq = w.frequency || 3;
+      const ts = w.timeSaved || 3;
+      const feas = w.feasibility || 3;
+      return imp * freq * ts * feas;
+    }
+
+    function renderStep4() {
+      const container = document.getElementById('scoring-list');
+      container.innerHTML = '';
+
+      appData.workloads.forEach(w => {
+        const role = appData.roles.find(r => r.id === w.stakeholderId);
+        const roleLabel = role ? role.title : 'Unassigned';
+        const score = computeScore(w);
+
+        const card = document.createElement('div');
+        card.className = 'p-4 bg-slate-900/70 rounded-xl border border-slate-800 space-y-3';
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-brand-400 uppercase">${roleLabel}</span>
+              <h4 class="text-sm font-bold text-white">${escapeHtml(w.title)}</h4>
+            </div>
+            <div class="text-right">
+              <span class="text-xl font-heading font-extrabold text-brand-400">${score}</span>
+              <span class="text-[9px] text-slate-500 uppercase font-bold block">Priority Score</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-2 border-t border-slate-800/60">
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Impact: <span class="text-white font-bold">${w.impact || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.impact || 3}" oninput="updateWorkload('${w.id}', 'impact', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Frequency: <span class="text-white font-bold">${w.frequency || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.frequency || 3}" oninput="updateWorkload('${w.id}', 'frequency', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Time Saved: <span class="text-white font-bold">${w.timeSaved || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.timeSaved || 3}" oninput="updateWorkload('${w.id}', 'timeSaved', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+            <div>
+              <label class="text-slate-400 block text-[10px] mb-1">Feasibility: <span class="text-white font-bold">${w.feasibility || 3}</span></label>
+              <input type="range" min="1" max="5" value="${w.feasibility || 3}" oninput="updateWorkload('${w.id}', 'feasibility', parseInt(this.value)); renderStep4();" class="w-full">
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      renderMatrix();
+    }
+
+    function renderMatrix() {
+      const plotArea = document.getElementById('matrix-plot-area');
+      plotArea.innerHTML = '';
+
+      appData.workloads.forEach((w, idx) => {
+        const feas = w.feasibility || 3;
+        const imp = w.impact || 3;
+
+        const xPct = ((feas - 1) / 4) * 80 + 10;
+        const yPct = 100 - (((imp - 1) / 4) * 80 + 10);
+
+        const score = computeScore(w);
+        const isTop = score >= 100;
+
+        const dot = document.createElement('div');
+        dot.style.left = `${xPct}%`;
+        dot.style.top = `${yPct}%`;
+        dot.className = `absolute transform -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full ${isTop ? 'bg-emerald-500 ring-2 ring-white shadow-lg shadow-emerald-500/50' : 'bg-brand-500'} flex items-center justify-center text-white text-xs font-bold cursor-pointer transition hover:scale-125 z-10`;
+        dot.innerText = `#${idx + 1}`;
+        dot.title = `${w.title} (Score: ${score})`;
+
+        plotArea.appendChild(dot);
+      });
+    }
+
+    /* STEP 5 LOGIC: EXECUTIVE DASHBOARD OUTPUT */
+    function renderStep5() {
+      const container = document.getElementById('top3-container');
+      container.innerHTML = '';
+
+      const sorted = [...appData.workloads].sort((a, b) => computeScore(b) - computeScore(a));
+      const top3 = sorted.slice(0, 3);
+
+      if (top3.length === 0) {
+        container.innerHTML = '<div class="col-span-3 text-center text-slate-400 py-8">No opportunities ranked yet.</div>';
+        return;
+      }
+
+      top3.forEach((w, idx) => {
+        const cap = AI_CAPABILITIES.find(c => c.id === w.capabilityId) || AI_CAPABILITIES[0];
+        const role = appData.roles.find(r => r.id === w.stakeholderId);
+        const score = computeScore(w);
+
+        const card = document.createElement('div');
+        card.className = `glass-card rounded-2xl p-6 border ${idx === 0 ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-slate-800'} relative flex flex-col justify-between`;
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full text-xs font-bold ${idx === 0 ? 'bg-brand-600 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                TOP PRIORITY #${idx + 1}
+              </span>
+              <span class="text-xs font-bold text-brand-400">Score: ${score}</span>
+            </div>
+
+            <h3 class="text-lg font-heading font-bold text-white mb-2">${escapeHtml(w.title)}</h3>
+
+            ${role ? `
+              <div class="mb-3 flex items-center gap-2 bg-slate-800/80 p-2 rounded-xl border border-slate-700/60">
+                <i class="fa-solid fa-user-check text-brand-400 text-xs"></i>
+                <div class="text-xs">
+                  <span class="text-white font-semibold block">${escapeHtml(role.title)}</span>
+                  <span class="text-slate-400 text-[10px]">${role.department || 'General'} · ${role.tier}</span>
+                </div>
+              </div>
+            ` : ''}
+
+            <p class="text-xs text-slate-300 mb-4 line-clamp-3">${escapeHtml(w.painPoint)}</p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800/80 bg-slate-900/40 -mx-6 -mb-6 p-6 rounded-b-2xl">
+            <span class="text-[10px] font-bold text-brand-400 block mb-1">RECOMMENDED AI CAPABILITY:</span>
+            <div class="flex items-center gap-2 text-xs font-semibold text-white">
+              <i class="fa-solid ${cap.icon} text-brand-400"></i>
+              <span>${cap.title}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('action-notes').value = appData.actionNotes || '';
+    }
+
+    function saveNotes(val) {
+      appData.actionNotes = val;
+      saveState();
+    }
+
+    /* SAMPLE SCENARIO PRE-FILL */
+    function loadSampleScenario(showNotification = true) {
+      appData = {
+        roles: [
+          { id: 'r1', tier: 'Strategy', title: 'Chief Marketing Officer', department: 'Executive Board', tasks: 'Growth strategy, agency oversight, market positioning' },
+          { id: 'r2', tier: 'Management', title: 'Director of Customer Operations', department: 'Client Services', tasks: 'Supervise team leads, SLA compliance, weekly reviews' },
+          { id: 'r3', tier: 'Execution', title: 'Customer Support Lead', department: 'Tier 2 Support', tasks: 'Draft response guides, write documentation, answer complex tickets' }
+        ],
+        workloads: [
+          {
+            id: 'w1',
+            stakeholderId: 'r3',
+            title: 'Knowledge Base Drafting & Customer Email Triage',
+            timeSpent: 'High (16 hrs/wk)',
+            contentDemand: 'Writing repetitive custom responses and updating technical guides.',
+            painPoint: 'Customer reply delays and manual duplication in documentation.',
+            capabilityId: 'content',
+            impact: 5,
+            frequency: 5,
+            timeSaved: 5,
+            feasibility: 5
+          },
+          {
+            id: 'w2',
+            stakeholderId: 'r2',
+            title: 'Weekly Cross-Department Operational Decks',
+            timeSpent: 'Moderate (8 hrs/wk)',
+            contentDemand: 'Synthesising operational status notes into board slides.',
+            painPoint: 'Time lost chasing inputs from 6 team leads and re-formatting slides.',
+            capabilityId: 'reports',
+            impact: 4,
+            frequency: 4,
+            timeSaved: 4,
+            feasibility: 4
+          },
+          {
+            id: 'w3',
+            stakeholderId: 'r1',
+            title: 'Competitor Intelligence & Campaign Analysis',
+            timeSpent: 'Moderate (6 hrs/wk)',
+            contentDemand: 'Reading industry reports and summarising executive insights.',
+            painPoint: 'Information overload delays quarterly strategic marketing planning.',
+            capabilityId: 'summarise',
+            impact: 5,
+            frequency: 3,
+            timeSaved: 4,
+            feasibility: 3
+          }
+        ],
+        actionNotes: 'Q1 AI Roadmap Kickoff:\n- Pilot 1: Support Ticket Assistant for Customer Support Lead.\n- Pilot 2: Weekly Operations Slide Synthesiser.\n- Executive Sponsor: Chief Marketing Officer.'
+      };
+      saveState();
+      goToStep(currentStep);
+      if (showNotification) showToast('Sample Data Loaded!');
+    }
+
+    function resetData() {
+      if (confirm('Clear all inputs back to empty state?')) {
+        localStorage.removeItem('ai_priorities_app_data');
+        appData = { roles: [], workloads: [], actionNotes: '' };
+        saveState();
+        goToStep(1);
+        showToast('All inputs cleared.');
+      }
+    }
+
+    function copyMarkdownReport() {
+      const sorted = [...appData.workloads].sort((a, b) => computeScore(b) - computeScore(a));
+      let md = `# AI PRIORITY IDENTIFICATION REPORT\n\n`;
+      md += `## Top 3 AI Priorities\n`;
+
+      sorted.slice(0, 3).forEach((w, idx) => {
+        const role = appData.roles.find(r => r.id === w.stakeholderId);
+        md += `### ${idx + 1}. ${w.title}\n`;
+        md += `- **Assigned Role:** ${role ? role.title + ' (' + role.tier + ')' : 'Unassigned'}\n`;
+        md += `- **Priority Score:** ${computeScore(w)}\n`;
+        md += `- **Pain Point & Delays:** ${w.painPoint}\n\n`;
+      });
+
+      md += `## Roadmap Notes\n${appData.actionNotes || 'None'}\n`;
+
+      const textArea = document.createElement("textarea");
+      textArea.value = md;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Markdown report copied to clipboard!');
+      } catch (err) {
+        showToast('Failed to copy');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", "AI_Priorities_Framework.json");
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      showToast('Exported JSON successfully!');
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('light');
+      const icon = document.getElementById('theme-icon');
+      if (document.documentElement.classList.contains('light')) {
+        icon.className = 'fa-solid fa-sun';
+      } else {
+        icon.className = 'fa-solid fa-moon';
+      }
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    window.onload = function() {
+      loadState();
+      goToStep(1);
+    };
+  </script>
+</body>
+</html>
