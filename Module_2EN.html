@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab Exercise 2: Prompting Work</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --bg-alt: #F7F9FB;
+    --text: #1A1A1A;
+    --text-muted: #55606B;
+    --accent: #1F4E78;
+    --accent-light: #EAF1F8;
+    --accent-border: #9DB8D2;
+    --amber-bg: #FDF2D0;
+    --amber-border: #E8C468;
+    --amber-text: #7F3F00;
+    --code-bg: #0F1B2A;
+    --code-text: #E7EEF5;
+    --table-header: #D9E2F3;
+    --border: #DDE3E9;
+    --green-bg: #EAF5EC;
+    --green-text: #1E6B34;
+    --purple-bg: #F1EAF8;
+    --purple-border: #C7A8E0;
+    --purple-text: #5B2E80;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #14181D;
+      --bg-alt: #1B2129;
+      --text: #ECEFF2;
+      --text-muted: #A9B4BF;
+      --accent: #7FB0E0;
+      --accent-light: #1D2C3B;
+      --accent-border: #35526E;
+      --amber-bg: #3A2E10;
+      --amber-border: #6B5324;
+      --amber-text: #E8C468;
+      --code-bg: #0B1119;
+      --code-text: #D9E6F2;
+      --table-header: #22344A;
+      --border: #2B333C;
+      --green-bg: #16281B;
+      --green-text: #7FCB93;
+      --purple-bg: #271C33;
+      --purple-border: #5B3E74;
+      --purple-text: #D5B3EE;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181D;
+    --bg-alt: #1B2129;
+    --text: #ECEFF2;
+    --text-muted: #A9B4BF;
+    --accent: #7FB0E0;
+    --accent-light: #1D2C3B;
+    --accent-border: #35526E;
+    --amber-bg: #3A2E10;
+    --amber-border: #6B5324;
+    --amber-text: #E8C468;
+    --code-bg: #0B1119;
+    --code-text: #D9E6F2;
+    --table-header: #22344A;
+    --border: #2B333C;
+    --green-bg: #16281B;
+    --green-text: #7FCB93;
+    --purple-bg: #271C33;
+    --purple-border: #5B3E74;
+    --purple-text: #D5B3EE;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 1.9rem; margin: 0 0 4px; color: var(--accent); }
+  .subtitle { color: var(--text-muted); font-size: 1.05rem; margin: 0 0 28px; }
+  .intro-box {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 36px;
+  }
+  .intro-box h2 { margin-top: 0; font-size: 1.1rem; color: var(--accent); }
+  .intro-box ol { margin: 8px 0 0; padding-left: 22px; }
+  .intro-box li { margin-bottom: 6px; }
+
+  .exercise {
+    border-top: 3px solid var(--accent);
+    padding-top: 24px;
+    margin-top: 48px;
+  }
+  .exercise-number {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+  }
+  .exercise h2 { font-size: 1.5rem; margin: 10px 0 2px; }
+  .skill-focus { color: var(--text-muted); font-style: italic; margin: 0 0 18px; font-size: 0.98rem; }
+
+  .context-block {
+    background: var(--bg-alt);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  .context-block h3 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+  .context-block p { margin: 0 0 8px; }
+  .context-block p:last-child { margin-bottom: 0; }
+
+  h3.section-label {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin: 22px 0 8px;
+  }
+  h4.sub-label {
+    font-size: 1.05rem;
+    margin: 30px 0 4px;
+    color: var(--accent);
+  }
+  .sub-intro { margin: 0 0 12px; color: var(--text-muted); font-size: 0.95rem; }
+
+  .rctf-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.9rem; }
+  .rctf-table th, .rctf-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .rctf-table th { background: var(--table-header); width: 110px; }
+  .rctf-tag {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .code-panel {
+    position: relative;
+    background: var(--code-bg);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  .code-panel pre {
+    margin: 0;
+    padding: 18px 52px 18px 18px;
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.88rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--code-text);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s ease;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.22); }
+  .copy-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .copy-btn.copied { background: var(--green-bg); color: var(--green-text); border-color: var(--green-text); }
+
+  .output-box {
+    background: var(--accent-light);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 4px;
+  }
+  .output-box.alt { background: var(--purple-bg); border-color: var(--purple-border); }
+  .output-box .label { font-weight: 700; color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 8px; }
+  .output-box.alt .label { color: var(--purple-text); }
+  .output-box pre { margin: 0; white-space: pre-wrap; font-family: inherit; font-style: italic; font-size: 0.95rem; color: var(--text); }
+
+  table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 0.92rem; }
+  table.data-table th, table.data-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  table.data-table th { background: var(--table-header); }
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; }
+
+  .capability-box, .technique-box {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-top: 18px;
+  }
+  .technique-box { background: var(--purple-bg); border-color: var(--purple-border); }
+  .capability-box .label, .technique-box .label {
+    font-weight: 700; color: var(--amber-text); font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px;
+  }
+  .technique-box .label { color: var(--purple-text); }
+  .capability-box p, .technique-box p { margin: 0; }
+
+  .debrief {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border: 1px dashed var(--accent-border);
+    border-radius: 8px;
+  }
+  .debrief .label { font-weight: 700; color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+  .debrief p { margin: 0; }
+
+  .prompt2-block {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .summary-section { margin-top: 56px; padding-top: 24px; border-top: 3px solid var(--accent); }
+  .summary-section h2 { color: var(--accent); }
+
+  footer.note { margin-top: 40px; color: var(--text-muted); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Lab Exercise 2: Prompting Work</h1>
+  <p class="subtitle">Four scenarios from real Alfameli workload, each built on RCTF+C and taken through a second prompt</p>
+
+  <div class="intro-box">
+    <h2>How to use this lab</h2>
+    <p>Each exercise is a real task from a different part of Alfameli's operations. Work through them in order, the prompting skill required gets progressively harder. Every prompt is built on the RCTF+C framework from Module 2, Role, Context, Task, Format, Constraints, and every exercise now has two prompts, the first gets a usable result, the second extracts more value from the same dataset using a technique from Module 1 or 2.</p>
+    <ol>
+      <li>Read the <strong>Workload Context</strong> so you understand who is asking for this and why it matters.</li>
+      <li>Read the <strong>Dataset</strong> explanation, then copy the dataset block into your AI tool.</li>
+      <li>Check the <strong>RCTF+C Breakdown</strong>, then copy <strong>Prompt 1</strong> and run it.</li>
+      <li>Compare your result against the <strong>Sample Output</strong>. Results vary slightly each run, that is normal.</li>
+      <li>Read <strong>What the AI Just Did</strong>, this names the actual capability at work.</li>
+      <li>Copy <strong>Prompt 2</strong> and run it in the same conversation, this builds on your first result rather than starting over.</li>
+      <li>Answer the <strong>Debrief Question</strong> before moving on.</li>
+    </ol>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="exercise">
+    <span class="exercise-number">EXERCISE 1</span>
+    <h2>Client Reporting</h2>
+    <p class="skill-focus">Skill focus: prose summarising, without inventing anything</p>
+
+    <div class="context-block">
+      <h3>Workload Context</h3>
+      <p>You are a client account manager at Alfameli. Every week, the client on the Hess Malaysia contract expects a short written update on how their site is running, crew numbers, anything that went wrong, and anything they are still waiting on from you. This is routine, but it carries real weight, it is often the only visibility the client has into day-to-day operations, and a report that glosses over a problem or omits an open request damages trust.</p>
+      <p><strong>What you're expected to accomplish:</strong> turn a rough internal site log into a short, client-ready update that is accurate, complete, and appropriately reassuring, without adding anything that is not actually in the log.</p>
+    </div>
+
+    <h3 class="section-label">Dataset</h3>
+    <p>A rough internal site log, the kind a supervisor jots down during the week. It is not written for a client to read, it is written for you to work from. Notice it includes one open item, the manning schedule, that is easy to accidentally leave out.</p>
+    <div class="code-panel">
+      <pre id="ds1">Site log, Hess Malaysia contract, week of 8-14 Sept.
+Crew: 22 catering staff, full strength all week.
+Tue 10 Sept: minor generator fault in dry store, backup power engaged within 15 min, no food spoilage.
+Fri 13 Sept: new supervisor Ahmad started orientation.
+Client asked twice this week about next month's manning schedule, not yet sent.</pre>
+      <button class="copy-btn" data-target="ds1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <h3 class="section-label">RCTF+C Breakdown</h3>
+    <table class="rctf-table">
+      <tr><th><span class="rctf-tag">Role</span></th><td>You are a client account manager at Alfameli</td></tr>
+      <tr><th><span class="rctf-tag">Context</span></th><td>This is the weekly update the Hess Malaysia client relies on for visibility into site operations</td></tr>
+      <tr><th><span class="rctf-tag">Task</span></th><td>Using the site log, write the weekly update covering crew status, incidents, and open items</td></tr>
+      <tr><th><span class="rctf-tag">Format</span></th><td>One-page report, clear structure</td></tr>
+      <tr><th><span class="rctf-tag">Constraints</span></th><td>Formal tone, British spelling, no more than 200 words</td></tr>
+    </table>
+
+    <h3 class="section-label">Prompt 1</h3>
+    <div class="code-panel">
+      <pre id="p1">You are a client account manager at Alfameli. This is the weekly update the Hess Malaysia client relies on for visibility into site operations. Using this site log, write the weekly update, covering crew status, any incidents, and any open items they're waiting on. Present as a one-page report with clear structure. Formal tone, British spelling, no more than 200 words.</pre>
+      <button class="copy-btn" data-target="p1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <div class="output-box">
+      <div class="label">Sample Output</div>
+      <pre>Weekly Site Update, Hess Malaysia Contract
+Week of 8-14 September
+
+Crew remained at full strength throughout the week, with 22 catering staff deployed.
+
+On 10 September, a minor generator fault occurred in the dry store. Backup power was engaged within 15 minutes and no food spoilage resulted.
+
+Ahmad, our new site supervisor, began orientation on 13 September.
+
+We understand next month's manning schedule is outstanding on our end and will be sent shortly.</pre>
+    </div>
+
+    <div class="capability-box">
+      <div class="label">What the AI Just Did</div>
+      <p><strong>Capability: summarising and selective inclusion.</strong> The AI read unstructured notes and decided what mattered enough to include, while leaving nothing out that the client needs. It did not add anything beyond the source data.</p>
+    </div>
+
+    <div class="prompt2-block">
+      <h4 class="sub-label">Prompt 2, extract more value</h4>
+      <p class="sub-intro">The report above is honest but vague about the outstanding item, "will be sent shortly" commits to nothing. This is Draft, Diagnose, Direct from Module 2, one precise correction, not a restart.</p>
+      <div class="code-panel">
+        <pre id="p1b">The manning schedule has now been outstanding for two weeks and the client has asked twice. Revise the outstanding items line to commit to sending it within 3 working days, without inventing a reason for the delay.</pre>
+        <button class="copy-btn" data-target="p1b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+      </div>
+      <div class="output-box alt">
+        <div class="label">Sample Output, Revised</div>
+        <pre>We recognise next month's manning schedule remains outstanding despite your recent enquiries. We will provide this within three working days.</pre>
+      </div>
+      <div class="technique-box">
+        <div class="label">Technique: Draft, Diagnose, Direct</div>
+        <p>One weakness identified, one precise instruction given, the AI revised rather than regenerated the whole report. Notice it did not invent an excuse for the delay, it simply committed to a timeframe, exactly what was asked.</p>
+      </div>
+    </div>
+
+    <div class="debrief">
+      <div class="label">Debrief Question</div>
+      <p>Compare Prompt 1's output against Prompt 2's. Is there anything in either output that is not backed by the dataset or your instruction? Check every sentence.</p>
+    </div>
+  </div>
+
+  <!-- EXERCISE 2 -->
+  <div class="exercise">
+    <span class="exercise-number">EXERCISE 2</span>
+    <h2>Shift and Site Coordination</h2>
+    <p class="skill-focus">Skill focus: structured table output, respecting a hard constraint</p>
+
+    <div class="context-block">
+      <h3>Workload Context</h3>
+      <p>You are a site coordinator responsible for a small offshore catering crew. Every week you build the roster, and it has to satisfy two things at once, staff leave requests, and a minimum coverage rule the client's contract requires. Missing the minimum on any single day is a contract compliance issue, not just an inconvenience.</p>
+      <p><strong>What you're expected to accomplish:</strong> produce a roster that respects every leave request and never drops below minimum coverage on any day, in a format that's easy to scan at a glance.</p>
+    </div>
+
+    <h3 class="section-label">Dataset</h3>
+    <p>A short crew list with two leave requests and one hard rule. The rule, minimum 5 staff per day, is the part to watch, it's easy for a prompt to produce a roster that looks fine but quietly breaks it.</p>
+    <div class="code-panel">
+      <pre id="ds2">8 catering staff: Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra.
+Leave requests: Bala off Mon-Tue, Farah off Thu only.
+Minimum 5 staff required per day.</pre>
+      <button class="copy-btn" data-target="ds2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <h3 class="section-label">RCTF+C Breakdown</h3>
+    <table class="rctf-table">
+      <tr><th><span class="rctf-tag">Role</span></th><td>You are a site coordinator at Alfameli</td></tr>
+      <tr><th><span class="rctf-tag">Context</span></th><td>The client contract requires minimum daily coverage, this is a compliance obligation, not a preference</td></tr>
+      <tr><th><span class="rctf-tag">Task</span></th><td>Using the crew list and leave requests, build a 5-day roster (Mon-Fri)</td></tr>
+      <tr><th><span class="rctf-tag">Format</span></th><td>Table with a daily headcount</td></tr>
+      <tr><th><span class="rctf-tag">Constraints</span></th><td>At least 5 staff rostered every day, without exception</td></tr>
+    </table>
+
+    <h3 class="section-label">Prompt 1</h3>
+    <div class="code-panel">
+      <pre id="p2">You are a site coordinator at Alfameli. The client contract requires minimum daily coverage, this is a compliance obligation, not a preference. Using this crew list and leave requests, build a 5-day roster (Mon-Fri). Present as a table showing the daily headcount. At least 5 staff must be rostered every day, without exception.</pre>
+      <button class="copy-btn" data-target="p2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <tr><th>Day</th><th>Staff Rostered</th><th>Count</th></tr>
+        <tr><td>Mon</td><td>Ali, Chen, Devi, Goh, Hafiz, Indra</td><td>6</td></tr>
+        <tr><td>Tue</td><td>Ali, Chen, Devi, Goh, Hafiz, Indra</td><td>6</td></tr>
+        <tr><td>Wed</td><td>Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>8</td></tr>
+        <tr><td>Thu</td><td>Ali, Bala, Chen, Devi, Goh, Hafiz, Indra</td><td>7</td></tr>
+        <tr><td>Fri</td><td>Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>8</td></tr>
+      </table>
+    </div>
+
+    <div class="capability-box">
+      <div class="label">What the AI Just Did</div>
+      <p><strong>Capability: constraint checking plus structured formatting.</strong> The AI converted a plain list into a table and checked its own output against a rule, minimum 5 per day, before finalising it.</p>
+    </div>
+
+    <div class="prompt2-block">
+      <h4 class="sub-label">Prompt 2, extract more value</h4>
+      <p class="sub-intro">A roster that holds today can break with one more change. This applies Failure Anticipator from Module 2, deliberately stress-testing the plan before it's relied on.</p>
+      <div class="code-panel">
+        <pre id="p2b">Chen has just requested Wednesday off as well. Rebuild the roster and confirm explicitly whether minimum coverage still holds on every day.</pre>
+        <button class="copy-btn" data-target="p2b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+      </div>
+      <div class="output-box alt">
+        <div class="label">Sample Output, Rebuilt Roster</div>
+        <pre>Wed: Ali, Bala, Devi, Farah, Goh, Hafiz, Indra (7)
+
+Minimum coverage still holds on every day. Wednesday drops from 8 to 7 with Chen's leave added, still comfortably above the minimum of 5. No further action needed, but note Wednesday and Thursday are now the tightest days at 7 staff each.</pre>
+      </div>
+      <div class="technique-box">
+        <div class="label">Technique: Failure Anticipator</div>
+        <p>Rather than waiting for a real scheduling clash to surface a problem, this deliberately introduces one to check the plan's margin. Notice the AI also flagged which days are now tightest, information the first roster didn't surface because it wasn't asked to.</p>
+      </div>
+    </div>
+
+    <div class="debrief">
+      <div class="label">Debrief Question</div>
+      <p>Remove the "at least 5 staff" sentence from Prompt 1 and run it again. Does the roster change? This tells you whether the AI was actually applying the constraint, or just happened to produce a result that satisfied it.</p>
+    </div>
+  </div>
+
+  <!-- EXERCISE 3 -->
+  <div class="exercise">
+    <span class="exercise-number">EXERCISE 3</span>
+    <h2>Procurement and Logistics</h2>
+    <p class="skill-focus">Skill focus: comparing options and making a defensible recommendation</p>
+
+    <div class="context-block">
+      <h3>Workload Context</h3>
+      <p>You are a procurement officer sourcing crane wire rope for a project. Three suppliers have quoted, and you need to recommend one to your manager. This is not just a matter of picking the cheapest, price, lead time and warranty all matter differently depending on the project's urgency and risk tolerance, and your manager will expect a reason, not just a number.</p>
+      <p><strong>What you're expected to accomplish:</strong> compare all three quotes fairly across every factor that matters, and produce a recommendation you could defend in a meeting, not just repeat.</p>
+    </div>
+
+    <h3 class="section-label">Dataset</h3>
+    <p>Three supplier quotes for the same item, each strong on a different factor. There is no single obviously-best option, which is what makes this a genuine reasoning task rather than a simple lookup.</p>
+    <div class="code-panel">
+      <pre id="ds3">Three quotes for crane wire rope, 20mm, 500m.
+Supplier A: RM 18,500, 3-week lead time, 12-month warranty.
+Supplier B: RM 16,200, 6-week lead time, 6-month warranty.
+Supplier C: RM 19,800, 2-week lead time, 24-month warranty.</pre>
+      <button class="copy-btn" data-target="ds3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <h3 class="section-label">RCTF+C Breakdown</h3>
+    <table class="rctf-table">
+      <tr><th><span class="rctf-tag">Role</span></th><td>You are a procurement officer at Alfameli</td></tr>
+      <tr><th><span class="rctf-tag">Context</span></th><td>This wire rope is for an active crane operation and the choice affects both cost and schedule</td></tr>
+      <tr><th><span class="rctf-tag">Task</span></th><td>Compare the three quotes on price, lead time and warranty, and recommend one</td></tr>
+      <tr><th><span class="rctf-tag">Format</span></th><td>Comparison table, then a short written recommendation</td></tr>
+      <tr><th><span class="rctf-tag">Constraints</span></th><td>Recommendation must weigh all three factors, not price alone, one sentence of reasoning minimum</td></tr>
+    </table>
+
+    <h3 class="section-label">Prompt 1</h3>
+    <div class="code-panel">
+      <pre id="p3">You are a procurement officer at Alfameli. This wire rope is for an active crane operation, the choice affects both cost and schedule. Compare these three quotes on price, lead time and warranty. Present as a table, then recommend one, weighing all three factors rather than price alone, with a one-sentence reason.</pre>
+      <button class="copy-btn" data-target="p3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <tr><th>Supplier</th><th>Price (RM)</th><th>Lead Time</th><th>Warranty</th></tr>
+        <tr><td>A</td><td>18,500</td><td>3 weeks</td><td>12 months</td></tr>
+        <tr><td>B</td><td>16,200</td><td>6 weeks</td><td>6 months</td></tr>
+        <tr><td>C</td><td>19,800</td><td>2 weeks</td><td>24 months</td></tr>
+      </table>
+    </div>
+    <div class="output-box">
+      <div class="label">Sample Output, Recommendation</div>
+      <pre>Recommendation: Supplier A offers the best balance, mid-range price with a reasonable lead time and solid warranty coverage, whereas Supplier B's savings come with the weakest warranty and longest wait, and Supplier C's speed and warranty come at the highest cost.</pre>
+    </div>
+
+    <div class="capability-box">
+      <div class="label">What the AI Just Did</div>
+      <p><strong>Capability: multi-factor reasoning.</strong> The AI weighed price against lead time against warranty and produced a judgement, not just a restatement of the three quotes.</p>
+    </div>
+
+    <div class="prompt2-block">
+      <h4 class="sub-label">Prompt 2, extract more value</h4>
+      <p class="sub-intro">A recommendation made without a deadline in view can fall apart the moment one appears. This applies Trade-off Navigator from Module 2, testing whether the reasoning holds once a real constraint is added.</p>
+      <div class="code-panel">
+        <pre id="p3b">The engineering team has now confirmed the crane operation cannot proceed past 3 weeks from today. A delayed delivery halts the project at approximately RM 8,000 per day. Does your recommendation change?</pre>
+        <button class="copy-btn" data-target="p3b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+      </div>
+      <div class="output-box alt">
+        <div class="label">Sample Output, Revised Recommendation</div>
+        <pre>Yes. With a 3-week hard deadline, Supplier B is no longer viable, its 6-week lead time would halt the project for roughly three weeks at approximately RM 8,000 per day, far exceeding any price saving. Between the remaining two, Supplier C's 2-week lead time gives a one-week buffer against delays, worth the RM 1,300 premium over Supplier A given the cost of missing the deadline. Recommendation changes to Supplier C.</pre>
+      </div>
+      <div class="technique-box">
+        <div class="label">Technique: Trade-off Navigator</div>
+        <p>The recommendation genuinely changed, not just its wording. This is the test of whether a comparison is real reasoning or a template, a real one should move when a material fact changes.</p>
+      </div>
+    </div>
+
+    <div class="debrief">
+      <div class="label">Debrief Question</div>
+      <p>Did Prompt 1's original recommendation hold up, or was it quietly wrong the moment a deadline entered the picture? What does that tell you about asking for constraints upfront versus checking for them afterwards?</p>
+    </div>
+  </div>
+
+  <!-- EXERCISE 4 -->
+  <div class="exercise">
+    <span class="exercise-number">EXERCISE 4</span>
+    <h2>HR and Training</h2>
+    <p class="skill-focus">Skill focus: strict rule-following, with real consequences if wrong</p>
+
+    <div class="context-block">
+      <h3>Workload Context</h3>
+      <p>You are an HR coordinator tracking HSE certification for offshore crew. Certifications expire, and letting one lapse without noticing means someone works offshore without valid certification, a genuine compliance failure, not an administrative slip. Your job is to check the training log regularly and flag who needs action, and by when.</p>
+      <p><strong>What you're expected to accomplish:</strong> correctly identify who is already overdue and who is approaching their deadline, based on today's date, with no errors, since this is the one exercise in this lab where a wrong answer has a real consequence.</p>
+    </div>
+
+    <h3 class="section-label">Dataset</h3>
+    <p>A short certification expiry log with a stated reference date. Two entries are already in the past, the rest are a mix of near and far future dates, deliberately close enough together that a miscount is easy to make.</p>
+    <div class="code-panel">
+      <pre id="ds4">Today's date: 23 September.
+HSE certification expiry: Ali 15 Oct, Bala 2 Sept (expired), Chen 30 Nov, Devi 20 Oct, Farah 5 Sept (expired).</pre>
+      <button class="copy-btn" data-target="ds4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <h3 class="section-label">RCTF+C Breakdown</h3>
+    <table class="rctf-table">
+      <tr><th><span class="rctf-tag">Role</span></th><td>You are an HR coordinator at Alfameli responsible for HSE compliance tracking</td></tr>
+      <tr><th><span class="rctf-tag">Context</span></th><td>Missing a renewal means a crew member works offshore without valid certification, a compliance breach</td></tr>
+      <tr><th><span class="rctf-tag">Task</span></th><td>Using the training log, list who is already overdue and who is due within 60 days</td></tr>
+      <tr><th><span class="rctf-tag">Format</span></th><td>Two lists, sorted by date</td></tr>
+      <tr><th><span class="rctf-tag">Constraints</span></th><td>Today's date is 23 September, calculations must be precise</td></tr>
+    </table>
+
+    <h3 class="section-label">Prompt 1</h3>
+    <div class="code-panel">
+      <pre id="p4">You are an HR coordinator at Alfameli responsible for HSE compliance tracking. Missing a renewal means a crew member works offshore without valid certification, a compliance breach. Today is 23 September. Using this training log, list who is already overdue for renewal, and who is due within the next 60 days. Present as two lists, sorted by date.</pre>
+      <button class="copy-btn" data-target="p4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+    </div>
+
+    <div class="output-box">
+      <div class="label">Sample Output</div>
+      <pre>Already overdue:
+- Farah, expired 5 September
+- Bala, expired 2 September
+
+Due within 60 days (by 22 November):
+- Ali, 15 October
+- Devi, 20 October
+
+Not flagged: Chen, due 30 November, outside the 60-day window.</pre>
+    </div>
+
+    <div class="capability-box">
+      <div class="label">What the AI Just Did</div>
+      <p><strong>Capability: date arithmetic and rule-based filtering.</strong> The AI calculated a 60-day window from the stated date and sorted every record against it, correctly or incorrectly. This is the highest-stakes capability in this lab.</p>
+    </div>
+
+    <div class="prompt2-block">
+      <h4 class="sub-label">Prompt 2, extract more value</h4>
+      <p class="sub-intro">A clean list is not verifiable on its own. This applies the fact-check protocol from Module 1 directly, make the working visible so it can be checked, not just trusted.</p>
+      <div class="code-panel">
+        <pre id="p4b">Show your date calculation for each person, today's date minus or plus their expiry date, so I can verify each one before I act on this.</pre>
+        <button class="copy-btn" data-target="p4b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+      </div>
+      <div class="output-box alt">
+        <div class="label">Sample Output, With Working Shown</div>
+        <pre>Bala: expired 2 September, 21 days ago (overdue)
+Farah: expired 5 September, 18 days ago (overdue)
+Ali: due 15 October, 22 days from today (within 60 days)
+Devi: due 20 October, 27 days from today (within 60 days)
+Chen: due 30 November, 68 days from today (outside the 60-day window)</pre>
+      </div>
+      <div class="technique-box">
+        <div class="label">Technique: Fact-check protocol</div>
+        <p>With the working shown, you can check each figure by hand rather than trusting the summary. Count Sept 23 to Nov 30 yourself, 7 remaining days in September, 31 in October, 30 in November, 68 days total, and confirm it matches.</p>
+      </div>
+    </div>
+
+    <div class="debrief">
+      <div class="label">Debrief Question</div>
+      <p>Manually verify all five calculations against the working shown. Did the AI get every one right? What would you do differently if you found even one error here, given what's at stake?</p>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-section">
+    <h2>What You Should Take Away</h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <tr><th>Exercise</th><th>Prompt 1 Capability</th><th>Prompt 2 Technique</th><th>Risk if unchecked</th></tr>
+        <tr><td>Client Reporting</td><td>Summarising without inventing</td><td>Draft, Diagnose, Direct</td><td>A missing or invented detail reaches the client</td></tr>
+        <tr><td>Shift and Site Coordination</td><td>Constraint checking + formatting</td><td>Failure Anticipator</td><td>A day ends up understaffed</td></tr>
+        <tr><td>Procurement and Logistics</td><td>Multi-factor comparison</td><td>Trade-off Navigator</td><td>A recommendation looks reasoned but hides a bad trade-off</td></tr>
+        <tr><td>HR and Training</td><td>Date arithmetic and rule-following</td><td>Fact-check protocol</td><td>A compliance deadline is missed</td></tr>
+      </table>
+    </div>
+    <p>The pattern across all four: Prompt 1 gets you a usable first result, Prompt 2 is where the real skill lives, catching what the first pass missed, testing whether it holds under a new condition, or making it verifiable before you act on it. That second step is what separates a quick AI draft from something you can actually stand behind.</p>
+  </div>
+
+  <footer class="note">Sample outputs shown were live-tested, not assumed. Exact wording will vary slightly each time you run these prompts, the pattern of what the AI gets right and wrong is what matters, not the precise phrasing.</footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-target');
+      var el = document.getElementById(targetId);
+      var text = el.textContent;
+      function done() {
+        var span = btn.querySelector('span');
+        var original = span.textContent;
+        span.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          span.textContent = original;
+          btn.classList.remove('copied');
+        }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function() {
+          fallbackCopy(text, done);
+        });
+      } else {
+        fallbackCopy(text, done);
+      }
+    });
+  });
+  function fallbackCopy(text, cb) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      cb();
+    } catch (e) {
+      console.error('Copy failed', e);
+    }
+  }
+</script>
+</body>
+</html>
