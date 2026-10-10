@@ -1,8 +1,8 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Latihan Makmal 2: Prompting Kerja</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Lab Exercise 2: Prompting Engineering</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;600&display=swap">
 <style>
-  /* Layout: satu lajur sempit, empat latihan bertingkat, panel salin untuk teks yang perlu ditampal */
+  /* Layout: one narrow column, four graded exercises, copy panels for everything participants paste */
   :root {
     --bg: #F6F8F9;
     --surface: #FFFFFF;
@@ -12,7 +12,7 @@
     --accent: #0F6B7A;
     --accent-soft: #E3F1F3;
     --accent-fg: #FFFFFF;
-    --code-bg: #1F4E79;
+    --code-bg: #12202B;
     --code-fg: #E4EEF3;
     --note-bg: #FFF4D6;
     --note-line: #E2C26B;
@@ -93,6 +93,24 @@
   }
   p { margin: 0 0 10px; }
   .lead { color: var(--muted); margin-bottom: 20px; }
+  .framework {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 12px 0 16px;
+  }
+  .framework p { margin: 0 0 8px; }
+  .framework p:last-child { margin-bottom: 0; }
+  .framework ul { list-style: none; margin: 10px 0 12px; padding: 0; display: grid; gap: 10px; }
+  .framework .eg {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
 
   .howto {
     background: var(--surface);
@@ -172,18 +190,7 @@
     font-size: 0.95rem;
   }
   details > .inner { padding: 4px 14px 14px; min-width: 0; }
-  details.stuck { border-style: dashed; }
-
-  dl.rctf {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 4px 12px;
-    margin: 0 0 14px;
-    font-size: 0.9rem;
-  }
-  dl.rctf dt { font-weight: 600; color: var(--accent); }
-  dl.rctf dd { margin: 0; }
-  .plabel { font-weight: 600; margin: 12px 0 6px; font-size: 0.9rem; }
+  .hint { color: var(--muted); font-size: 0.9rem; margin: 0 0 8px; }
 
   .answer {
     background: var(--accent-soft);
@@ -209,30 +216,46 @@
 
 <div class="page">
 
-  <h1>Latihan Makmal 2: Prompting Kerja</h1>
-  <p class="lead">Empat tugasan kerja harian Alfameli. Untuk setiap tugasan: fahami kerja itu, semak data, cuba prompt anda, kemudian bincang.</p>
+  <h1>Lab Exercise 2: Prompting Engineering</h1>
+  <div class="framework">
+    <p>Every prompt in this lab follows RCTF+C, five parts in this order. The examples below use an email triage task.</p>
+    <ul>
+      <li><strong>Role</strong> tells the AI whose voice to use and who the reader is.
+        <span class="eg">Example: You are an executive assistant to an operations manager at Alfameli.</span></li>
+      <li><strong>Context</strong> gives the situation and why the work matters.
+        <span class="eg">Example: The manager receives a high volume of emails every day and needs to spot the urgent ones quickly.</span></li>
+      <li><strong>Task</strong> states exactly what to produce.
+        <span class="eg">Example: Read the emails above and sort each one into Urgent, Reply this week or For information only.</span></li>
+      <li><strong>Format</strong> sets the shape of the result.
+        <span class="eg">Example: A table with sender, subject, category and a one-line reason.</span></li>
+      <li><strong>Constraints</strong> (the +C) set the limits and the rules that must not be broken.
+        <span class="eg">Example: Treat anything from a client or about safety as Urgent. Do not draft replies. Use only what is in the emails.</span></li>
+    </ul>
+    <p><strong>Why it works:</strong> the AI answers only from what you give it. Wherever your prompt is silent, it fills the gap with a safe, generic guess. That is where vague, invented or off-target text comes from. Each part of RCTF+C closes one of those gaps, so the first draft needs fewer corrections. In practice Context, Format and Constraints tend to make the biggest difference. Role mostly sets tone and audience, so do not expect it to make the AI more accurate.</p>
+  </div>
+  <p class="lead">Four everyday tasks from Alfameli's work. For each one: understand the job, review the data, run the structured prompt, then debrief.</p>
 
   <div class="howto">
-    <h2>Cara guna</h2>
+    <h2>How to use this lab</h2>
     <ol>
-      <li>Baca <strong>Tugasan</strong> untuk tahu peranan anda dan hasil yang diperlukan.</li>
-      <li>Salin <strong>Data</strong> ke alat AI anda.</li>
-      <li>Tulis prompt sendiri guna RCTF+C (Peranan, Konteks, Tugasan, Format, Kekangan) supaya hasilnya ada semua yang disenaraikan di bawah <strong>Hasil yang dijangka</strong>.</li>
-      <li>Selepas hasil pertama, cuba <strong>Prompt 2</strong> dalam perbualan yang sama.</li>
-      <li>Tersangkut atau kesuntukan masa? Buka <strong>Prompt contoh</strong>. Selepas itu bandingkan dengan <strong>Contoh jawapan</strong> dan bincang.</li>
+      <li>Read the <strong>Task</strong> to understand your role and what the result is for.</li>
+      <li>Copy the <strong>Data</strong> and paste it into your AI tool.</li>
+      <li>Copy the <strong>Structured Prompt</strong> and paste it under the data, in the same message. Notice how each line maps to RCTF+C.</li>
+      <li>Check the result against <strong>Expected output</strong>, then run <strong>Prompt 2</strong> in the same conversation.</li>
+      <li>Compare with the <strong>Sample answers</strong> and discuss.</li>
     </ol>
   </div>
 
-  <!-- LATIHAN 1 -->
+  <!-- EXERCISE 1 -->
   <section class="exercise">
-    <div class="meta"><span class="step">Latihan 1</span><span class="tag">Teknik: Draft, Diagnose, Direct</span></div>
-    <h2>Laporan Pelanggan</h2>
+    <div class="meta"><span class="step">Exercise 1</span><span class="tag">Technique: Draft, Diagnose, Direct</span></div>
+    <h2>Client Reporting</h2>
 
-    <h3>Tugasan</h3>
-    <p>Anda pengurus akaun pelanggan di Alfameli. Pelanggan kontrak Hess Malaysia mahu kemas kini mingguan tentang tapak mereka. Tukarkan log tapak yang kasar kepada laporan pendek yang sedia dihantar, tanpa menokok tambah apa-apa yang tiada dalam log.</p>
+    <h3>Task</h3>
+    <p>You are a client account manager at Alfameli. The Hess Malaysia client expects a weekly update on how their site is running. Turn the rough site log into a short report that is ready to send, without adding anything that is not in the log.</p>
 
     <h3>Data</h3>
-    <p>Log kasar daripada penyelia. Perhatikan satu perkara tertunggak yang mudah tertinggal: jadual manning.</p>
+    <p>A rough log from the site supervisor. It is written for you to work from, not for the client to read. Watch for one open item that is easy to leave out: the manning schedule.</p>
     <div class="codebox">
 <pre id="d1">Site log, Hess Malaysia contract, week of 8-14 Sept.
 Crew: 22 catering staff, full strength all week.
@@ -242,44 +265,36 @@ Client asked twice this week about next month's manning schedule, not yet sent.<
       <button class="copy" type="button" data-target="d1">Copy</button>
     </div>
 
-    <h3>Hasil yang dijangka</h3>
+    <h3>Structured Prompt</h3>
+    <p class="hint">Paste the data first, then this prompt, in the same message.</p>
+    <div class="codebox">
+<pre id="s1">Role: You are a client account manager at Alfameli.
+Context: This is the weekly update the Hess Malaysia client relies on for visibility into site operations.
+Task: Using the site log above, write the weekly update covering crew status, any incidents and any open items the client is waiting on.
+Format: One-page report with clear headings.
+Constraints: Formal tone, British spelling, no more than 200 words. Use only facts from the log.</pre>
+      <button class="copy" type="button" data-target="s1">Copy</button>
+    </div>
+
+    <h3>Expected output</h3>
     <ul class="expect">
-      <li>Status krew dan insiden 10 Sept bersama tindakan yang diambil</li>
-      <li>Penyelia baharu disebut</li>
-      <li>Jadual manning diakui sebagai perkara tertunggak</li>
-      <li>Nada formal, tidak lebih 200 patah perkataan, tiada maklumat di luar log</li>
+      <li>Crew status and the 10 Sept incident, including the action taken</li>
+      <li>The new supervisor mentioned</li>
+      <li>The manning schedule acknowledged as an open item</li>
+      <li>Formal tone, no more than 200 words, nothing beyond the log</li>
     </ul>
 
     <h3>Prompt 2</h3>
-    <p>Laporan pertama biasanya hanya kata jadual itu akan dihantar "tidak lama lagi". Kenal pasti kelemahan itu, kemudian beri satu arahan tepat. Jangan minta laporan dijana semula. Hasil yang dijangka: satu ayat yang menetapkan tempoh 3 hari bekerja, tanpa alasan rekaan.</p>
-
-    <details class="stuck">
-      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
-      <div class="inner">
-        <dl class="rctf">
-          <dt>Peranan</dt><dd>Pengurus akaun pelanggan</dd>
-          <dt>Konteks</dt><dd>Kemas kini mingguan untuk pelanggan Hess Malaysia</dd>
-          <dt>Tugasan</dt><dd>Tulis kemas kini daripada log tapak</dd>
-          <dt>Format</dt><dd>Laporan satu halaman</dd>
-          <dt>Kekangan</dt><dd>Formal, ejaan British, maksimum 200 patah perkataan</dd>
-        </dl>
-        <div class="plabel">Prompt 1</div>
-        <div class="codebox">
-<pre id="p1">You are a client account manager at Alfameli. This is the weekly update the Hess Malaysia client relies on for visibility into site operations. Using this site log, write the weekly update, covering crew status, any incidents, and any open items they're waiting on. Present as a one-page report with clear structure. Formal tone, British spelling, no more than 200 words.</pre>
-          <button class="copy" type="button" data-target="p1">Copy</button>
-        </div>
-        <div class="plabel">Prompt 2</div>
-        <div class="codebox">
-<pre id="p1b">The manning schedule has now been outstanding for two weeks and the client has asked twice. Revise the outstanding items line to commit to sending it within 3 working days, without inventing a reason for the delay.</pre>
-          <button class="copy" type="button" data-target="p1b">Copy</button>
-        </div>
-      </div>
-    </details>
+    <p>The first report usually says only that the schedule will be sent "shortly". Spot that weakness, then give one precise instruction instead of asking for the whole report again. Expected result: one revised line that commits to 3 working days, with no invented excuse.</p>
+    <div class="codebox">
+<pre id="q1">The manning schedule has now been outstanding for two weeks and the client has asked twice. Revise the outstanding items line to commit to sending it within 3 working days, without inventing a reason for the delay.</pre>
+      <button class="copy" type="button" data-target="q1">Copy</button>
+    </div>
 
     <details>
-      <summary>Contoh jawapan</summary>
+      <summary>Sample answers</summary>
       <div class="inner">
-        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+        <div class="answer"><div class="lbl">After the Structured Prompt</div>
 <pre>Weekly Site Update, Hess Malaysia Contract
 Week of 8-14 September
 
@@ -290,30 +305,30 @@ On 10 September, a minor generator fault occurred in the dry store. Backup power
 Ahmad, our new site supervisor, began orientation on 13 September.
 
 We understand next month's manning schedule is outstanding on our end and will be sent shortly.</pre></div>
-        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+        <div class="answer"><div class="lbl">After Prompt 2</div>
 <pre>We recognise next month's manning schedule remains outstanding despite your recent enquiries. We will provide this within three working days.</pre></div>
       </div>
     </details>
 
     <details>
-      <summary>Perbincangan</summary>
+      <summary>Discussion</summary>
       <div class="inner">
-        <div class="why"><strong>Apa yang AI lakukan:</strong> meringkaskan nota kasar dan memilih apa yang penting kepada pelanggan. Pada Prompt 2, AI hanya membetulkan satu ayat dan tidak menulis semula keseluruhan laporan.</div>
-        <p><strong>Soalan:</strong> Semak setiap ayat dalam kedua-dua hasil dengan data. Ada apa-apa yang tiada dalam log atau arahan anda?</p>
+        <div class="why"><strong>What the AI did:</strong> it summarised rough notes and chose what matters to the client. With Prompt 2 it corrected one sentence instead of rewriting the whole report.</div>
+        <p><strong>Question:</strong> Check every sentence in both outputs against the data. Is anything there that was not in the log or in your instruction?</p>
       </div>
     </details>
   </section>
 
-  <!-- LATIHAN 2 -->
+  <!-- EXERCISE 2 -->
   <section class="exercise">
-    <div class="meta"><span class="step">Latihan 2</span><span class="tag">Teknik: Failure Anticipator</span></div>
-    <h2>Penyelarasan Syif dan Tapak</h2>
+    <div class="meta"><span class="step">Exercise 2</span><span class="tag">Technique: Failure Anticipator</span></div>
+    <h2>Shift and Site Coordination</h2>
 
-    <h3>Tugasan</h3>
-    <p>Anda penyelaras tapak bagi krew katering kecil di luar pesisir. Setiap minggu anda menyediakan roster yang mesti menghormati permohonan cuti dan liputan minimum harian yang diwajibkan kontrak pelanggan. Gagal mencapai minimum pada satu hari sahaja sudah menjadi isu pematuhan kontrak.</p>
+    <h3>Task</h3>
+    <p>You are a site coordinator for a small offshore catering crew. Each week you prepare the roster. It must respect leave requests and the minimum daily coverage required by the client contract. Missing the minimum on even one day is a contract compliance issue.</p>
 
     <h3>Data</h3>
-    <p>Lapan kakitangan, dua permohonan cuti dan satu peraturan tegas. Perhatikan peraturan minimum itu, kerana roster yang nampak betul boleh melanggarnya secara senyap.</p>
+    <p>Eight staff, two leave requests and one firm rule. Watch the minimum: a roster can look right and quietly break it.</p>
     <div class="codebox">
 <pre id="d2">8 catering staff: Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra.
 Leave requests: Bala off Mon-Tue, Farah off Thu only.
@@ -321,43 +336,35 @@ Minimum 5 staff required per day.</pre>
       <button class="copy" type="button" data-target="d2">Copy</button>
     </div>
 
-    <h3>Hasil yang dijangka</h3>
+    <h3>Structured Prompt</h3>
+    <p class="hint">Paste the data first, then this prompt, in the same message.</p>
+    <div class="codebox">
+<pre id="s2">Role: You are a site coordinator at Alfameli.
+Context: The client contract requires minimum daily coverage. This is a compliance obligation, not a preference.
+Task: Using the crew list and leave requests above, build a roster for Monday to Friday.
+Format: A table showing who is rostered each day and the daily headcount.
+Constraints: At least 5 staff rostered every day, without exception. Respect every leave request.</pre>
+      <button class="copy" type="button" data-target="s2">Copy</button>
+    </div>
+
+    <h3>Expected output</h3>
     <ul class="expect">
-      <li>Jadual roster Isnin hingga Jumaat</li>
-      <li>Cuti Bala dan Farah dihormati</li>
-      <li>Bilangan kakitangan setiap hari ditunjukkan, tidak pernah kurang daripada 5</li>
+      <li>A roster table for Monday to Friday</li>
+      <li>Bala's and Farah's leave respected</li>
+      <li>Daily headcount shown, never below 5</li>
     </ul>
 
     <h3>Prompt 2</h3>
-    <p>Roster yang selamat hari ini boleh gagal dengan satu perubahan lagi. Uji dengan situasi baharu: Chen turut memohon cuti pada hari Rabu. Hasil yang dijangka: roster dikemas kini, pengesahan jelas sama ada minimum masih dipenuhi, dan hari yang paling ketat dikenal pasti.</p>
-
-    <details class="stuck">
-      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
-      <div class="inner">
-        <dl class="rctf">
-          <dt>Peranan</dt><dd>Penyelaras tapak Alfameli</dd>
-          <dt>Konteks</dt><dd>Kontrak pelanggan mewajibkan liputan minimum harian</dd>
-          <dt>Tugasan</dt><dd>Bina roster Isnin hingga Jumaat</dd>
-          <dt>Format</dt><dd>Jadual dengan bilangan harian</dd>
-          <dt>Kekangan</dt><dd>Sekurang-kurangnya 5 kakitangan setiap hari</dd>
-        </dl>
-        <div class="plabel">Prompt 1</div>
-        <div class="codebox">
-<pre id="p2">You are a site coordinator at Alfameli. The client contract requires minimum daily coverage, this is a compliance obligation, not a preference. Using this crew list and leave requests, build a 5-day roster (Mon-Fri). Present as a table showing the daily headcount. At least 5 staff must be rostered every day, without exception.</pre>
-          <button class="copy" type="button" data-target="p2">Copy</button>
-        </div>
-        <div class="plabel">Prompt 2</div>
-        <div class="codebox">
-<pre id="p2b">Chen has just requested Wednesday off as well. Rebuild the roster and confirm explicitly whether minimum coverage still holds on every day.</pre>
-          <button class="copy" type="button" data-target="p2b">Copy</button>
-        </div>
-      </div>
-    </details>
+    <p>A roster that is safe today can fail with one more change. Test it with a new situation: Chen also asks for Wednesday off. Expected result: an updated roster and an explicit statement on whether minimum coverage still holds every day.</p>
+    <div class="codebox">
+<pre id="q2">Chen has just requested Wednesday off as well. Rebuild the roster and confirm explicitly whether minimum coverage still holds on every day.</pre>
+      <button class="copy" type="button" data-target="q2">Copy</button>
+    </div>
 
     <details>
-      <summary>Contoh jawapan</summary>
+      <summary>Sample answers</summary>
       <div class="inner">
-        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+        <div class="answer"><div class="lbl">After the Structured Prompt</div>
           <div class="scroll"><table>
             <tr><th>Day</th><th>Staff rostered</th><th>Count</th></tr>
             <tr><td>Mon</td><td>Ali, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>7</td></tr>
@@ -367,32 +374,32 @@ Minimum 5 staff required per day.</pre>
             <tr><td>Fri</td><td>Ali, Bala, Chen, Devi, Farah, Goh, Hafiz, Indra</td><td>8</td></tr>
           </table></div>
         </div>
-        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+        <div class="answer"><div class="lbl">After Prompt 2</div>
 <pre>Wed: Ali, Bala, Devi, Farah, Goh, Hafiz, Indra (7)
 
-Minimum coverage still holds on every day. Wednesday drops from 8 to 7 with Chen's leave added, still above the minimum of 5. Wednesday, Thursday and Monday-Tuesday are now the tightest days at 7 staff each.</pre></div>
+Minimum coverage still holds on every day. Wednesday drops from 8 to 7 with Chen's leave added, still above the minimum of 5. Monday to Thursday are now all at 7 staff, the tightest days of the week.</pre></div>
       </div>
     </details>
 
     <details>
-      <summary>Perbincangan</summary>
+      <summary>Discussion</summary>
       <div class="inner">
-        <div class="why"><strong>Apa yang AI lakukan:</strong> menukar senarai biasa kepada jadual dan menyemak hasilnya terhadap peraturan minimum. Pada Prompt 2, ia menguji kekuatan pelan dan menunjukkan hari yang paling ketat, perkara yang tidak dilaporkan pada roster pertama kerana tidak diminta.</div>
-        <p><strong>Soalan:</strong> Buang ayat "sekurang-kurangnya 5" daripada Prompt 1 dan jalankan semula. Adakah roster berubah? Ini menunjukkan sama ada AI benar-benar menggunakan kekangan itu atau hanya kebetulan menghasilkan jawapan yang sesuai.</p>
+        <div class="why"><strong>What the AI did:</strong> it turned a plain list into a table and checked the result against the minimum coverage rule. With Prompt 2 it tested the plan under a new condition. It may also show which days are now tightest, which the first roster did not report because nobody asked.</div>
+        <p><strong>Question:</strong> Remove the "at least 5" rule from the Structured Prompt and run it again. Does the roster change? That shows whether the AI applied the rule or only happened to meet it.</p>
       </div>
     </details>
   </section>
 
-  <!-- LATIHAN 3 -->
+  <!-- EXERCISE 3 -->
   <section class="exercise">
-    <div class="meta"><span class="step">Latihan 3</span><span class="tag">Teknik: Trade-off Navigator</span></div>
-    <h2>Perolehan dan Logistik</h2>
+    <div class="meta"><span class="step">Exercise 3</span><span class="tag">Technique: Trade-off Navigator</span></div>
+    <h2>Procurement and Logistics</h2>
 
-    <h3>Tugasan</h3>
-    <p>Anda pegawai perolehan yang mencari dawai kren untuk sebuah projek. Tiga pembekal telah memberi sebut harga dan anda perlu mengesyorkan satu kepada pengurus. Harga yang paling murah belum tentu pilihan terbaik. Pengurus akan mahukan sebab, bukan sekadar nombor.</p>
+    <h3>Task</h3>
+    <p>You are a procurement officer sourcing crane wire rope for a project. Three suppliers have quoted and you must recommend one to your manager. The cheapest quote is not automatically the best choice. Your manager will want a reason, not just a number.</p>
 
     <h3>Data</h3>
-    <p>Tiga sebut harga untuk barang yang sama. Setiap pembekal kuat pada faktor yang berbeza, jadi tiada jawapan yang jelas dengan sendirinya.</p>
+    <p>Three quotes for the same item. Each supplier is strong on a different factor, so no answer is obvious by itself.</p>
     <div class="codebox">
 <pre id="d3">Three quotes for crane wire rope, 20mm, 500m.
 Supplier A: RM 18,500, 3-week lead time, 12-month warranty.
@@ -401,117 +408,101 @@ Supplier C: RM 19,800, 2-week lead time, 24-month warranty.</pre>
       <button class="copy" type="button" data-target="d3">Copy</button>
     </div>
 
-    <h3>Hasil yang dijangka</h3>
+    <h3>Structured Prompt</h3>
+    <p class="hint">Paste the data first, then this prompt, in the same message.</p>
+    <div class="codebox">
+<pre id="s3">Role: You are a procurement officer at Alfameli.
+Context: This wire rope is for an active crane operation. The choice affects both cost and schedule.
+Task: Compare the three quotes above on price, lead time and warranty, then recommend one supplier.
+Format: A comparison table, followed by a short recommendation.
+Constraints: Weigh all three factors, not price alone. Give the reason in one sentence.</pre>
+      <button class="copy" type="button" data-target="s3">Copy</button>
+    </div>
+
+    <h3>Expected output</h3>
     <ul class="expect">
-      <li>Jadual perbandingan harga, tempoh penghantaran dan waranti</li>
-      <li>Satu cadangan pembekal dengan sebab dalam satu ayat</li>
-      <li>Sebab itu menimbang ketiga-tiga faktor, bukan harga sahaja</li>
+      <li>A comparison table of price, lead time and warranty</li>
+      <li>One recommended supplier with a one-sentence reason</li>
+      <li>A reason that weighs all three factors, not price alone</li>
     </ul>
 
     <h3>Prompt 2</h3>
-    <p>Cadangan tanpa tarikh akhir boleh gugur apabila satu tarikh akhir muncul. Tambah fakta baharu: operasi kren tidak boleh bermula lewat daripada 3 minggu dari hari ini, dan kelewatan menghentikan projek dengan kos kira-kira RM 8,000 sehari. Hasil yang dijangka: cadangan yang benar-benar berubah, bukan sekadar ayat yang berbeza.</p>
-
-    <details class="stuck">
-      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
-      <div class="inner">
-        <dl class="rctf">
-          <dt>Peranan</dt><dd>Pegawai perolehan Alfameli</dd>
-          <dt>Konteks</dt><dd>Dawai kren untuk operasi aktif, kos dan jadual terjejas</dd>
-          <dt>Tugasan</dt><dd>Bandingkan tiga sebut harga dan cadangkan satu</dd>
-          <dt>Format</dt><dd>Jadual perbandingan, kemudian cadangan</dd>
-          <dt>Kekangan</dt><dd>Timbang ketiga-tiga faktor, satu ayat sebab</dd>
-        </dl>
-        <div class="plabel">Prompt 1</div>
-        <div class="codebox">
-<pre id="p3">You are a procurement officer at Alfameli. This wire rope is for an active crane operation, the choice affects both cost and schedule. Compare these three quotes on price, lead time and warranty. Present as a table, then recommend one, weighing all three factors rather than price alone, with a one-sentence reason.</pre>
-          <button class="copy" type="button" data-target="p3">Copy</button>
-        </div>
-        <div class="plabel">Prompt 2</div>
-        <div class="codebox">
-<pre id="p3b">The engineering team has now confirmed the crane operation cannot proceed past 3 weeks from today. A delayed delivery halts the project at approximately RM 8,000 per day. Does your recommendation change?</pre>
-          <button class="copy" type="button" data-target="p3b">Copy</button>
-        </div>
-      </div>
-    </details>
+    <p>A recommendation made without a deadline can collapse when one appears. Add a new fact: the crane operation cannot proceed past 3 weeks from today, and a delayed delivery halts the project at about RM 8,000 per day. Expected result: a recommendation that genuinely changes, with the reasoning shown, not just different wording.</p>
+    <div class="codebox">
+<pre id="q3">The engineering team has now confirmed the crane operation cannot proceed past 3 weeks from today. A delayed delivery halts the project at approximately RM 8,000 per day. Does your recommendation change?</pre>
+      <button class="copy" type="button" data-target="q3">Copy</button>
+    </div>
 
     <details>
-      <summary>Contoh jawapan</summary>
+      <summary>Sample answers</summary>
       <div class="inner">
-        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+        <div class="answer"><div class="lbl">After the Structured Prompt</div>
           <div class="scroll"><table>
             <tr><th>Supplier</th><th>Price (RM)</th><th>Lead time</th><th>Warranty</th></tr>
             <tr><td>A</td><td>18,500</td><td>3 weeks</td><td>12 months</td></tr>
             <tr><td>B</td><td>16,200</td><td>6 weeks</td><td>6 months</td></tr>
             <tr><td>C</td><td>19,800</td><td>2 weeks</td><td>24 months</td></tr>
           </table></div>
-<pre>Recommendation: Supplier A offers the best balance, mid-range price with a reasonable lead time and solid warranty coverage, whereas Supplier B's savings come with the weakest warranty and longest wait, and Supplier C's speed and warranty come at the highest cost.</pre></div>
-        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
-<pre>Yes. With a 3-week hard deadline, Supplier B is no longer viable, its 6-week lead time would halt the project for roughly three weeks at approximately RM 8,000 per day, far exceeding any price saving. Between the remaining two, Supplier A leaves no buffer at exactly 3 weeks, while Supplier C's 2-week lead time gives a one-week buffer, worth the RM 1,300 premium given the cost of missing the deadline. Recommendation changes to Supplier C.</pre></div>
+<pre>Recommendation: Supplier A offers the best balance, a mid-range price with a reasonable lead time and solid warranty coverage. Supplier B's savings come with the weakest warranty and the longest wait, and Supplier C's speed and warranty come at the highest cost.</pre></div>
+        <div class="answer"><div class="lbl">After Prompt 2</div>
+<pre>Yes. With a 3-week hard deadline, Supplier B is no longer viable. Its 6-week lead time would delay the project by about three weeks at roughly RM 8,000 per day, which far exceeds its RM 2,300 saving over Supplier A. Between the other two, Supplier A arrives at exactly 3 weeks with no buffer, while Supplier C's 2-week lead time leaves a week in hand, worth the RM 1,300 premium given the cost of missing the deadline. The recommendation changes to Supplier C.</pre></div>
       </div>
     </details>
 
     <details>
-      <summary>Perbincangan</summary>
+      <summary>Discussion</summary>
       <div class="inner">
-        <div class="why"><strong>Apa yang AI lakukan:</strong> menimbang harga, tempoh penghantaran dan waranti, kemudian membuat penilaian. Perbandingan yang sebenar patut berubah apabila fakta penting berubah. Itulah ujian sama ada ia penaakulan atau sekadar templat.</div>
-        <p><strong>Soalan:</strong> Adakah cadangan Prompt 1 senyap-senyap salah sebaik sahaja tarikh akhir muncul? Apa yang ini ajar tentang meletakkan kekangan di awal berbanding menyemaknya kemudian?</p>
+        <div class="why"><strong>What the AI did:</strong> it weighed price against lead time against warranty and made a judgement. A real comparison should change when an important fact changes. That is how you tell reasoning from a template.</div>
+        <p><strong>Question:</strong> Was the first recommendation quietly wrong the moment a deadline appeared? What does that teach about stating constraints up front versus checking for them afterwards?</p>
       </div>
     </details>
   </section>
 
-  <!-- LATIHAN 4 -->
+  <!-- EXERCISE 4 -->
   <section class="exercise">
-    <div class="meta"><span class="step">Latihan 4</span><span class="tag">Teknik: Fact-check, tunjuk pengiraan</span></div>
-    <h2>HR dan Latihan</h2>
+    <div class="meta"><span class="step">Exercise 4</span><span class="tag">Technique: Fact-check, show the working</span></div>
+    <h2>HR and Training</h2>
 
-    <h3>Tugasan</h3>
-    <p>Anda penyelaras HR yang menjejak pensijilan HSE krew luar pesisir. Sijil yang tamat tempoh tanpa disedari bermakna seseorang bekerja tanpa pensijilan sah, iaitu kegagalan pematuhan, bukan kesilapan pentadbiran biasa. Latihan ini paling berisiko dalam makmal ini kerana jawapan yang salah ada akibat sebenar.</p>
+    <h3>Task</h3>
+    <p>You are an HR coordinator tracking HSE certification for offshore crew. A certificate that lapses unnoticed means someone works without valid certification, which is a compliance failure, not an admin slip. This is the riskiest exercise in the lab because a wrong answer has real consequences.</p>
 
     <h3>Data</h3>
-    <p>Log tarikh tamat sijil dengan tarikh rujukan. Dua entri sudah lepas, selebihnya dekat antara satu sama lain supaya mudah tersilap kira.</p>
+    <p>A short certification log with a reference date of 13 October. Two entries have already lapsed. The rest sit close enough to the 60-day boundary that a miscount is easy.</p>
     <div class="codebox">
 <pre id="d4">Today's date: 13 October.
 HSE certification expiry: Ali 25 Oct, Bala 2 Oct (expired), Chen 15 Dec, Devi 20 Nov, Farah 8 Oct (expired).</pre>
       <button class="copy" type="button" data-target="d4">Copy</button>
     </div>
 
-    <h3>Hasil yang dijangka</h3>
+    <h3>Structured Prompt</h3>
+    <p class="hint">Paste the data first, then this prompt, in the same message.</p>
+    <div class="codebox">
+<pre id="s4">Role: You are an HR coordinator at Alfameli responsible for HSE compliance tracking.
+Context: A lapsed certification means a crew member works offshore without valid certification, which is a compliance breach.
+Task: Using the training log above, list who is already overdue for renewal and who is due within the next 60 days.
+Format: Two lists, each sorted by date.
+Constraints: Use 13 October as today's date and calculate precisely. Name anyone outside the 60-day window.</pre>
+      <button class="copy" type="button" data-target="s4">Copy</button>
+    </div>
+
+    <h3>Expected output</h3>
     <ul class="expect">
-      <li>Senarai pertama: sijil yang sudah tamat, ikut tarikh</li>
-      <li>Senarai kedua: sijil yang tamat dalam 60 hari, ikut tarikh</li>
-      <li>Orang yang di luar tetingkap 60 hari dinyatakan</li>
+      <li>First list: certificates already lapsed, sorted by date</li>
+      <li>Second list: certificates expiring within 60 days, sorted by date</li>
+      <li>Anyone outside the 60-day window named</li>
     </ul>
 
     <h3>Prompt 2</h3>
-    <p>Senarai yang kemas belum boleh disahkan. Minta AI menunjukkan pengiraan tarikh bagi setiap orang supaya anda boleh menyemaknya sendiri sebelum bertindak. Hasil yang dijangka: bilangan hari untuk setiap orang, sama ada sudah lepas atau akan datang.</p>
-
-    <details class="stuck">
-      <summary>Tersangkut atau kesuntukan masa? Prompt contoh</summary>
-      <div class="inner">
-        <dl class="rctf">
-          <dt>Peranan</dt><dd>Penyelaras HR Alfameli untuk pematuhan HSE</dd>
-          <dt>Konteks</dt><dd>Sijil tamat tempoh bermakna krew bekerja tanpa pensijilan sah</dd>
-          <dt>Tugasan</dt><dd>Senaraikan yang sudah lewat dan yang tamat dalam 60 hari</dd>
-          <dt>Format</dt><dd>Dua senarai ikut tarikh</dd>
-          <dt>Kekangan</dt><dd>Tarikh hari ini 13 Oktober, pengiraan mesti tepat</dd>
-        </dl>
-        <div class="plabel">Prompt 1</div>
-        <div class="codebox">
-<pre id="p4">You are an HR coordinator at Alfameli responsible for HSE compliance tracking. Missing a renewal means a crew member works offshore without valid certification, a compliance breach. Today is 13 October. Using this training log, list who is already overdue for renewal, and who is due within the next 60 days. Present as two lists, sorted by date.</pre>
-          <button class="copy" type="button" data-target="p4">Copy</button>
-        </div>
-        <div class="plabel">Prompt 2</div>
-        <div class="codebox">
-<pre id="p4b">Show your date calculation for each person, today's date minus or plus their expiry date, so I can verify each one before I act on this.</pre>
-          <button class="copy" type="button" data-target="p4b">Copy</button>
-        </div>
-      </div>
-    </details>
+    <p>A tidy list cannot be checked on its own. Ask the AI to show its date calculation for each person so you can verify it before acting. Expected result: the number of days for each person, and whether it is in the past or still to come.</p>
+    <div class="codebox">
+<pre id="q4">Show your date calculation for each person, today's date minus or plus their expiry date, so I can verify each one before I act on this.</pre>
+      <button class="copy" type="button" data-target="q4">Copy</button>
+    </div>
 
     <details>
-      <summary>Contoh jawapan</summary>
+      <summary>Sample answers</summary>
       <div class="inner">
-        <div class="answer"><div class="lbl">Selepas Prompt 1</div>
+        <div class="answer"><div class="lbl">After the Structured Prompt</div>
 <pre>Already overdue:
 - Bala, expired 2 October
 - Farah, expired 8 October
@@ -521,7 +512,7 @@ Due within 60 days (by 12 December):
 - Devi, 20 November
 
 Not flagged: Chen, due 15 December, outside the 60-day window.</pre></div>
-        <div class="answer"><div class="lbl">Selepas Prompt 2</div>
+        <div class="answer"><div class="lbl">After Prompt 2</div>
 <pre>Bala: expired 2 October, 11 days ago (overdue)
 Farah: expired 8 October, 5 days ago (overdue)
 Ali: due 25 October, 12 days from today (within 60 days)
@@ -531,35 +522,35 @@ Chen: due 15 December, 63 days from today (outside the 60-day window)</pre></div
     </details>
 
     <details>
-      <summary>Perbincangan</summary>
+      <summary>Discussion</summary>
       <div class="inner">
-        <div class="why"><strong>Apa yang AI lakukan:</strong> mengira tetingkap 60 hari daripada tarikh yang diberi dan menapis setiap rekod. Dengan pengiraan ditunjukkan, anda boleh menyemak setiap nombor sendiri dan tidak perlu percaya ringkasan semata-mata.</div>
-        <p><strong>Soalan:</strong> Kira sendiri dari 13 Oktober hingga 15 Disember (18 hari baki Oktober, 30 hari November, 15 hari Disember, jumlah 63). Adakah semua lima pengiraan betul? Jika satu salah, apa yang anda akan lakukan?</p>
+        <div class="why"><strong>What the AI did:</strong> it calculated a 60-day window from the date given and sorted every record against it. With the working shown, you can check each figure yourself instead of trusting the summary.</div>
+        <p><strong>Question:</strong> Count from 13 October to 15 December yourself (18 days left in October, 30 in November, 15 in December, 63 in total). Are all five calculations right? If one is wrong, what do you do?</p>
       </div>
     </details>
   </section>
 
-  <!-- RINGKASAN -->
+  <!-- SUMMARY -->
   <section class="summary">
-    <h2>Rumusan</h2>
+    <h2>Takeaways</h2>
     <div class="scroll"><table>
-      <tr><th>Latihan</th><th>Teknik Prompt 2</th><th>Risiko jika tidak disemak</th></tr>
-      <tr><td>Laporan Pelanggan</td><td>Draft, Diagnose, Direct</td><td>Butiran yang tertinggal atau direka sampai kepada pelanggan</td></tr>
-      <tr><td>Penyelarasan Syif dan Tapak</td><td>Failure Anticipator</td><td>Satu hari kekurangan kakitangan</td></tr>
-      <tr><td>Perolehan dan Logistik</td><td>Trade-off Navigator</td><td>Cadangan nampak munasabah tetapi menyembunyikan pertukaran yang buruk</td></tr>
-      <tr><td>HR dan Latihan</td><td>Fact-check, tunjuk pengiraan</td><td>Tarikh akhir pematuhan terlepas</td></tr>
+      <tr><th>Exercise</th><th>Prompt 2 technique</th><th>Risk if unchecked</th></tr>
+      <tr><td>Client Reporting</td><td>Draft, Diagnose, Direct</td><td>A missing or invented detail reaches the client</td></tr>
+      <tr><td>Shift and Site Coordination</td><td>Failure Anticipator</td><td>A day ends up understaffed</td></tr>
+      <tr><td>Procurement and Logistics</td><td>Trade-off Navigator</td><td>A recommendation looks reasoned but hides a bad trade-off</td></tr>
+      <tr><td>HR and Training</td><td>Fact-check, show the working</td><td>A compliance deadline is missed</td></tr>
     </table></div>
-    <p>Prompt 1 memberi draf yang boleh digunakan. Kemahiran sebenar ada pada Prompt 2: menangkap apa yang terlepas, menguji sama ada jawapan bertahan apabila keadaan berubah, dan menjadikannya boleh disahkan sebelum anda bertindak.</p>
+    <p>The Structured Prompt gives you a usable draft. The real skill is in Prompt 2: catching what was missed, testing whether the answer survives a change, and making it checkable before you act.</p>
   </section>
 
-  <p class="foot">Contoh jawapan ditulis sebagai rujukan, bukan hasil tangkapan langsung daripada alat AI. Hasil anda akan berbeza sedikit setiap kali. Yang penting ialah coraknya, bukan perkataan yang tepat. Data dan prompt kekal dalam bahasa Inggeris kerana itulah bahasa dokumen kerja sebenar.</p>
+  <p class="foot">Sample answers were written as a reference and were not captured from live runs, so your results will differ a little each time. The pattern matters more than the exact wording.</p>
 </div>
 
 <script>
   (function () {
     function flash(btn) {
       var original = btn.textContent;
-      btn.textContent = 'Disalin';
+      btn.textContent = 'Copied';
       btn.classList.add('done');
       setTimeout(function () {
         btn.textContent = original;
